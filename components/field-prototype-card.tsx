@@ -1,5 +1,4 @@
 import type { FieldPrototype } from "@/lib/data/interventions";
-import { accentGradient, prototypeAccentKeys } from "@/lib/data/color-studies";
 
 type FieldPrototypeCardProps = {
   prototype: FieldPrototype;
@@ -7,15 +6,8 @@ type FieldPrototypeCardProps = {
 };
 
 export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps) {
-  const accent = prototypeAccentKeys[index % prototypeAccentKeys.length];
-
   return (
-    <article className="relative overflow-hidden rounded-[2rem] bg-white p-5 text-black shadow-quiet sm:p-6">
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-24 opacity-70 blur-2xl"
-        style={{ background: accentGradient(accent) }}
-      />
+    <article className="relative overflow-hidden rounded-[1.5rem] bg-white p-5 text-black shadow-quiet sm:p-6">
       <div className="relative flex items-start justify-between gap-6">
         <p className="font-mono text-xs uppercase text-black/45">
           Prototype {String(index + 1).padStart(2, "0")}

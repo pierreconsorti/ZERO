@@ -11,7 +11,7 @@ export function PlanetHeatGrid({ indicators }: PlanetHeatGridProps) {
   return (
     <section className="px-3 py-8 sm:px-5 lg:px-8">
       <AtmosphericPanel
-        accent="signals"
+        tone="paper"
         className="py-12 sm:py-16"
         contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
       >

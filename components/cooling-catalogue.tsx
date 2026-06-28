@@ -19,7 +19,7 @@ export function CoolingCatalogue() {
   return (
     <section id="catalogue" className="px-3 py-8 sm:px-5 lg:px-8">
       <AtmosphericPanel
-        accent="catalogue"
+        tone="mist"
         className="py-12 sm:py-16"
         contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
       >

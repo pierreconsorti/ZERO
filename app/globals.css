@@ -41,11 +41,6 @@ a {
   background: rgba(117, 168, 211, 0.26);
 }
 
-.hairline {
-  background: linear-gradient(90deg, transparent, #ececec, transparent);
-  height: 1px;
-}
-
 .text-balance {
   text-wrap: balance;
 }

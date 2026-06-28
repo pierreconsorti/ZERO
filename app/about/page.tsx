@@ -24,9 +24,12 @@ export default function AboutPage() {
             what they mean, and shows what must change to reduce the heat humanity is
             adding to the planet.
           </p>
-          <div className="divide-y divide-zero-rule border-y border-zero-rule">
+          <div className="grid gap-3">
             {principles.map((principle) => (
-              <p key={principle} className="py-5 text-base leading-7 text-zero-ink">
+              <p
+                key={principle}
+                className="rounded-[1.25rem] bg-[#f6f6f2] p-5 text-base leading-7 text-zero-ink"
+              >
                 {principle}
               </p>
             ))}

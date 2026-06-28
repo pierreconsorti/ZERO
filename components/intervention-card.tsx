@@ -1,10 +1,7 @@
 import type { Intervention } from "@/lib/data/interventions";
-import {
-  accentGradient,
-  interventionAccentMap,
-  softAccentGradient
-} from "@/lib/data/color-studies";
+import { getEditorialImageForIntervention } from "@/lib/data/editorial-images";
 import { cn } from "@/lib/utils";
+import { EditorialImageFrame } from "./editorial-image-frame";
 import { SaveIdeaButton } from "./save-idea-button";
 
 type InterventionCardProps = {
@@ -28,21 +25,16 @@ export function InterventionCard({
   featured = false,
   className
 }: InterventionCardProps) {
-  const accent = interventionAccentMap[intervention.id] ?? "catalogue";
+  const editorialImage = getEditorialImageForIntervention(intervention.id);
 
   return (
     <article
       className={cn(
-        "group hover-lift relative flex min-h-[30rem] flex-col justify-between overflow-hidden rounded-[2rem] bg-white p-5 shadow-quiet sm:p-6",
-        featured && "min-h-[38rem] rounded-[2.5rem] p-6 sm:p-8",
+        "group hover-lift relative flex min-h-[30rem] flex-col justify-between overflow-hidden rounded-[1.5rem] bg-white p-5 shadow-quiet sm:p-6",
+        featured && "min-h-[38rem] rounded-[2rem] p-6 sm:p-8",
         className
       )}
     >
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-32 opacity-80 blur-2xl"
-        style={{ background: softAccentGradient(accent) }}
-      />
       <div className="relative">
         <div className="flex items-start justify-between gap-4">
           <p className="font-mono text-[0.66rem] uppercase text-black/44">
@@ -68,6 +60,13 @@ export function InterventionCard({
         <p className="mt-6 max-w-xl text-base leading-7 text-zero-muted">
           {intervention.whatMakesItInteresting}
         </p>
+        {editorialImage ? (
+          <EditorialImageFrame
+            image={editorialImage}
+            variant="card"
+            className={cn("mt-8", featured && "max-w-2xl")}
+          />
+        ) : null}
       </div>
 
       <div className="relative mt-9 space-y-5">
@@ -88,7 +87,7 @@ export function InterventionCard({
           </div>
         </dl>
 
-        <details className="group/details rounded-[1.5rem] bg-black/[0.035] p-3">
+        <details className="group/details rounded-[1.25rem] bg-black/[0.035] p-3">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm text-zero-ink">
             <span className="rounded-full bg-white px-3 py-2 text-sm shadow-quiet">
               Open field note
@@ -122,10 +121,7 @@ export function InterventionCard({
             <span className="rounded-full bg-black/[0.05] px-3 py-1.5 text-xs text-black/62">
               Evidence: {intervention.evidenceStrength}
             </span>
-            <span
-              className="rounded-full px-3 py-1.5 text-xs text-white shadow-quiet"
-              style={{ background: accentGradient(accent) }}
-            >
+            <span className="rounded-full bg-white px-3 py-1.5 text-xs text-black/70 shadow-quiet">
               Prototype locally
             </span>
             <span className="rounded-full bg-black/[0.05] px-3 py-1.5 text-xs text-black/62">

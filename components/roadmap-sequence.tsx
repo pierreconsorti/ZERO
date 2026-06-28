@@ -13,7 +13,7 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
   return (
     <section className="px-3 py-8 sm:px-5 lg:px-8">
       <AtmosphericPanel
-        accent="roadmap"
+        tone="warm"
         className="py-12 sm:py-16"
         contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
       >
@@ -22,11 +22,11 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
           title="The systems that must bend"
           description="ZERO organizes climate progress around the major levers required to move toward zero additional heat."
         />
-        <div className="mt-12 divide-y divide-zero-rule">
+        <div className="mt-12 grid gap-3">
           {visible.map((lever, index) => (
             <article
               key={lever.id}
-              className="grid gap-6 py-8 lg:grid-cols-[7rem_1fr_1fr]"
+              className="grid gap-6 rounded-[1.25rem] bg-white p-5 shadow-quiet lg:grid-cols-[7rem_1fr_1fr] lg:p-6"
             >
               <div className="font-mono text-sm text-zero-muted">
                 {String(index + 1).padStart(2, "0")}

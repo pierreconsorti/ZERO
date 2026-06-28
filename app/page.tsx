@@ -25,7 +25,7 @@ export default async function HomePage() {
 
       <section className="px-3 py-8 sm:px-5 lg:px-8">
         <AtmosphericPanel
-          accent="field"
+          tone="paper"
           className="py-12 sm:py-16"
           contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
         >
@@ -57,7 +57,7 @@ export default async function HomePage() {
 
       <section className="px-3 py-8 sm:px-5 lg:px-8">
         <AtmosphericPanel
-          accent="speculation"
+          tone="warm"
           className="py-12 sm:py-16"
           contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
         >
@@ -88,7 +88,7 @@ export default async function HomePage() {
       <RoadmapSequence levers={roadmapLevers} compact />
       <section className="px-3 py-8 sm:px-5 lg:px-8">
         <AtmosphericPanel
-          accent="evidence"
+          tone="mist"
           className="py-12 sm:py-16"
           contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
         >

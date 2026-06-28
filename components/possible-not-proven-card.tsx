@@ -1,5 +1,4 @@
 import type { PossibleNotProven } from "@/lib/data/interventions";
-import { accentGradient } from "@/lib/data/color-studies";
 
 type PossibleNotProvenCardProps = {
   idea: PossibleNotProven;
@@ -7,12 +6,7 @@ type PossibleNotProvenCardProps = {
 
 export function PossibleNotProvenCard({ idea }: PossibleNotProvenCardProps) {
   return (
-    <article className="relative overflow-hidden rounded-[2rem] bg-white p-5 shadow-quiet sm:p-6">
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-24 opacity-70 blur-2xl"
-        style={{ background: accentGradient("speculation") }}
-      />
+    <article className="relative overflow-hidden rounded-[1.5rem] bg-white p-5 shadow-quiet sm:p-6">
       <p className="relative font-mono text-xs uppercase text-black/45">
         Possible, not proven
       </p>
