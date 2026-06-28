@@ -18,12 +18,15 @@ export function SiteHeader() {
             cooling possibilities
           </span>
         </Link>
-        <nav aria-label="Primary navigation" className="flex flex-wrap gap-2">
+        <nav
+          aria-label="Primary navigation"
+          className="flex w-fit flex-wrap gap-1 rounded-full bg-black/[0.045] p-1"
+        >
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-full border border-transparent px-3 py-1.5 text-sm text-zero-muted transition hover:border-zero-rule hover:bg-white hover:text-zero-ink"
+              className="rounded-full px-3.5 py-2 text-sm text-black/62 transition hover:bg-white hover:text-black hover:shadow-quiet"
             >
               {item.label}
             </Link>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AccentRule } from "@/components/accent-rule";
+import { AtmosphericPanel } from "@/components/atmospheric-panel";
 import { CoolingCatalogue } from "@/components/cooling-catalogue";
 import { EvidenceProfileCard } from "@/components/evidence-profile-card";
 import { FieldPrototypeCard } from "@/components/field-prototype-card";
@@ -23,9 +23,12 @@ export default async function HomePage() {
       <StatusHero updatedAt={formatDate()} />
       <CoolingCatalogue />
 
-      <section className="py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-          <AccentRule accent="field" className="mb-12 opacity-70" />
+      <section className="px-3 py-8 sm:px-5 lg:px-8">
+        <AtmosphericPanel
+          accent="field"
+          className="py-12 sm:py-16"
+          contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
+        >
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
             <div>
               <p className="font-mono text-xs uppercase text-black/45">
@@ -49,12 +52,15 @@ export default async function HomePage() {
               />
             ))}
           </div>
-        </div>
+        </AtmosphericPanel>
       </section>
 
-      <section className="py-16 sm:py-24">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-          <AccentRule accent="speculation" className="mb-12 opacity-70" />
+      <section className="px-3 py-8 sm:px-5 lg:px-8">
+        <AtmosphericPanel
+          accent="speculation"
+          className="py-12 sm:py-16"
+          contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
+        >
           <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
             <div>
               <p className="font-mono text-xs uppercase text-black/45">
@@ -75,14 +81,17 @@ export default async function HomePage() {
               <PossibleNotProvenCard key={idea.id} idea={idea} />
             ))}
           </div>
-        </div>
+        </AtmosphericPanel>
       </section>
 
       <PlanetHeatGrid indicators={indicators} />
       <RoadmapSequence levers={roadmapLevers} compact />
-      <section className="py-16 sm:py-20">
-        <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-          <AccentRule accent="evidence" className="mb-12 opacity-70" />
+      <section className="px-3 py-8 sm:px-5 lg:px-8">
+        <AtmosphericPanel
+          accent="evidence"
+          className="py-12 sm:py-16"
+          contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
+        >
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <SectionHeading
               eyebrow="Evidence Profiles"
@@ -101,7 +110,7 @@ export default async function HomePage() {
               <EvidenceProfileCard key={profile.id} profile={profile} />
             ))}
           </div>
-        </div>
+        </AtmosphericPanel>
       </section>
     </main>
   );

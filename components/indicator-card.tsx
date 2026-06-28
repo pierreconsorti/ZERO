@@ -15,7 +15,7 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
   return (
     <article
       className={cn(
-        "hover-lift flex min-h-[21rem] flex-col justify-between rounded-lg border bg-zero-panel p-5 shadow-quiet",
+        "hover-lift flex min-h-[21rem] flex-col justify-between rounded-[1.75rem] bg-zero-panel p-5 shadow-quiet",
         indicator.status === "current" && "border-black/[0.06]",
         indicator.status === "fallback" && "border-black/[0.08]",
         indicator.status === "unavailable" && "border-dashed border-zero-rule bg-white/[0.55]"

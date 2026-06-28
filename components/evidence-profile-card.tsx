@@ -6,8 +6,8 @@ type EvidenceProfileCardProps = {
 
 export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
   return (
-    <article className="rounded-lg border border-zero-rule bg-white p-5 shadow-quiet">
-      <div className="flex flex-col gap-4 border-b border-zero-rule pb-5 sm:flex-row sm:items-start sm:justify-between">
+    <article className="rounded-[2rem] bg-white p-5 shadow-quiet">
+      <div className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-start sm:justify-between">
         <h3 className="text-balance text-xl font-semibold leading-snug text-zero-ink">
           {profile.claim}
         </h3>

@@ -42,7 +42,8 @@ const config: Config = {
         ]
       },
       boxShadow: {
-        quiet: "0 24px 80px rgba(18, 26, 24, 0.06)"
+        quiet: "0 24px 80px rgba(0, 0, 0, 0.06)",
+        object: "0 28px 90px rgba(0, 0, 0, 0.08)"
       }
     }
   },

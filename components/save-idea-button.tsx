@@ -57,9 +57,9 @@ export function SaveIdeaButton({ id }: SaveIdeaButtonProps) {
       type="button"
       aria-pressed={saved}
       onClick={toggleSaved}
-      className="rounded-full border border-zero-ink/[0.15] bg-white/70 px-3 py-1.5 font-mono text-[0.68rem] uppercase text-zero-ink transition hover:border-zero-ink hover:bg-zero-ink hover:text-white"
+      className="rounded-full bg-black px-4 py-2 text-sm text-white shadow-quiet transition hover:bg-black/82"
     >
-      {saved ? "In fieldbook" : "Mark for prototype"}
+      {saved ? "Saved" : "Save idea"}
     </button>
   );
 }

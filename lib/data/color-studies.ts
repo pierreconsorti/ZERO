@@ -77,6 +77,17 @@ export function softAccentGradient(key: AccentKey) {
   return `linear-gradient(96deg, ${colors[1]}1A 0%, ${colors[2]}22 28%, ${colors[3]}1F 58%, transparent 100%)`;
 }
 
+export function atmosphericGradient(key: AccentKey) {
+  const colors = colorStudies[key].colors;
+
+  return [
+    `radial-gradient(circle at 18% 22%, ${colors[2]}42 0, transparent 30%)`,
+    `radial-gradient(circle at 82% 18%, ${colors[3]}38 0, transparent 28%)`,
+    `radial-gradient(circle at 62% 78%, ${colors[1]}24 0, transparent 34%)`,
+    `linear-gradient(135deg, ${colors[0]}08, ${colors[4]}10 48%, transparent 100%)`
+  ].join(", ");
+}
+
 export const interventionAccentMap: Record<string, AccentKey> = {
   "ultra-white-roof-coatings": "hero",
   "reflective-cooling-textiles": "field",

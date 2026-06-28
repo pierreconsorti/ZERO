@@ -70,7 +70,16 @@ Next.js fetch revalidation is used for local caching. V1 does not need a databas
 
 - No displayed images, climate cliches, or sensational language.
 - Use stark white surfaces, black text, Helvetica Now-first typography, and quiet interaction.
-- Use Wikimedia-derived color studies only as subtle abstract accent rules.
+- Use Wikimedia-derived color studies as soft atmospheric panels, gradient action pills, and restrained background washes.
 - Treat uncertainty as a first-class part of the interface.
 - Prefer primary scientific and institutional sources.
 - Update when better evidence appears.
+
+## Visual layer system
+
+- Layer 0: stark white page.
+- Layer 1: large rounded atmospheric containers using `AtmosphericPanel`.
+- Layer 2: foreground knowledge objects, intervention cards, and prototype cards.
+- Layer 3: tactile pills, save actions, metadata, and compact controls.
+
+The gradient and source-imagery logic lives in `lib/data/color-studies.ts`.

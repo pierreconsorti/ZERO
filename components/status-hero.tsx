@@ -1,75 +1,100 @@
-import { AccentRule } from "./accent-rule";
+import { AtmosphericPanel } from "./atmospheric-panel";
 
 type StatusHeroProps = {
   updatedAt: string;
 };
 
+const categories = [
+  "Materials",
+  "Shade",
+  "Textiles",
+  "Surfaces",
+  "Methane",
+  "Passive cooling"
+];
+
 export function StatusHero({ updatedAt }: StatusHeroProps) {
   return (
-    <section className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 sm:py-20 lg:min-h-[calc(100vh-4.5rem)] lg:grid-cols-[1fr_0.82fr] lg:items-stretch lg:px-10">
-      <div className="flex flex-col justify-between gap-12">
-        <div>
-          <p className="font-mono text-sm uppercase text-black">ZERO</p>
-          <h1 className="mt-5 max-w-5xl text-balance text-6xl font-semibold leading-[0.95] text-zero-ink sm:text-7xl lg:text-8xl">
-            A catalogue of planetary cooling possibilities
-          </h1>
-          <AccentRule accent="hero" className="mt-8 max-w-3xl opacity-80" />
-        </div>
-        <div className="grid gap-4 py-5 text-sm sm:grid-cols-3">
+    <div className="px-3 py-4 sm:px-5 sm:py-6 lg:px-8">
+      <AtmosphericPanel
+        accent="hero"
+        className="min-h-[calc(100vh-6rem)]"
+        contentClassName="grid min-h-[calc(100vh-6rem)] gap-8 p-5 sm:p-8 lg:grid-cols-[1.08fr_0.92fr] lg:p-10"
+      >
+        <div className="flex flex-col justify-between gap-10">
           <div>
-            <p className="font-mono uppercase text-black/45">Frame</p>
-            <p className="mt-1 text-zero-ink">materials, inventions, prototypes</p>
+            <p className="font-mono text-[0.72rem] uppercase text-black/50">ZERO</p>
+            <h1 className="mt-5 max-w-5xl text-balance text-6xl font-semibold leading-[0.88] text-black sm:text-7xl lg:text-8xl">
+              A catalogue of planetary cooling possibilities
+            </h1>
           </div>
-          <div>
-            <p className="font-mono uppercase text-black/45">Signal</p>
-            <p className="mt-1 text-zero-ink">evidence, scale, risk, possibility</p>
-          </div>
-          <div>
-            <p className="font-mono uppercase text-black/45">Updated</p>
-            <p className="mt-1 text-zero-ink">{updatedAt}</p>
-          </div>
-        </div>
-      </div>
 
-      <div className="flex flex-col justify-between gap-10 rounded-md border border-black/[0.06] bg-white p-5 shadow-quiet sm:p-7">
-        <div className="grid grid-cols-[1fr_auto] gap-4 pb-6">
-          <div>
-            <p className="font-mono text-xs uppercase text-black/45">Cooling index</p>
-            <p className="mt-2 text-sm leading-6 text-zero-muted">
-              What can be tested, funded, regulated, installed, worn, painted,
-              detected, or prototyped before the next hot season?
+          <div className="max-w-3xl rounded-[2rem] bg-white/[0.74] p-4 shadow-quiet backdrop-blur-md sm:p-5">
+            <p className="text-2xl font-semibold leading-[1.05] text-black sm:text-3xl">
+              What can we try next summer?
             </p>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-black/62">
+              Materials, urban experiments, passive systems, and climate
+              interventions organized by evidence, scale, risk, and possibility.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <span
+                  key={category}
+                  className="rounded-full bg-black/[0.06] px-3 py-1.5 text-sm text-black/70"
+                >
+                  {category}
+                </span>
+              ))}
+            </div>
           </div>
-          <p className="tabular text-7xl font-semibold leading-none text-zero-ink sm:text-8xl">
-            0°
-          </p>
         </div>
 
-        <div>
-          <p className="max-w-xl text-2xl leading-9 text-zero-ink">
-            What can we try next summer?
-          </p>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-zero-muted">
-            A living catalogue of cooling materials, urban experiments, passive
-            systems, and climate interventions organized by evidence, scale,
-            risk, and possibility.
-          </p>
-        </div>
+        <div className="grid gap-4 lg:grid-rows-[1fr_auto]">
+          <div className="flex min-h-[24rem] flex-col justify-between rounded-[2rem] bg-white/[0.72] p-5 shadow-quiet backdrop-blur-md sm:rounded-[2.5rem] sm:p-7">
+            <div className="flex items-start justify-between gap-5">
+              <div>
+                <p className="font-mono text-[0.68rem] uppercase text-black/45">
+                  Cooling index
+                </p>
+                <p className="mt-3 max-w-sm text-sm leading-6 text-black/58">
+                  A living field guide for things that can be tested, funded,
+                  regulated, installed, worn, painted, detected, or prototyped.
+                </p>
+              </div>
+              <p className="tabular text-7xl font-semibold leading-none text-black sm:text-8xl">
+                0°
+              </p>
+            </div>
 
-        <AccentRule accent="hero" className="opacity-70" />
-        <dl className="grid gap-4 text-sm">
-          <div>
-            <dt className="font-mono uppercase text-black/45">First question</dt>
-            <dd className="mt-1 text-zero-ink">What is cool, new, testable, and honest?</dd>
+            <dl className="grid gap-3 text-sm sm:grid-cols-2">
+              <div className="rounded-full bg-white px-4 py-3 shadow-quiet">
+                <dt className="font-mono text-[0.62rem] uppercase text-black/42">
+                  Updated
+                </dt>
+                <dd className="mt-1 text-black">{updatedAt}</dd>
+              </div>
+              <div className="rounded-full bg-white px-4 py-3 shadow-quiet">
+                <dt className="font-mono text-[0.62rem] uppercase text-black/42">
+                  Evidence support
+                </dt>
+                <dd className="mt-1 text-black">NASA, NOAA, OWID, IEA</dd>
+              </div>
+            </dl>
           </div>
-          <div>
-            <dt className="font-mono uppercase text-black/45">Evidence support</dt>
-            <dd className="mt-1 text-zero-ink">
-              NASA, NOAA, Copernicus, OWID, IEA where available
-            </dd>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            {["Evidence", "Prototype", "Scale"].map((label) => (
+              <div
+                key={label}
+                className="rounded-full bg-white/[0.78] px-4 py-3 text-sm text-black/70 shadow-quiet backdrop-blur-md"
+              >
+                {label}
+              </div>
+            ))}
           </div>
-        </dl>
-      </div>
-    </section>
+        </div>
+      </AtmosphericPanel>
+    </div>
   );
 }

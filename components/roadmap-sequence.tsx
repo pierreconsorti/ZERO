@@ -1,5 +1,5 @@
 import type { RoadmapLever } from "@/lib/types";
-import { AccentRule } from "./accent-rule";
+import { AtmosphericPanel } from "./atmospheric-panel";
 import { SectionHeading } from "./section-heading";
 
 type RoadmapSequenceProps = {
@@ -11,9 +11,12 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
   const visible = compact ? levers.slice(0, 5) : levers;
 
   return (
-    <section className="py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-        <AccentRule accent="roadmap" className="mb-12 opacity-70" />
+    <section className="px-3 py-8 sm:px-5 lg:px-8">
+      <AtmosphericPanel
+        accent="roadmap"
+        className="py-12 sm:py-16"
+        contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
+      >
         <SectionHeading
           eyebrow="The Roadmap"
           title="The systems that must bend"
@@ -85,7 +88,7 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
             </article>
           ))}
         </div>
-      </div>
+      </AtmosphericPanel>
     </section>
   );
 }

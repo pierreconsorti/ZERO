@@ -10,13 +10,13 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
   const accent = prototypeAccentKeys[index % prototypeAccentKeys.length];
 
   return (
-    <article className="relative overflow-hidden rounded-md border border-black/[0.06] bg-white p-5 text-black shadow-quiet">
+    <article className="relative overflow-hidden rounded-[2rem] bg-white p-5 text-black shadow-quiet sm:p-6">
       <div
         aria-hidden="true"
-        className="absolute inset-x-0 top-0 h-px"
+        className="absolute inset-x-0 top-0 h-24 opacity-70 blur-2xl"
         style={{ background: accentGradient(accent) }}
       />
-      <div className="flex items-start justify-between gap-6">
+      <div className="relative flex items-start justify-between gap-6">
         <p className="font-mono text-xs uppercase text-black/45">
           Prototype {String(index + 1).padStart(2, "0")}
         </p>
@@ -24,11 +24,13 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
           field test
         </span>
       </div>
-      <h3 className="mt-10 text-balance text-3xl font-semibold leading-none">
+      <h3 className="relative mt-10 text-balance text-3xl font-semibold leading-[0.96]">
         {prototype.title}
       </h3>
-      <p className="mt-5 text-sm leading-6 text-zero-muted">{prototype.whatToTest}</p>
-      <dl className="mt-8 grid gap-5 pt-5 text-sm leading-6">
+      <p className="relative mt-5 text-sm leading-6 text-zero-muted">
+        {prototype.whatToTest}
+      </p>
+      <dl className="relative mt-8 grid gap-5 pt-5 text-sm leading-6">
         <div>
           <dt className="font-mono text-xs uppercase text-black/45">Where to try it</dt>
           <dd className="mt-2 text-black">{prototype.whereToTryIt}</dd>
