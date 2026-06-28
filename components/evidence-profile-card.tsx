@@ -6,12 +6,12 @@ type EvidenceProfileCardProps = {
 
 export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
   return (
-    <article className="rounded-[2rem] bg-white p-5 shadow-quiet">
+    <article className="object-card p-5">
       <div className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-start sm:justify-between">
-        <h3 className="text-balance text-xl font-semibold leading-snug text-zero-ink">
+        <h3 className="text-balance text-xl font-semibold leading-[1.12] text-zero-ink">
           {profile.claim}
         </h3>
-        <span className="w-fit shrink-0 rounded-full border border-black/[0.08] bg-white px-3 py-1 font-mono text-xs uppercase text-black/60">
+        <span className="pill-control w-fit shrink-0 px-3 py-1 text-xs">
           {profile.strengthOfEvidence}
         </span>
       </div>
@@ -31,8 +31,8 @@ export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
 
 function EvidenceField({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <dt className="font-mono text-xs uppercase text-black/45">{label}</dt>
+    <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
+      <dt className="meta-label">{label}</dt>
       <dd className="mt-2 text-sm leading-6 text-zero-muted">{value}</dd>
     </div>
   );

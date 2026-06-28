@@ -28,7 +28,7 @@ export default function AboutPage() {
             {principles.map((principle) => (
               <p
                 key={principle}
-                className="rounded-[1.25rem] bg-[#f6f6f2] p-5 text-base leading-7 text-zero-ink"
+                className="rounded-[1.25rem] bg-[#f6f6f6] p-5 text-base leading-7 text-zero-ink"
               >
                 {principle}
               </p>

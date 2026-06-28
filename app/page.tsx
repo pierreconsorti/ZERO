@@ -29,12 +29,10 @@ export default async function HomePage() {
           className="py-12 sm:py-16"
           contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
         >
-          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+          <div className="object-card grid gap-8 p-5 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
             <div>
-              <p className="font-mono text-xs uppercase text-black/45">
-                Field prototypes
-              </p>
-              <h2 className="mt-4 max-w-3xl text-balance text-5xl font-semibold leading-none text-black sm:text-6xl">
+              <p className="meta-label">Field prototypes</p>
+              <h2 className="display-tight-soft mt-4 max-w-3xl text-balance text-5xl text-black sm:text-6xl">
                 Small tests before next summer.
               </h2>
             </div>
@@ -61,12 +59,10 @@ export default async function HomePage() {
           className="py-12 sm:py-16"
           contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
         >
-          <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
+          <div className="object-card grid gap-8 p-5 sm:p-7 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
             <div>
-              <p className="font-mono text-xs uppercase text-black/45">
-                Possible, not proven
-              </p>
-              <h2 className="mt-4 text-balance text-5xl font-semibold leading-none text-zero-ink sm:text-6xl">
+              <p className="meta-label">Possible, not proven</p>
+              <h2 className="display-tight-soft mt-4 text-balance text-5xl text-zero-ink sm:text-6xl">
                 Imagination with an evidence brake.
               </h2>
             </div>
@@ -100,7 +96,7 @@ export default async function HomePage() {
             />
             <Link
               href="/evidence"
-              className="w-fit rounded-full border border-black/[0.08] bg-white px-4 py-2 text-sm text-zero-ink transition hover:border-black hover:bg-black hover:text-white"
+              className="pill-control-light w-fit px-4 py-2 text-sm transition hover:bg-black hover:text-white"
             >
               View methodology
             </Link>

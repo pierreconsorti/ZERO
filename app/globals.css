@@ -38,7 +38,7 @@ a {
 }
 
 ::selection {
-  background: rgba(117, 168, 211, 0.26);
+  background: rgba(0, 0, 0, 0.12);
 }
 
 .text-balance {
@@ -47,6 +47,61 @@ a {
 
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+@layer components {
+  .display-tight {
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 0.9;
+  }
+
+  .display-tight-soft {
+    font-weight: 650;
+    letter-spacing: 0;
+    line-height: 0.94;
+  }
+
+  .soft-section {
+    border-radius: 2.5rem;
+    background: #f6f6f6;
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.055);
+  }
+
+  .object-card {
+    border-radius: 2rem;
+    background: #ffffff;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.055);
+  }
+
+  .pill-control {
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.055);
+    color: rgba(0, 0, 0, 0.72);
+  }
+
+  .pill-control-light {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    color: rgba(0, 0, 0, 0.72);
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.055);
+  }
+
+  .pill-control-dark {
+    border-radius: 999px;
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .meta-label {
+    font-family: var(--font-zero-sans);
+    font-size: 0.68rem;
+    font-weight: 650;
+    letter-spacing: 0;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.45);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

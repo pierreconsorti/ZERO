@@ -6,7 +6,7 @@ type SourceCardProps = {
 
 export function SourceCard({ source }: SourceCardProps) {
   return (
-    <article className="rounded-[2rem] bg-white p-5 shadow-quiet">
+    <article className="object-card p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h3 className="text-xl font-semibold text-zero-ink">{source.name}</h3>
@@ -17,25 +17,25 @@ export function SourceCard({ source }: SourceCardProps) {
             {source.url}
           </a>
         </div>
-        <span className="w-fit shrink-0 rounded-full border border-zero-rule px-3 py-1 font-mono text-xs uppercase text-zero-muted">
+        <span className="pill-control w-fit shrink-0 px-3 py-1 text-xs">
           {source.trustLevel}
         </span>
       </div>
       <dl className="mt-6 grid gap-5 text-sm leading-6 md:grid-cols-2">
-        <div>
-          <dt className="font-mono text-xs uppercase text-black/45">Type</dt>
+        <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
+          <dt className="meta-label">Type</dt>
           <dd className="mt-2 text-zero-muted">{source.type}</dd>
         </div>
-        <div>
-          <dt className="font-mono text-xs uppercase text-black/45">Update frequency</dt>
+        <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
+          <dt className="meta-label">Update frequency</dt>
           <dd className="mt-2 text-zero-muted">{source.updateFrequency}</dd>
         </div>
-        <div>
-          <dt className="font-mono text-xs uppercase text-black/45">Used for</dt>
+        <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
+          <dt className="meta-label">Used for</dt>
           <dd className="mt-2 text-zero-muted">{source.usedFor}</dd>
         </div>
-        <div>
-          <dt className="font-mono text-xs uppercase text-black/45">Limitations</dt>
+        <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
+          <dt className="meta-label">Limitations</dt>
           <dd className="mt-2 text-zero-muted">{source.limitations}</dd>
         </div>
       </dl>

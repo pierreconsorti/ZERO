@@ -23,12 +23,10 @@ export function CoolingCatalogue() {
         className="py-12 sm:py-16"
         contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
       >
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div className="object-card grid gap-8 p-5 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
-            <p className="font-mono text-[0.68rem] uppercase text-black/45">
-              Cooling catalogue
-            </p>
-            <h2 className="mt-4 max-w-3xl text-balance text-5xl font-semibold leading-[0.92] text-zero-ink sm:text-6xl">
+            <p className="meta-label">Cooling catalogue</p>
+            <h2 className="display-tight-soft mt-4 max-w-3xl text-balance text-5xl text-zero-ink sm:text-6xl">
               Things that can be tried, bought, built, installed, worn, or measured.
             </h2>
           </div>
@@ -38,7 +36,7 @@ export function CoolingCatalogue() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-2 xl:grid-cols-12">
+        <div className="mt-5 grid gap-5 lg:grid-cols-2 xl:grid-cols-12">
           {interventions.map((intervention, index) => (
             <InterventionCard
               key={intervention.id}

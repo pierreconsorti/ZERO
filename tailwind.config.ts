@@ -14,11 +14,7 @@ const config: Config = {
           panel: "#ffffff",
           ink: "#000000",
           muted: "#555555",
-          rule: "#ececec",
-          blue: "#274e9b",
-          rust: "#87524a",
-          moss: "#315338",
-          amber: "#d29b64"
+          rule: "#ececec"
         }
       },
       fontFamily: {

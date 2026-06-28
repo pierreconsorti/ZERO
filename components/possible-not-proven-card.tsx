@@ -6,11 +6,9 @@ type PossibleNotProvenCardProps = {
 
 export function PossibleNotProvenCard({ idea }: PossibleNotProvenCardProps) {
   return (
-    <article className="relative overflow-hidden rounded-[1.5rem] bg-white p-5 shadow-quiet sm:p-6">
-      <p className="relative font-mono text-xs uppercase text-black/45">
-        Possible, not proven
-      </p>
-      <h3 className="relative mt-6 text-balance text-3xl font-semibold leading-[0.98] text-zero-ink">
+    <article className="object-card relative overflow-hidden p-5 sm:p-6">
+      <p className="meta-label relative">Possible, not proven</p>
+      <h3 className="display-tight-soft relative mt-6 text-balance text-3xl text-zero-ink">
         {idea.title}
       </h3>
       <dl className="relative mt-7 grid gap-5 text-sm leading-6 md:grid-cols-2">
@@ -30,8 +28,8 @@ export function PossibleNotProvenCard({ idea }: PossibleNotProvenCardProps) {
 
 function SpecField({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <dt className="font-mono text-xs uppercase text-zero-muted">{label}</dt>
+    <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
+      <dt className="meta-label">{label}</dt>
       <dd className="mt-2 text-zero-ink">{value}</dd>
     </div>
   );

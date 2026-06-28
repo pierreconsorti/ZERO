@@ -26,13 +26,13 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
           {visible.map((lever, index) => (
             <article
               key={lever.id}
-              className="grid gap-6 rounded-[1.25rem] bg-white p-5 shadow-quiet lg:grid-cols-[7rem_1fr_1fr] lg:p-6"
+              className="object-card grid gap-6 p-5 lg:grid-cols-[7rem_1fr_1fr] lg:p-6"
             >
-              <div className="font-mono text-sm text-zero-muted">
+              <div className="meta-label text-sm">
                 {String(index + 1).padStart(2, "0")}
               </div>
               <div>
-                <h3 className="text-balance text-2xl font-semibold text-zero-ink">
+                <h3 className="display-tight-soft text-balance text-2xl text-zero-ink">
                   {lever.title}
                 </h3>
                 <p className="mt-4 text-sm leading-6 text-zero-muted">
@@ -41,44 +41,32 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
               </div>
               <dl className="grid gap-5 text-sm leading-6">
                 <div>
-                  <dt className="font-mono text-xs uppercase text-black/45">
-                    What needs to change
-                  </dt>
+                  <dt className="meta-label">What needs to change</dt>
                   <dd className="mt-2 text-zero-ink">{lever.whatNeedsToChange}</dd>
                 </div>
                 <div>
-                  <dt className="font-mono text-xs uppercase text-black/45">
-                    Speed required
-                  </dt>
+                  <dt className="meta-label">Speed required</dt>
                   <dd className="mt-2 text-zero-ink">{lever.speedRequired}</dd>
                 </div>
                 {!compact ? (
                   <>
                     <div>
-                      <dt className="font-mono text-xs uppercase text-black/45">
-                        Why it matters
-                      </dt>
+                      <dt className="meta-label">Why it matters</dt>
                       <dd className="mt-2 text-zero-ink">{lever.whyItMatters}</dd>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-3">
                       <div>
-                        <dt className="font-mono text-xs uppercase text-zero-muted">
-                          Evidence
-                        </dt>
+                        <dt className="meta-label">Evidence</dt>
                         <dd className="mt-1 text-zero-ink">{lever.evidenceStrength}</dd>
                       </div>
                       <div>
-                        <dt className="font-mono text-xs uppercase text-zero-muted">
-                          Sources
-                        </dt>
+                        <dt className="meta-label">Sources</dt>
                         <dd className="mt-1 text-zero-ink">
                           {lever.dataSources.join(", ")}
                         </dd>
                       </div>
                       <div>
-                        <dt className="font-mono text-xs uppercase text-zero-muted">
-                          Review
-                        </dt>
+                        <dt className="meta-label">Review</dt>
                         <dd className="mt-1 text-zero-ink">{lever.reviewDate}</dd>
                       </div>
                     </div>

@@ -57,7 +57,7 @@ export function SaveIdeaButton({ id }: SaveIdeaButtonProps) {
       type="button"
       aria-pressed={saved}
       onClick={toggleSaved}
-      className="rounded-full bg-black px-4 py-2 text-sm text-white shadow-quiet transition hover:bg-black/82"
+      className="pill-control-dark px-4 py-2 text-sm shadow-quiet transition hover:bg-black/82"
     >
       {saved ? "Saved" : "Save idea"}
     </button>

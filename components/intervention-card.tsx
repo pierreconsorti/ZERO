@@ -1,7 +1,5 @@
 import type { Intervention } from "@/lib/data/interventions";
-import { getEditorialImageForIntervention } from "@/lib/data/editorial-images";
 import { cn } from "@/lib/utils";
-import { EditorialImageFrame } from "./editorial-image-frame";
 import { SaveIdeaButton } from "./save-idea-button";
 
 type InterventionCardProps = {
@@ -12,11 +10,11 @@ type InterventionCardProps = {
 };
 
 const maturityTone: Record<Intervention["maturity"], string> = {
-  known: "bg-white text-black/60 border-black/[0.08]",
-  deployable: "bg-white text-black/60 border-black/[0.08]",
-  emerging: "bg-white text-black/60 border-black/[0.08]",
-  experimental: "bg-white text-black/60 border-black/[0.08]",
-  speculative: "bg-white text-black/60 border-black/[0.08]"
+  known: "bg-black/[0.055] text-black/62",
+  deployable: "bg-black/[0.055] text-black/62",
+  emerging: "bg-black/[0.055] text-black/62",
+  experimental: "bg-black/[0.055] text-black/62",
+  speculative: "bg-black text-white"
 };
 
 export function InterventionCard({
@@ -25,24 +23,22 @@ export function InterventionCard({
   featured = false,
   className
 }: InterventionCardProps) {
-  const editorialImage = getEditorialImageForIntervention(intervention.id);
-
   return (
     <article
       className={cn(
-        "group hover-lift relative flex min-h-[30rem] flex-col justify-between overflow-hidden rounded-[1.5rem] bg-white p-5 shadow-quiet sm:p-6",
-        featured && "min-h-[38rem] rounded-[2rem] p-6 sm:p-8",
+        "object-card group hover-lift relative flex min-h-[31rem] flex-col justify-between overflow-hidden p-5 sm:p-6",
+        featured && "min-h-[39rem] p-6 sm:p-8",
         className
       )}
     >
       <div className="relative">
         <div className="flex items-start justify-between gap-4">
-          <p className="font-mono text-[0.66rem] uppercase text-black/44">
+          <p className="meta-label">
             {String(index + 1).padStart(2, "0")} / {intervention.category}
           </p>
           <span
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 text-xs",
+              "shrink-0 rounded-full px-3 py-1.5 text-xs",
               maturityTone[intervention.maturity]
             )}
           >
@@ -51,8 +47,8 @@ export function InterventionCard({
         </div>
         <h3
           className={cn(
-            "mt-8 text-balance font-semibold leading-[0.92] text-zero-ink",
-            featured ? "text-5xl sm:text-6xl" : "text-4xl"
+            "display-tight-soft mt-8 text-balance text-zero-ink",
+            featured ? "text-5xl sm:text-6xl" : "text-4xl sm:text-5xl"
           )}
         >
           {intervention.title}
@@ -60,27 +56,18 @@ export function InterventionCard({
         <p className="mt-6 max-w-xl text-base leading-7 text-zero-muted">
           {intervention.whatMakesItInteresting}
         </p>
-        {editorialImage ? (
-          <EditorialImageFrame
-            image={editorialImage}
-            variant="card"
-            className={cn("mt-8", featured && "max-w-2xl")}
-          />
-        ) : null}
       </div>
 
       <div className="relative mt-9 space-y-5">
         <dl className="grid gap-3 sm:grid-cols-2">
-          <div>
-            <dt className="font-mono text-[0.64rem] uppercase text-black/42">Mechanism</dt>
+          <div className="rounded-[1.25rem] bg-black/[0.035] p-4">
+            <dt className="meta-label text-[0.64rem]">Mechanism</dt>
             <dd className="mt-2 text-sm leading-6 text-black/76">
               {intervention.mechanism}
             </dd>
           </div>
-          <div>
-            <dt className="font-mono text-[0.64rem] uppercase text-black/42">
-              Local prototype
-            </dt>
+          <div className="rounded-[1.25rem] bg-black/[0.035] p-4">
+            <dt className="meta-label text-[0.64rem]">Local prototype</dt>
             <dd className="mt-2 text-sm leading-6 text-black/76">
               {intervention.localPrototype}
             </dd>
@@ -89,28 +76,26 @@ export function InterventionCard({
 
         <details className="group/details rounded-[1.25rem] bg-black/[0.035] p-3">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm text-zero-ink">
-            <span className="rounded-full bg-white px-3 py-2 text-sm shadow-quiet">
+            <span className="pill-control-light px-3 py-2 text-sm">
               Open field note
             </span>
-            <span className="rounded-full bg-white px-3 py-1.5 font-mono text-lg leading-none shadow-quiet transition group-open/details:rotate-45">
+            <span className="pill-control-light px-3 py-1.5 font-mono text-lg leading-none transition group-open/details:rotate-45">
               +
             </span>
           </summary>
           <div className="mt-5 grid gap-5 text-sm leading-6 md:grid-cols-3">
             <div>
-              <p className="font-mono text-xs uppercase text-zero-muted">Scale</p>
+              <p className="meta-label">Scale</p>
               <p className="mt-2 text-zero-ink">{intervention.scale.join(", ")}</p>
             </div>
             <div>
-              <p className="font-mono text-xs uppercase text-zero-muted">Measure</p>
+              <p className="meta-label">Measure</p>
               <p className="mt-2 text-zero-ink">
                 {intervention.whatToMeasure.join(", ")}
               </p>
             </div>
             <div>
-              <p className="font-mono text-xs uppercase text-zero-muted">
-                Risks / unknowns
-              </p>
+              <p className="meta-label">Risks / unknowns</p>
               <p className="mt-2 text-zero-ink">{intervention.risks.join(", ")}</p>
             </div>
           </div>
@@ -118,13 +103,13 @@ export function InterventionCard({
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-2">
-            <span className="rounded-full bg-black/[0.05] px-3 py-1.5 text-xs text-black/62">
+            <span className="pill-control px-3 py-1.5 text-xs">
               Evidence: {intervention.evidenceStrength}
             </span>
-            <span className="rounded-full bg-white px-3 py-1.5 text-xs text-black/70 shadow-quiet">
+            <span className="pill-control-light px-3 py-1.5 text-xs">
               Prototype locally
             </span>
-            <span className="rounded-full bg-black/[0.05] px-3 py-1.5 text-xs text-black/62">
+            <span className="pill-control px-3 py-1.5 text-xs">
               {intervention.status}
             </span>
           </div>

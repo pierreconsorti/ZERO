@@ -7,16 +7,16 @@ type FieldPrototypeCardProps = {
 
 export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps) {
   return (
-    <article className="relative overflow-hidden rounded-[1.5rem] bg-white p-5 text-black shadow-quiet sm:p-6">
+    <article className="object-card relative overflow-hidden p-5 text-black sm:p-6">
       <div className="relative flex items-start justify-between gap-6">
-        <p className="font-mono text-xs uppercase text-black/45">
+        <p className="meta-label">
           Prototype {String(index + 1).padStart(2, "0")}
         </p>
-        <span className="rounded-full border border-black/[0.08] px-2.5 py-1 font-mono text-[0.65rem] uppercase text-black/60">
+        <span className="pill-control px-2.5 py-1 text-[0.65rem]">
           field test
         </span>
       </div>
-      <h3 className="relative mt-10 text-balance text-3xl font-semibold leading-[0.96]">
+      <h3 className="display-tight-soft relative mt-10 text-balance text-3xl">
         {prototype.title}
       </h3>
       <p className="relative mt-5 text-sm leading-6 text-zero-muted">
@@ -24,28 +24,24 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
       </p>
       <dl className="relative mt-8 grid gap-5 pt-5 text-sm leading-6">
         <div>
-          <dt className="font-mono text-xs uppercase text-black/45">Where to try it</dt>
+          <dt className="meta-label">Where to try it</dt>
           <dd className="mt-2 text-black">{prototype.whereToTryIt}</dd>
         </div>
         <div>
-          <dt className="font-mono text-xs uppercase text-black/45">What to measure</dt>
+          <dt className="meta-label">What to measure</dt>
           <dd className="mt-2 text-black">{prototype.whatToMeasure.join(", ")}</dd>
         </div>
         <div>
-          <dt className="font-mono text-xs uppercase text-black/45">Tools needed</dt>
+          <dt className="meta-label">Tools needed</dt>
           <dd className="mt-2 text-black">{prototype.toolsNeeded.join(", ")}</dd>
         </div>
         <div className="grid gap-4 pt-5 sm:grid-cols-2">
           <div>
-            <dt className="font-mono text-xs uppercase text-black/45">
-              Evidence value
-            </dt>
+            <dt className="meta-label">Evidence value</dt>
             <dd className="mt-2 text-black">{prototype.evidenceValue}</dd>
           </div>
           <div>
-            <dt className="font-mono text-xs uppercase text-black/45">
-              Possible risk
-            </dt>
+            <dt className="meta-label">Possible risk</dt>
             <dd className="mt-2 text-black">{prototype.possibleRisk}</dd>
           </div>
         </div>
