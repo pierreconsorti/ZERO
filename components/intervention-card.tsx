@@ -26,8 +26,8 @@ export function InterventionCard({
   return (
     <article
       className={cn(
-        "object-card group hover-lift relative flex min-h-[25rem] flex-col justify-between overflow-hidden p-5 sm:min-h-[31rem] sm:p-6",
-        featured && "sm:min-h-[39rem] sm:p-8",
+        "object-card group hover-lift relative flex min-h-[24rem] flex-col justify-between overflow-hidden p-4 sm:min-h-[29rem] sm:p-6",
+        featured && "sm:min-h-[34rem] sm:p-7",
         className
       )}
     >
@@ -47,13 +47,15 @@ export function InterventionCard({
         </div>
         <h3
           className={cn(
-            "display-tight-soft mt-8 text-balance text-zero-ink",
-            featured ? "text-4xl sm:text-6xl" : "text-3xl sm:text-5xl"
+            "display-tight-lg mt-7 text-balance text-zero-ink sm:mt-8",
+            featured
+              ? "text-[clamp(2.15rem,6.5vw,3rem)]"
+              : "text-[clamp(1.9rem,5.5vw,2.65rem)]"
           )}
         >
           {intervention.title}
         </h3>
-        <p className="mt-5 max-w-xl text-base leading-7 text-zero-muted sm:mt-6">
+        <p className="mt-5 max-w-xl text-[1.03rem] leading-7 text-zero-muted sm:mt-6 sm:text-base">
           {intervention.whatMakesItInteresting}
         </p>
       </div>

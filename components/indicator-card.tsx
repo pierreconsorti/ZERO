@@ -15,7 +15,7 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
   return (
     <article
       className={cn(
-        "object-card hover-lift flex min-h-[21rem] flex-col justify-between p-5",
+        "object-card hover-lift flex min-h-[20rem] flex-col justify-between p-4 sm:min-h-[21rem] sm:p-5",
         indicator.status === "unavailable" && "bg-white/[0.62]"
       )}
     >
@@ -32,7 +32,7 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
           </span>
         </div>
         <div className="mt-8 flex items-end gap-2">
-          <p className="display-tight-soft tabular text-5xl text-zero-ink sm:text-6xl">
+          <p className="display-tight-lg tabular text-[clamp(2.5rem,8vw,3rem)] text-zero-ink">
             {indicator.value}
           </p>
           {indicator.unit ? (
@@ -42,7 +42,7 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
         <p className="mt-5 text-sm font-medium text-black">{indicator.trend}</p>
       </div>
       <div className="mt-8 space-y-5">
-        <p className="text-sm leading-6 text-zero-muted">
+        <p className="text-[0.98rem] leading-6 text-zero-muted sm:text-sm">
           <span className="text-zero-ink">Why it matters: </span>
           {indicator.interpretation}
         </p>

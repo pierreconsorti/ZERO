@@ -7,7 +7,7 @@ export const revalidate = 43200;
 export default function RoadmapPage() {
   return (
     <main>
-      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:px-10">
+      <section className="mx-auto max-w-7xl px-3 py-12 sm:px-8 sm:py-20 lg:px-10">
         <SectionHeading
           eyebrow="Roadmap"
           title="What has to change, how fast, and how we know"

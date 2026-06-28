@@ -15,27 +15,27 @@ const categories = [
 
 export function StatusHero({ updatedAt }: StatusHeroProps) {
   return (
-    <div className="px-3 pb-4 pt-2 sm:px-5 sm:pb-6 lg:px-8">
+    <div className="px-2 pb-4 pt-2 sm:px-5 sm:pb-6 lg:px-8">
       <AtmosphericPanel
         tone="mist"
         className="lg:min-h-[calc(100vh-6rem)]"
-        contentClassName="grid gap-4 p-3 sm:gap-6 sm:p-8 lg:min-h-[calc(100vh-6rem)] lg:grid-cols-[1.08fr_0.92fr] lg:p-10"
+        contentClassName="grid gap-3 p-2 sm:gap-6 sm:p-8 lg:min-h-[calc(100vh-6rem)] lg:grid-cols-[1.08fr_0.92fr] lg:p-10"
       >
         <div className="flex flex-col justify-between gap-4 sm:gap-6 lg:gap-8">
-          <div className="object-card p-5 sm:p-8 lg:min-h-[31rem]">
+          <div className="object-card p-4 sm:p-8 lg:min-h-[30rem]">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="meta-label">Public cooling catalogue</p>
               <p className="pill-control px-3 py-1.5 text-sm font-semibold text-black">
                 ZERO / 0°
               </p>
             </div>
-            <h1 className="display-tight mt-6 max-w-5xl text-balance text-[clamp(3.25rem,15vw,5.75rem)] text-black sm:text-8xl lg:text-[8.5rem]">
+            <h1 className="display-tight-xl mt-5 max-w-5xl text-balance text-[clamp(2.85rem,11.5vw,6.75rem)] text-black sm:mt-6">
               A catalogue of planetary cooling possibilities
             </h1>
             <p className="mt-7 max-w-2xl text-xl font-semibold leading-[1.08] text-black sm:text-2xl">
               What can we try next summer?
             </p>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-black/[0.62]">
+            <p className="mt-4 max-w-2xl text-[1.03rem] leading-7 text-black/[0.62] sm:text-base">
               A public catalogue of planetary cooling possibilities organized
               by evidence, scale, risk, and what can actually be tested.
             </p>
@@ -54,7 +54,7 @@ export function StatusHero({ updatedAt }: StatusHeroProps) {
         </div>
 
         <div className="grid gap-4 lg:grid-rows-[1fr_auto]">
-          <div className="object-card flex min-h-[18rem] flex-col justify-between p-5 sm:min-h-[22rem] sm:p-7 lg:min-h-[26rem]">
+          <div className="object-card flex min-h-[17rem] flex-col justify-between p-4 sm:min-h-[22rem] sm:p-7 lg:min-h-[25rem]">
             <div className="flex items-start justify-between gap-5">
               <div>
                 <p className="meta-label">Cooling index</p>
@@ -63,7 +63,7 @@ export function StatusHero({ updatedAt }: StatusHeroProps) {
                   regulated, installed, worn, painted, detected, or prototyped.
                 </p>
               </div>
-              <p className="display-tight tabular text-[4.75rem] text-black sm:text-8xl">
+              <p className="display-tight-xl tabular text-[4rem] text-black sm:text-[4.5rem] lg:text-[4.8rem]">
                 0°
               </p>
             </div>

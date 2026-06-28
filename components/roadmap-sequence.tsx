@@ -11,11 +11,11 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
   const visible = compact ? levers.slice(0, 5) : levers;
 
   return (
-    <section className="px-3 py-5 sm:px-5 sm:py-8 lg:px-8">
+    <section className="px-2 py-5 sm:px-5 sm:py-8 lg:px-8">
       <AtmosphericPanel
         tone="warm"
         className="py-5 sm:py-12 lg:py-16"
-        contentClassName="mx-auto max-w-7xl px-3 sm:px-8 lg:px-10"
+        contentClassName="mx-auto max-w-7xl px-2 sm:px-8 lg:px-10"
       >
         <SectionHeading
           eyebrow="The Roadmap"

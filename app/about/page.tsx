@@ -12,7 +12,7 @@ const principles = [
 export default function AboutPage() {
   return (
     <main>
-      <section className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
+      <section className="mx-auto grid max-w-7xl gap-8 px-3 py-12 sm:gap-10 sm:px-8 sm:py-24 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
         <SectionHeading
           eyebrow="About"
           title="A public learning instrument for planetary heat"

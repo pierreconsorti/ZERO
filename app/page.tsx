@@ -23,20 +23,20 @@ export default async function HomePage() {
       <StatusHero updatedAt={formatDate()} />
       <CoolingCatalogue />
 
-      <section className="px-3 py-5 sm:px-5 sm:py-8 lg:px-8">
+      <section className="px-2 py-5 sm:px-5 sm:py-8 lg:px-8">
         <AtmosphericPanel
           tone="paper"
           className="py-5 sm:py-12 lg:py-16"
-          contentClassName="mx-auto max-w-7xl px-3 sm:px-8 lg:px-10"
+          contentClassName="mx-auto max-w-7xl px-2 sm:px-8 lg:px-10"
         >
-          <div className="object-card grid gap-5 p-5 sm:gap-8 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+          <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
             <div>
               <p className="meta-label">Field prototypes</p>
-              <h2 className="display-tight-soft mt-4 max-w-3xl text-balance text-[clamp(2.6rem,12vw,4rem)] text-black sm:text-6xl">
+              <h2 className="display-tight-lg mt-4 max-w-3xl text-balance text-[clamp(2.35rem,9.5vw,3.25rem)] text-black">
                 Small tests before next summer.
               </h2>
             </div>
-            <p className="max-w-2xl text-base leading-7 text-zero-muted sm:text-lg sm:leading-8">
+            <p className="max-w-2xl text-[1.03rem] leading-7 text-zero-muted sm:text-lg sm:leading-8">
               Practical experiments a city, school, studio, neighborhood, or
               building owner could run without pretending the whole system is solved.
             </p>
@@ -53,20 +53,20 @@ export default async function HomePage() {
         </AtmosphericPanel>
       </section>
 
-      <section className="px-3 py-5 sm:px-5 sm:py-8 lg:px-8">
+      <section className="px-2 py-5 sm:px-5 sm:py-8 lg:px-8">
         <AtmosphericPanel
           tone="warm"
           className="py-5 sm:py-12 lg:py-16"
-          contentClassName="mx-auto max-w-7xl px-3 sm:px-8 lg:px-10"
+          contentClassName="mx-auto max-w-7xl px-2 sm:px-8 lg:px-10"
         >
-          <div className="object-card grid gap-5 p-5 sm:gap-8 sm:p-7 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
+          <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
             <div>
               <p className="meta-label">Possible, not proven</p>
-              <h2 className="display-tight-soft mt-4 text-balance text-[clamp(2.6rem,12vw,4rem)] text-zero-ink sm:text-6xl">
+              <h2 className="display-tight-lg mt-4 text-balance text-[clamp(2.35rem,9.5vw,3.25rem)] text-zero-ink">
                 Imagination with an evidence brake.
               </h2>
             </div>
-            <p className="max-w-2xl text-base leading-7 text-zero-muted sm:text-lg sm:leading-8">
+            <p className="max-w-2xl text-[1.03rem] leading-7 text-zero-muted sm:text-lg sm:leading-8">
               ZERO can think speculatively, but it has to say what would need to
               be true, what could go wrong, and what evidence would change the
               idea.
@@ -82,11 +82,11 @@ export default async function HomePage() {
 
       <PlanetHeatGrid indicators={indicators} />
       <RoadmapSequence levers={roadmapLevers} compact />
-      <section className="px-3 py-5 sm:px-5 sm:py-8 lg:px-8">
+      <section className="px-2 py-5 sm:px-5 sm:py-8 lg:px-8">
         <AtmosphericPanel
           tone="mist"
           className="py-5 sm:py-12 lg:py-16"
-          contentClassName="mx-auto max-w-7xl px-3 sm:px-8 lg:px-10"
+          contentClassName="mx-auto max-w-7xl px-2 sm:px-8 lg:px-10"
         >
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <SectionHeading

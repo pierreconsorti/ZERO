@@ -52,17 +52,26 @@ a {
 }
 
 @layer components {
-  .display-tight {
+  .display-tight,
+  .display-tight-xl {
     font-weight: 700;
     letter-spacing: 0;
     line-height: 0.88;
     overflow-wrap: anywhere;
   }
 
-  .display-tight-soft {
+  .display-tight-soft,
+  .display-tight-lg {
     font-weight: 650;
     letter-spacing: 0;
     line-height: 0.92;
+    overflow-wrap: anywhere;
+  }
+
+  .display-tight-md {
+    font-weight: 650;
+    letter-spacing: 0;
+    line-height: 0.96;
     overflow-wrap: anywhere;
   }
 
@@ -117,6 +126,10 @@ a {
     scroll-padding-top: 4.5rem;
   }
 
+  body {
+    font-size: 1.03125rem;
+  }
+
   .soft-section {
     border-radius: 1.75rem;
   }
@@ -125,12 +138,18 @@ a {
     border-radius: 1.45rem;
   }
 
-  .display-tight {
+  .display-tight,
+  .display-tight-xl {
     line-height: 0.9;
   }
 
-  .display-tight-soft {
+  .display-tight-soft,
+  .display-tight-lg {
     line-height: 0.94;
+  }
+
+  .display-tight-md {
+    line-height: 0.98;
   }
 }
 

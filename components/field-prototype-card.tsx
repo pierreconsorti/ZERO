@@ -7,7 +7,7 @@ type FieldPrototypeCardProps = {
 
 export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps) {
   return (
-    <article className="object-card relative overflow-hidden p-5 text-black sm:p-6">
+    <article className="object-card relative overflow-hidden p-4 text-black sm:p-6">
       <div className="relative flex items-start justify-between gap-6">
         <p className="meta-label">
           Prototype {String(index + 1).padStart(2, "0")}
@@ -16,10 +16,10 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
           field test
         </span>
       </div>
-      <h3 className="display-tight-soft relative mt-8 text-balance text-3xl sm:mt-10">
+      <h3 className="display-tight-md relative mt-8 text-balance text-[clamp(1.9rem,7.5vw,2.55rem)] sm:mt-10">
         {prototype.title}
       </h3>
-      <p className="relative mt-5 text-sm leading-6 text-zero-muted">
+      <p className="relative mt-5 text-[0.98rem] leading-6 text-zero-muted sm:text-sm">
         {prototype.whatToTest}
       </p>
       <details className="group/details relative mt-7 rounded-[1.25rem] bg-black/[0.035] p-3 text-sm leading-6">

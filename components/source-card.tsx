@@ -6,7 +6,7 @@ type SourceCardProps = {
 
 export function SourceCard({ source }: SourceCardProps) {
   return (
-    <article className="object-card p-5">
+    <article className="object-card p-4 sm:p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h3 className="text-xl font-semibold text-zero-ink">{source.name}</h3>
@@ -24,19 +24,27 @@ export function SourceCard({ source }: SourceCardProps) {
       <dl className="mt-6 grid gap-5 text-sm leading-6 md:grid-cols-2">
         <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
           <dt className="meta-label">Type</dt>
-          <dd className="mt-2 text-zero-muted">{source.type}</dd>
+          <dd className="mt-2 text-[0.98rem] leading-6 text-zero-muted sm:text-sm">
+            {source.type}
+          </dd>
         </div>
         <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
           <dt className="meta-label">Update frequency</dt>
-          <dd className="mt-2 text-zero-muted">{source.updateFrequency}</dd>
+          <dd className="mt-2 text-[0.98rem] leading-6 text-zero-muted sm:text-sm">
+            {source.updateFrequency}
+          </dd>
         </div>
         <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
           <dt className="meta-label">Used for</dt>
-          <dd className="mt-2 text-zero-muted">{source.usedFor}</dd>
+          <dd className="mt-2 text-[0.98rem] leading-6 text-zero-muted sm:text-sm">
+            {source.usedFor}
+          </dd>
         </div>
         <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
           <dt className="meta-label">Limitations</dt>
-          <dd className="mt-2 text-zero-muted">{source.limitations}</dd>
+          <dd className="mt-2 text-[0.98rem] leading-6 text-zero-muted sm:text-sm">
+            {source.limitations}
+          </dd>
         </div>
       </dl>
     </article>

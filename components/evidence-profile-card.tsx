@@ -6,7 +6,7 @@ type EvidenceProfileCardProps = {
 
 export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
   return (
-    <article className="object-card p-5">
+    <article className="object-card p-4 sm:p-5">
       <div className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-start sm:justify-between">
         <h3 className="text-balance text-xl font-semibold leading-[1.12] text-zero-ink">
           {profile.claim}
@@ -33,7 +33,9 @@ function EvidenceField({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
       <dt className="meta-label">{label}</dt>
-      <dd className="mt-2 text-sm leading-6 text-zero-muted">{value}</dd>
+      <dd className="mt-2 text-[0.98rem] leading-6 text-zero-muted sm:text-sm">
+        {value}
+      </dd>
     </div>
   );
 }
