@@ -10,10 +10,10 @@ type InterventionCardProps = {
 };
 
 const maturityTone: Record<Intervention["maturity"], string> = {
-  known: "bg-black/[0.055] text-black/62",
-  deployable: "bg-black/[0.055] text-black/62",
-  emerging: "bg-black/[0.055] text-black/62",
-  experimental: "bg-black/[0.055] text-black/62",
+  known: "bg-black/[0.055] text-black/[0.62]",
+  deployable: "bg-black/[0.055] text-black/[0.62]",
+  emerging: "bg-black/[0.055] text-black/[0.62]",
+  experimental: "bg-black/[0.055] text-black/[0.62]",
   speculative: "bg-black text-white"
 };
 
@@ -26,8 +26,8 @@ export function InterventionCard({
   return (
     <article
       className={cn(
-        "object-card group hover-lift relative flex min-h-[31rem] flex-col justify-between overflow-hidden p-5 sm:p-6",
-        featured && "min-h-[39rem] p-6 sm:p-8",
+        "object-card group hover-lift relative flex min-h-[25rem] flex-col justify-between overflow-hidden p-5 sm:min-h-[31rem] sm:p-6",
+        featured && "sm:min-h-[39rem] sm:p-8",
         className
       )}
     >
@@ -48,27 +48,27 @@ export function InterventionCard({
         <h3
           className={cn(
             "display-tight-soft mt-8 text-balance text-zero-ink",
-            featured ? "text-5xl sm:text-6xl" : "text-4xl sm:text-5xl"
+            featured ? "text-4xl sm:text-6xl" : "text-3xl sm:text-5xl"
           )}
         >
           {intervention.title}
         </h3>
-        <p className="mt-6 max-w-xl text-base leading-7 text-zero-muted">
+        <p className="mt-5 max-w-xl text-base leading-7 text-zero-muted sm:mt-6">
           {intervention.whatMakesItInteresting}
         </p>
       </div>
 
-      <div className="relative mt-9 space-y-5">
-        <dl className="grid gap-3 sm:grid-cols-2">
+      <div className="relative mt-7 space-y-4 sm:mt-9 sm:space-y-5">
+        <dl className="hidden gap-3 sm:grid sm:grid-cols-2">
           <div className="rounded-[1.25rem] bg-black/[0.035] p-4">
             <dt className="meta-label text-[0.64rem]">Mechanism</dt>
-            <dd className="mt-2 text-sm leading-6 text-black/76">
+            <dd className="mt-2 text-sm leading-6 text-black/[0.76]">
               {intervention.mechanism}
             </dd>
           </div>
           <div className="rounded-[1.25rem] bg-black/[0.035] p-4">
             <dt className="meta-label text-[0.64rem]">Local prototype</dt>
-            <dd className="mt-2 text-sm leading-6 text-black/76">
+            <dd className="mt-2 text-sm leading-6 text-black/[0.76]">
               {intervention.localPrototype}
             </dd>
           </div>
@@ -84,6 +84,14 @@ export function InterventionCard({
             </span>
           </summary>
           <div className="mt-5 grid gap-5 text-sm leading-6 md:grid-cols-3">
+            <div className="sm:hidden">
+              <p className="meta-label">Mechanism</p>
+              <p className="mt-2 text-zero-ink">{intervention.mechanism}</p>
+            </div>
+            <div className="sm:hidden">
+              <p className="meta-label">Local prototype</p>
+              <p className="mt-2 text-zero-ink">{intervention.localPrototype}</p>
+            </div>
             <div>
               <p className="meta-label">Scale</p>
               <p className="mt-2 text-zero-ink">{intervention.scale.join(", ")}</p>

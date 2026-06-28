@@ -16,36 +16,44 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
           field test
         </span>
       </div>
-      <h3 className="display-tight-soft relative mt-10 text-balance text-3xl">
+      <h3 className="display-tight-soft relative mt-8 text-balance text-3xl sm:mt-10">
         {prototype.title}
       </h3>
       <p className="relative mt-5 text-sm leading-6 text-zero-muted">
         {prototype.whatToTest}
       </p>
-      <dl className="relative mt-8 grid gap-5 pt-5 text-sm leading-6">
-        <div>
-          <dt className="meta-label">Where to try it</dt>
-          <dd className="mt-2 text-black">{prototype.whereToTryIt}</dd>
-        </div>
-        <div>
-          <dt className="meta-label">What to measure</dt>
-          <dd className="mt-2 text-black">{prototype.whatToMeasure.join(", ")}</dd>
-        </div>
-        <div>
-          <dt className="meta-label">Tools needed</dt>
-          <dd className="mt-2 text-black">{prototype.toolsNeeded.join(", ")}</dd>
-        </div>
-        <div className="grid gap-4 pt-5 sm:grid-cols-2">
+      <details className="group/details relative mt-7 rounded-[1.25rem] bg-black/[0.035] p-3 text-sm leading-6">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-zero-ink">
+          <span className="pill-control-light px-3 py-2 text-sm">Open test note</span>
+          <span className="pill-control-light px-3 py-1.5 font-mono text-lg leading-none transition group-open/details:rotate-45">
+            +
+          </span>
+        </summary>
+        <dl className="mt-5 grid gap-5">
           <div>
-            <dt className="meta-label">Evidence value</dt>
-            <dd className="mt-2 text-black">{prototype.evidenceValue}</dd>
+            <dt className="meta-label">Where to try it</dt>
+            <dd className="mt-2 text-black">{prototype.whereToTryIt}</dd>
           </div>
           <div>
-            <dt className="meta-label">Possible risk</dt>
-            <dd className="mt-2 text-black">{prototype.possibleRisk}</dd>
+            <dt className="meta-label">What to measure</dt>
+            <dd className="mt-2 text-black">{prototype.whatToMeasure.join(", ")}</dd>
           </div>
-        </div>
-      </dl>
+          <div>
+            <dt className="meta-label">Tools needed</dt>
+            <dd className="mt-2 text-black">{prototype.toolsNeeded.join(", ")}</dd>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <dt className="meta-label">Evidence value</dt>
+              <dd className="mt-2 text-black">{prototype.evidenceValue}</dd>
+            </div>
+            <div>
+              <dt className="meta-label">Possible risk</dt>
+              <dd className="mt-2 text-black">{prototype.possibleRisk}</dd>
+            </div>
+          </div>
+        </dl>
+      </details>
     </article>
   );
 }

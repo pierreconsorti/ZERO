@@ -11,18 +11,18 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
   const visible = compact ? levers.slice(0, 5) : levers;
 
   return (
-    <section className="px-3 py-8 sm:px-5 lg:px-8">
+    <section className="px-3 py-5 sm:px-5 sm:py-8 lg:px-8">
       <AtmosphericPanel
         tone="warm"
-        className="py-12 sm:py-16"
-        contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
+        className="py-5 sm:py-12 lg:py-16"
+        contentClassName="mx-auto max-w-7xl px-3 sm:px-8 lg:px-10"
       >
         <SectionHeading
           eyebrow="The Roadmap"
           title="The systems that must bend"
           description="ZERO organizes climate progress around the major levers required to move toward zero additional heat."
         />
-        <div className="mt-12 grid gap-3">
+        <div className="mt-5 grid gap-3 sm:mt-12">
           {visible.map((lever, index) => (
             <article
               key={lever.id}

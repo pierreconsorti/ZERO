@@ -17,20 +17,20 @@ const cardSpans = [
 
 export function CoolingCatalogue() {
   return (
-    <section id="catalogue" className="px-3 py-8 sm:px-5 lg:px-8">
+    <section id="catalogue" className="px-3 py-5 sm:px-5 sm:py-8 lg:px-8">
       <AtmosphericPanel
         tone="mist"
-        className="py-12 sm:py-16"
-        contentClassName="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10"
+        className="py-5 sm:py-12 lg:py-16"
+        contentClassName="mx-auto max-w-7xl px-3 sm:px-8 lg:px-10"
       >
-        <div className="object-card grid gap-8 p-5 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+        <div className="object-card grid gap-5 p-5 sm:gap-8 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
             <p className="meta-label">Cooling catalogue</p>
-            <h2 className="display-tight-soft mt-4 max-w-3xl text-balance text-5xl text-zero-ink sm:text-6xl">
+            <h2 className="display-tight-soft mt-4 max-w-3xl text-balance text-[clamp(2.6rem,12vw,4rem)] text-zero-ink sm:text-6xl">
               Things that can be tried, bought, built, installed, worn, or measured.
             </h2>
           </div>
-          <p className="max-w-2xl text-lg leading-8 text-zero-muted">
+          <p className="max-w-2xl text-base leading-7 text-zero-muted sm:text-lg sm:leading-8">
             Things that can be painted, worn, installed, shaded, measured,
             retrofitted, grown, detected, replaced, or deployed.
           </p>
