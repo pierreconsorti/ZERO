@@ -1,25 +1,27 @@
+import {
+  interventionFilterOptions,
+  type InterventionFilter
+} from "@/lib/data/intervention-filters";
+import { cn } from "@/lib/utils";
 import { AtmosphericPanel } from "./atmospheric-panel";
 
 type StatusHeroProps = {
   updatedAt: string;
+  activeFilter: InterventionFilter;
+  onFilterChange: (filter: InterventionFilter) => void;
 };
 
-const categories = [
-  "Materials",
-  "Shade",
-  "Textiles",
-  "Surfaces",
-  "Methane",
-  "Passive cooling"
-];
-
-export function StatusHero({ updatedAt }: StatusHeroProps) {
+export function StatusHero({
+  updatedAt,
+  activeFilter,
+  onFilterChange
+}: StatusHeroProps) {
   return (
-    <div className="px-2 pb-4 pt-2 sm:px-5 sm:pb-6 lg:px-8">
+    <div className="px-1.5 pb-4 pt-2 sm:px-5 sm:pb-6 lg:px-8">
       <AtmosphericPanel
         tone="mist"
         className="lg:min-h-[calc(100vh-6rem)]"
-        contentClassName="grid gap-3 p-2 sm:gap-6 sm:p-8 lg:min-h-[calc(100vh-6rem)] lg:grid-cols-[1.08fr_0.92fr] lg:p-10"
+        contentClassName="grid gap-3 p-1.5 sm:gap-6 sm:p-8 lg:min-h-[calc(100vh-6rem)] lg:grid-cols-[1.22fr_0.78fr] lg:p-10"
       >
         <div className="flex flex-col justify-between gap-4 sm:gap-6 lg:gap-8">
           <div className="object-card p-4 sm:p-8 lg:min-h-[30rem]">
@@ -29,10 +31,10 @@ export function StatusHero({ updatedAt }: StatusHeroProps) {
                 ZERO / 0°
               </p>
             </div>
-            <h1 className="display-tight-xl mt-5 max-w-5xl text-balance text-[clamp(2.85rem,11.5vw,6.75rem)] text-black sm:mt-6">
+            <h1 className="display-tight-xl mt-5 max-w-[58rem] text-balance text-[clamp(2.25rem,8.6vw,5.2rem)] text-black sm:mt-6">
               A catalogue of planetary cooling possibilities
             </h1>
-            <p className="mt-7 max-w-2xl text-xl font-semibold leading-[1.08] text-black sm:text-2xl">
+            <p className="mt-7 max-w-2xl text-lg font-semibold leading-[1.1] text-black sm:text-xl">
               What can we try next summer?
             </p>
             <p className="mt-4 max-w-2xl text-[1.03rem] leading-7 text-black/[0.62] sm:text-base">
@@ -44,10 +46,21 @@ export function StatusHero({ updatedAt }: StatusHeroProps) {
           <div className="object-card max-w-3xl p-4 sm:p-5">
             <p className="meta-label">Browse by intervention family</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <span key={category} className="pill-control px-3 py-1.5 text-sm">
-                  {category}
-                </span>
+              {interventionFilterOptions.map((filter) => (
+                <button
+                  key={filter}
+                  type="button"
+                  aria-pressed={activeFilter === filter}
+                  onClick={() => onFilterChange(filter)}
+                  className={cn(
+                    "rounded-full px-3 py-1.5 text-sm transition",
+                    activeFilter === filter
+                      ? "bg-black text-white shadow-quiet"
+                      : "pill-control hover:bg-black/[0.08] hover:text-black"
+                  )}
+                >
+                  {filter}
+                </button>
               ))}
             </div>
           </div>
@@ -63,7 +76,7 @@ export function StatusHero({ updatedAt }: StatusHeroProps) {
                   regulated, installed, worn, painted, detected, or prototyped.
                 </p>
               </div>
-              <p className="display-tight-xl tabular text-[4rem] text-black sm:text-[4.5rem] lg:text-[4.8rem]">
+              <p className="display-tight-xl tabular text-[3.15rem] text-black sm:text-[3.65rem] lg:text-[3.85rem]">
                 0°
               </p>
             </div>

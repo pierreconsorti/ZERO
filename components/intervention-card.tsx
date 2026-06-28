@@ -49,8 +49,8 @@ export function InterventionCard({
           className={cn(
             "display-tight-lg mt-7 text-balance text-zero-ink sm:mt-8",
             featured
-              ? "text-[clamp(2.15rem,6.5vw,3rem)]"
-              : "text-[clamp(1.9rem,5.5vw,2.65rem)]"
+              ? "text-[clamp(1.75rem,5vw,2.35rem)]"
+              : "text-[clamp(1.55rem,4.5vw,2.1rem)]"
           )}
         >
           {intervention.title}

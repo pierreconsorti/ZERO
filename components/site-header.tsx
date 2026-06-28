@@ -15,18 +15,15 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 bg-white/[0.86] px-3 py-2 backdrop-blur-xl sm:px-5 lg:px-8">
+    <header className="sticky top-0 z-30 bg-white/[0.86] px-3 py-1.5 backdrop-blur-xl sm:px-5 sm:py-2 lg:px-8">
       <div className="mx-auto max-w-[92rem]">
         <div className="flex items-center justify-between gap-3">
           <Link
             href="/"
-            className="pill-control-light flex items-baseline gap-3 px-4 py-2.5"
+            className="pill-control-light flex items-baseline gap-3 px-4 py-2 sm:py-2.5"
             onClick={() => setMenuOpen(false)}
           >
             <span className="text-sm font-semibold uppercase text-zero-ink">ZERO</span>
-            <span className="hidden text-sm text-zero-muted sm:inline">
-              cooling possibilities
-            </span>
           </Link>
           <button
             type="button"
@@ -34,7 +31,7 @@ export function SiteHeader() {
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
             onClick={() => setMenuOpen((open) => !open)}
-            className="pill-control-light flex items-center gap-2 px-3.5 py-2.5 text-sm lg:hidden"
+            className="pill-control-light flex items-center gap-2 px-3.5 py-2 text-sm lg:hidden"
           >
             <span>Menu</span>
             <span className="grid gap-1" aria-hidden="true">

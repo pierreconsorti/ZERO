@@ -10,7 +10,7 @@ export function SectionHeading({ eyebrow, title, description }: SectionHeadingPr
       {eyebrow ? (
         <p className="meta-label mb-3">{eyebrow}</p>
       ) : null}
-      <h2 className="display-tight-lg text-balance text-[clamp(2.15rem,8.5vw,3rem)] text-zero-ink">
+      <h2 className="display-tight-lg text-balance text-[clamp(1.75rem,6.5vw,2.35rem)] text-zero-ink">
         {title}
       </h2>
       {description ? (

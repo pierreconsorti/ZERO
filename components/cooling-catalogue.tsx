@@ -1,3 +1,7 @@
+import {
+  filterInterventions,
+  type InterventionFilter
+} from "@/lib/data/intervention-filters";
 import { interventions } from "@/lib/data/interventions";
 import { cn } from "@/lib/utils";
 import { AtmosphericPanel } from "./atmospheric-panel";
@@ -15,35 +19,51 @@ const cardSpans = [
   "xl:col-span-7"
 ];
 
-export function CoolingCatalogue() {
+type CoolingCatalogueProps = {
+  activeFilter?: InterventionFilter;
+};
+
+export function CoolingCatalogue({ activeFilter = "All" }: CoolingCatalogueProps) {
+  const visibleInterventions = filterInterventions(interventions, activeFilter);
+
   return (
-    <section id="catalogue" className="px-2 py-5 sm:px-5 sm:py-8 lg:px-8">
+    <section id="catalogue" className="px-1.5 py-5 sm:px-5 sm:py-8 lg:px-8">
       <AtmosphericPanel
         tone="mist"
         className="py-5 sm:py-12 lg:py-16"
-        contentClassName="mx-auto max-w-7xl px-2 sm:px-8 lg:px-10"
+        contentClassName="mx-auto max-w-7xl px-1.5 sm:px-8 lg:px-10"
       >
         <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
             <p className="meta-label">Cooling catalogue</p>
-            <h2 className="display-tight-lg mt-4 max-w-3xl text-balance text-[clamp(2.35rem,9.5vw,3.25rem)] text-zero-ink">
+            <h2 className="display-tight-lg mt-4 max-w-3xl text-balance text-[clamp(1.9rem,7.2vw,2.55rem)] text-zero-ink">
               Things that can be tried, bought, built, installed, worn, or measured.
             </h2>
           </div>
-          <p className="max-w-2xl text-[1.03rem] leading-7 text-zero-muted sm:text-lg sm:leading-8">
-            Things that can be painted, worn, installed, shaded, measured,
-            retrofitted, grown, detected, replaced, or deployed.
-          </p>
+          <div className="space-y-4">
+            <p className="max-w-2xl text-[1.03rem] leading-7 text-zero-muted sm:text-lg sm:leading-8">
+              Things that can be painted, worn, installed, shaded, measured,
+              retrofitted, grown, detected, replaced, or deployed.
+            </p>
+            <p className="pill-control w-fit px-3 py-1.5 text-sm">
+              {activeFilter === "All"
+                ? `${visibleInterventions.length} interventions`
+                : `${visibleInterventions.length} in ${activeFilter}`}
+            </p>
+          </div>
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-2 xl:grid-cols-12">
-          {interventions.map((intervention, index) => (
+          {visibleInterventions.map((intervention, index) => (
             <InterventionCard
               key={intervention.id}
               intervention={intervention}
               index={index}
               featured={index === 0}
-              className={cn(cardSpans[index], index === 0 && "xl:row-span-2")}
+              className={cn(
+                cardSpans[index % cardSpans.length],
+                index === 0 && "xl:row-span-2"
+              )}
             />
           ))}
         </div>
