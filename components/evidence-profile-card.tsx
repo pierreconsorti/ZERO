@@ -11,7 +11,7 @@ export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
         <h3 className="text-balance text-xl font-semibold leading-snug text-zero-ink">
           {profile.claim}
         </h3>
-        <span className="w-fit shrink-0 rounded-full border border-zero-blue/25 bg-zero-blue/5 px-3 py-1 font-mono text-xs uppercase text-zero-blue">
+        <span className="w-fit shrink-0 rounded-full border border-black/[0.08] bg-white px-3 py-1 font-mono text-xs uppercase text-black/60">
           {profile.strengthOfEvidence}
         </span>
       </div>
@@ -32,7 +32,7 @@ export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
 function EvidenceField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="font-mono text-xs uppercase text-zero-rust">{label}</dt>
+      <dt className="font-mono text-xs uppercase text-black/45">{label}</dt>
       <dd className="mt-2 text-sm leading-6 text-zero-muted">{value}</dd>
     </div>
   );

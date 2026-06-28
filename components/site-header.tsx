@@ -10,7 +10,7 @@ const navItems = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-20 border-b border-zero-rule/80 bg-zero-paper/88 backdrop-blur-xl">
+    <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-10">
         <Link href="/" className="flex items-baseline gap-3">
           <span className="font-mono text-sm uppercase text-zero-ink">ZERO</span>

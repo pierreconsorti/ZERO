@@ -1,4 +1,5 @@
 import type { Intervention } from "@/lib/data/interventions";
+import { accentGradient, interventionAccentMap } from "@/lib/data/color-studies";
 import { cn } from "@/lib/utils";
 import { SaveIdeaButton } from "./save-idea-button";
 
@@ -10,11 +11,11 @@ type InterventionCardProps = {
 };
 
 const maturityTone: Record<Intervention["maturity"], string> = {
-  known: "bg-zero-moss/10 text-zero-moss border-zero-moss/20",
-  deployable: "bg-zero-blue/10 text-zero-blue border-zero-blue/20",
-  emerging: "bg-zero-rust/10 text-zero-rust border-zero-rust/20",
-  experimental: "bg-zero-amber/10 text-zero-amber border-zero-amber/25",
-  speculative: "bg-zero-ink/5 text-zero-muted border-zero-ink/[0.15]"
+  known: "bg-white text-black/60 border-black/[0.08]",
+  deployable: "bg-white text-black/60 border-black/[0.08]",
+  emerging: "bg-white text-black/60 border-black/[0.08]",
+  experimental: "bg-white text-black/60 border-black/[0.08]",
+  speculative: "bg-white text-black/60 border-black/[0.08]"
 };
 
 export function InterventionCard({
@@ -23,15 +24,21 @@ export function InterventionCard({
   featured = false,
   className
 }: InterventionCardProps) {
+  const accent = interventionAccentMap[intervention.id] ?? "catalogue";
+
   return (
     <article
       className={cn(
-        "group hover-lift flex min-h-[29rem] flex-col justify-between rounded-md border border-zero-rule bg-white p-5 shadow-quiet",
-        "relative overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-zero-ink",
-        featured && "min-h-[36rem] bg-[#fcfbf4] p-6 sm:p-7",
+        "group hover-lift relative flex min-h-[29rem] flex-col justify-between overflow-hidden rounded-md border border-black/[0.06] bg-white p-5 shadow-quiet",
+        featured && "min-h-[36rem] p-6 sm:p-7",
         className
       )}
     >
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px"
+        style={{ background: accentGradient(accent) }}
+      />
       <div className="relative">
         <div className="flex items-start justify-between gap-4">
           <p className="font-mono text-xs uppercase text-zero-muted">
@@ -60,15 +67,15 @@ export function InterventionCard({
       </div>
 
       <div className="relative mt-9 space-y-6">
-        <dl className="grid gap-5 border-t border-zero-rule pt-5 sm:grid-cols-2">
+        <dl className="grid gap-5 pt-5 sm:grid-cols-2">
           <div>
-            <dt className="font-mono text-xs uppercase text-zero-rust">Mechanism</dt>
+            <dt className="font-mono text-xs uppercase text-black/45">Mechanism</dt>
             <dd className="mt-2 text-sm leading-6 text-zero-ink">
               {intervention.mechanism}
             </dd>
           </div>
           <div>
-            <dt className="font-mono text-xs uppercase text-zero-rust">
+            <dt className="font-mono text-xs uppercase text-black/45">
               Local prototype
             </dt>
             <dd className="mt-2 text-sm leading-6 text-zero-ink">
@@ -77,7 +84,7 @@ export function InterventionCard({
           </div>
         </dl>
 
-        <details className="group/details border-y border-zero-rule py-4">
+        <details className="group/details py-4">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm text-zero-ink">
             <span className="font-mono text-xs uppercase">Open field notes</span>
             <span className="font-mono text-lg leading-none transition group-open/details:rotate-45">

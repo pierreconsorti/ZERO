@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AccentRule } from "@/components/accent-rule";
 import { CoolingCatalogue } from "@/components/cooling-catalogue";
 import { EvidenceProfileCard } from "@/components/evidence-profile-card";
 import { FieldPrototypeCard } from "@/components/field-prototype-card";
@@ -22,18 +23,19 @@ export default async function HomePage() {
       <StatusHero updatedAt={formatDate()} />
       <CoolingCatalogue />
 
-      <section className="border-t border-zero-rule bg-zero-ink py-16 text-white sm:py-24">
+      <section className="py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <AccentRule accent="field" className="mb-12 opacity-70" />
           <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
             <div>
-              <p className="font-mono text-xs uppercase text-white/[0.45]">
+              <p className="font-mono text-xs uppercase text-black/45">
                 Field prototypes
               </p>
-              <h2 className="mt-4 max-w-3xl text-balance text-5xl font-semibold leading-none sm:text-6xl">
+              <h2 className="mt-4 max-w-3xl text-balance text-5xl font-semibold leading-none text-black sm:text-6xl">
                 Small tests before next summer.
               </h2>
             </div>
-            <p className="max-w-2xl text-lg leading-8 text-white/[0.65]">
+            <p className="max-w-2xl text-lg leading-8 text-zero-muted">
               Practical experiments a city, school, studio, neighborhood, or
               building owner could run without pretending the whole system is solved.
             </p>
@@ -50,11 +52,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="border-t border-zero-rule py-16 sm:py-24">
+      <section className="py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <AccentRule accent="speculation" className="mb-12 opacity-70" />
           <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
             <div>
-              <p className="font-mono text-xs uppercase text-zero-rust">
+              <p className="font-mono text-xs uppercase text-black/45">
                 Possible, not proven
               </p>
               <h2 className="mt-4 text-balance text-5xl font-semibold leading-none text-zero-ink sm:text-6xl">
@@ -77,8 +80,9 @@ export default async function HomePage() {
 
       <PlanetHeatGrid indicators={indicators} />
       <RoadmapSequence levers={roadmapLevers} compact />
-      <section className="border-t border-zero-rule py-16 sm:py-20">
+      <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+          <AccentRule accent="evidence" className="mb-12 opacity-70" />
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <SectionHeading
               eyebrow="Evidence Profiles"
@@ -87,7 +91,7 @@ export default async function HomePage() {
             />
             <Link
               href="/evidence"
-              className="w-fit rounded-full border border-zero-rule bg-white px-4 py-2 text-sm text-zero-ink transition hover:border-zero-blue hover:text-zero-blue"
+              className="w-fit rounded-full border border-black/[0.08] bg-white px-4 py-2 text-sm text-zero-ink transition hover:border-black hover:bg-black hover:text-white"
             >
               View methodology
             </Link>

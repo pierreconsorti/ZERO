@@ -1,4 +1,5 @@
 import type { RoadmapLever } from "@/lib/types";
+import { AccentRule } from "./accent-rule";
 import { SectionHeading } from "./section-heading";
 
 type RoadmapSequenceProps = {
@@ -12,12 +13,13 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
   return (
     <section className="py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        <AccentRule accent="roadmap" className="mb-12 opacity-70" />
         <SectionHeading
           eyebrow="The Roadmap"
           title="The systems that must bend"
           description="ZERO organizes climate progress around the major levers required to move toward zero additional heat."
         />
-        <div className="mt-12 divide-y divide-zero-rule border-y border-zero-rule">
+        <div className="mt-12 divide-y divide-zero-rule">
           {visible.map((lever, index) => (
             <article
               key={lever.id}
@@ -36,13 +38,13 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
               </div>
               <dl className="grid gap-5 text-sm leading-6">
                 <div>
-                  <dt className="font-mono text-xs uppercase text-zero-rust">
+                  <dt className="font-mono text-xs uppercase text-black/45">
                     What needs to change
                   </dt>
                   <dd className="mt-2 text-zero-ink">{lever.whatNeedsToChange}</dd>
                 </div>
                 <div>
-                  <dt className="font-mono text-xs uppercase text-zero-rust">
+                  <dt className="font-mono text-xs uppercase text-black/45">
                     Speed required
                   </dt>
                   <dd className="mt-2 text-zero-ink">{lever.speedRequired}</dd>
@@ -50,7 +52,7 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
                 {!compact ? (
                   <>
                     <div>
-                      <dt className="font-mono text-xs uppercase text-zero-rust">
+                      <dt className="font-mono text-xs uppercase text-black/45">
                         Why it matters
                       </dt>
                       <dd className="mt-2 text-zero-ink">{lever.whyItMatters}</dd>

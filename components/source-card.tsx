@@ -12,7 +12,7 @@ export function SourceCard({ source }: SourceCardProps) {
           <h3 className="text-xl font-semibold text-zero-ink">{source.name}</h3>
           <a
             href={source.url}
-            className="mt-2 inline-block text-sm text-zero-blue underline decoration-zero-blue/25 underline-offset-4"
+            className="mt-2 inline-block text-sm text-black underline decoration-black/20 underline-offset-4"
           >
             {source.url}
           </a>
@@ -23,19 +23,19 @@ export function SourceCard({ source }: SourceCardProps) {
       </div>
       <dl className="mt-6 grid gap-5 text-sm leading-6 md:grid-cols-2">
         <div>
-          <dt className="font-mono text-xs uppercase text-zero-rust">Type</dt>
+          <dt className="font-mono text-xs uppercase text-black/45">Type</dt>
           <dd className="mt-2 text-zero-muted">{source.type}</dd>
         </div>
         <div>
-          <dt className="font-mono text-xs uppercase text-zero-rust">Update frequency</dt>
+          <dt className="font-mono text-xs uppercase text-black/45">Update frequency</dt>
           <dd className="mt-2 text-zero-muted">{source.updateFrequency}</dd>
         </div>
         <div>
-          <dt className="font-mono text-xs uppercase text-zero-rust">Used for</dt>
+          <dt className="font-mono text-xs uppercase text-black/45">Used for</dt>
           <dd className="mt-2 text-zero-muted">{source.usedFor}</dd>
         </div>
         <div>
-          <dt className="font-mono text-xs uppercase text-zero-rust">Limitations</dt>
+          <dt className="font-mono text-xs uppercase text-black/45">Limitations</dt>
           <dd className="mt-2 text-zero-muted">{source.limitations}</dd>
         </div>
       </dl>

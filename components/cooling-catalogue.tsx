@@ -1,5 +1,6 @@
 import { interventions } from "@/lib/data/interventions";
 import { cn } from "@/lib/utils";
+import { AccentRule } from "./accent-rule";
 import { InterventionCard } from "./intervention-card";
 
 const cardSpans = [
@@ -16,11 +17,12 @@ const cardSpans = [
 
 export function CoolingCatalogue() {
   return (
-    <section id="catalogue" className="border-t border-zero-rule py-16 sm:py-24">
+    <section id="catalogue" className="py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        <AccentRule accent="catalogue" className="mb-12 opacity-70" />
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
-            <p className="font-mono text-xs uppercase text-zero-rust">
+            <p className="font-mono text-xs uppercase text-black/45">
               Cooling catalogue
             </p>
             <h2 className="mt-4 max-w-3xl text-balance text-5xl font-semibold leading-[0.98] text-zero-ink sm:text-6xl">

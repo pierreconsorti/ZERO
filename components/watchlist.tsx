@@ -10,7 +10,7 @@ export function Watchlist({ indicators }: WatchlistProps) {
   const indicatorsById = new Map(indicators.map((indicator) => [indicator.id, indicator]));
 
   return (
-    <section className="border-t border-zero-rule bg-white/[0.38] py-16 sm:py-20">
+    <section className="py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <SectionHeading
           eyebrow="What We Are Watching"

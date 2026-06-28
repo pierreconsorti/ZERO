@@ -19,6 +19,7 @@ Then open `http://localhost:3000`.
 app/                 Next.js App Router routes
 components/          Reusable interface components
 lib/content.ts       Roadmap, evidence profiles, and watchlist copy
+lib/data/color-studies.ts  Wikimedia-derived abstract accent palettes
 lib/data/interventions.ts  Cooling catalogue, field prototypes, speculation
 lib/sources.ts       Internal source registry
 lib/types.ts         Shared TypeScript schemas
@@ -67,8 +68,9 @@ Next.js fetch revalidation is used for local caching. V1 does not need a databas
 
 ## Design principles
 
-- No images, decorative graphics, climate cliches, or sensational language.
-- Use whitespace, typography, thin rules, data cards, and quiet interaction.
+- No displayed images, climate cliches, or sensational language.
+- Use stark white surfaces, black text, Helvetica Now-first typography, and quiet interaction.
+- Use Wikimedia-derived color studies only as subtle abstract accent rules.
 - Treat uncertainty as a first-class part of the interface.
 - Prefer primary scientific and institutional sources.
 - Update when better evidence appears.

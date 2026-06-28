@@ -16,8 +16,8 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
     <article
       className={cn(
         "hover-lift flex min-h-[21rem] flex-col justify-between rounded-lg border bg-zero-panel p-5 shadow-quiet",
-        indicator.status === "current" && "border-zero-rule",
-        indicator.status === "fallback" && "border-zero-amber/[0.45]",
+        indicator.status === "current" && "border-black/[0.06]",
+        indicator.status === "fallback" && "border-black/[0.08]",
         indicator.status === "unavailable" && "border-dashed border-zero-rule bg-white/[0.55]"
       )}
     >
@@ -28,9 +28,9 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
             className={cn(
               "shrink-0 rounded-full border px-2 py-1 font-mono text-[0.68rem] uppercase",
               indicator.status === "current" &&
-                "border-zero-moss/30 bg-zero-moss/5 text-zero-moss",
+                "border-black/[0.08] bg-white text-black/60",
               indicator.status === "fallback" &&
-                "border-zero-amber/[0.35] bg-zero-amber/5 text-zero-amber",
+                "border-black/[0.08] bg-white text-black/60",
               indicator.status === "unavailable" &&
                 "border-zero-rule bg-zero-paper text-zero-muted"
             )}
@@ -46,7 +46,7 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
             <p className="pb-1 text-lg text-zero-muted">{indicator.unit}</p>
           ) : null}
         </div>
-        <p className="mt-5 text-sm font-medium text-zero-blue">{indicator.trend}</p>
+        <p className="mt-5 text-sm font-medium text-black">{indicator.trend}</p>
       </div>
       <div className="mt-8 space-y-5">
         <p className="text-sm leading-6 text-zero-muted">
@@ -54,11 +54,11 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
           {indicator.interpretation}
         </p>
         {indicator.unavailableReason ? (
-          <p className="border-l border-zero-amber/50 pl-3 text-xs leading-5 text-zero-muted">
+          <p className="pl-3 text-xs leading-5 text-zero-muted">
             {indicator.unavailableReason}
           </p>
         ) : null}
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-zero-rule pt-4 text-xs">
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-3 pt-4 text-xs">
           <div>
             <dt className="font-mono uppercase text-zero-muted">Source</dt>
             <dd className="mt-1 text-zero-ink">{indicator.sourceName}</dd>

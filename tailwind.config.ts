@@ -10,25 +10,27 @@ const config: Config = {
     extend: {
       colors: {
         zero: {
-          paper: "#f6f7f2",
+          paper: "#ffffff",
           panel: "#ffffff",
-          ink: "#121a18",
-          muted: "#5f6864",
-          rule: "#d9ded4",
-          blue: "#355c7d",
-          rust: "#805541",
-          moss: "#52675d",
-          amber: "#9b6a2f"
+          ink: "#000000",
+          muted: "#555555",
+          rule: "#ececec",
+          blue: "#274e9b",
+          rust: "#87524a",
+          moss: "#315338",
+          amber: "#d29b64"
         }
       },
       fontFamily: {
         sans: [
-          "Inter",
+          "Helvetica Now",
+          "Helvetica Now Display",
+          "Helvetica Neue",
+          "Helvetica",
+          "Arial",
           "ui-sans-serif",
           "system-ui",
           "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
           "sans-serif"
         ],
         mono: [

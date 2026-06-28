@@ -19,7 +19,7 @@ export default function EvidencePage() {
           ))}
         </div>
       </section>
-      <section className="border-t border-zero-rule bg-white/[0.38] py-16">
+      <section className="py-16">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:px-10">
           <h2 className="text-3xl font-semibold text-zero-ink">Method</h2>
           <div className="space-y-6 text-base leading-8 text-zero-muted">
