@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { SearchCompositeInput } from "./search-composite-input";
 
 const navItems = [
   { href: "/", label: "Catalogue" },
@@ -13,18 +14,39 @@ const navItems = [
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [burstActive, setBurstActive] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("zero-burst-active", burstActive);
+
+    return () => {
+      document.documentElement.classList.remove("zero-burst-active");
+    };
+  }, [burstActive]);
 
   return (
     <header className="sticky top-0 z-30 bg-white/[0.86] px-3 py-1.5 backdrop-blur-xl sm:px-5 sm:py-2 lg:px-8">
       <div className="mx-auto max-w-[92rem]">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
           <Link
             href="/"
-            className="pill-control-light flex items-baseline gap-3 px-4 py-2 sm:py-2.5"
+            className="zero-brand-burst pill-control-light flex items-baseline gap-3 px-4 py-2 sm:py-2.5"
+            onPointerDown={() => setBurstActive(true)}
+            onPointerUp={() => setBurstActive(false)}
+            onPointerCancel={() => setBurstActive(false)}
+            onPointerLeave={() => setBurstActive(false)}
+            onBlur={() => setBurstActive(false)}
+            onKeyDown={(event) => {
+              if (event.key === " " || event.key === "Enter") {
+                setBurstActive(true);
+              }
+            }}
+            onKeyUp={() => setBurstActive(false)}
             onClick={() => setMenuOpen(false)}
           >
             <span className="text-sm font-semibold uppercase text-zero-ink">ZERO</span>
           </Link>
+          <SearchCompositeInput />
           <button
             type="button"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}

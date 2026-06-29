@@ -24,7 +24,7 @@ export function AtmosphericPanel({
   return (
     <section
       className={cn(
-        "relative mx-auto max-w-[92rem] overflow-hidden rounded-[2rem] shadow-quiet sm:rounded-[2.75rem]",
+        "atmospheric-panel relative mx-auto max-w-[92rem] overflow-hidden rounded-[2rem] shadow-quiet sm:rounded-[2.75rem]",
         toneClasses[tone],
         className
       )}
