@@ -12,7 +12,7 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
         <p className="meta-label">
           Prototype {String(index + 1).padStart(2, "0")}
         </p>
-        <span className="pill-control px-2.5 py-1 text-[0.65rem]">
+        <span className="metadata-pill px-2.5 py-1 text-[0.65rem]">
           field test
         </span>
       </div>

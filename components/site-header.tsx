@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SearchCompositeInput } from "./search-composite-input";
 
 const navItems = [
@@ -15,6 +15,7 @@ const navItems = [
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [burstActive, setBurstActive] = useState(false);
+  const burstTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle("zero-burst-active", burstActive);
@@ -24,6 +25,46 @@ export function SiteHeader() {
     };
   }, [burstActive]);
 
+  useEffect(() => {
+    return () => {
+      if (burstTimeoutRef.current) {
+        window.clearTimeout(burstTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const startBurst = () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    if (burstTimeoutRef.current) {
+      window.clearTimeout(burstTimeoutRef.current);
+      burstTimeoutRef.current = null;
+    }
+
+    if (!burstActive && "vibrate" in navigator) {
+      try {
+        navigator.vibrate(12);
+      } catch {
+        // Haptics are a progressive enhancement.
+      }
+    }
+
+    setBurstActive(true);
+  };
+
+  const endBurst = () => {
+    if (burstTimeoutRef.current) {
+      window.clearTimeout(burstTimeoutRef.current);
+    }
+
+    burstTimeoutRef.current = window.setTimeout(() => {
+      setBurstActive(false);
+      burstTimeoutRef.current = null;
+    }, 180);
+  };
+
   return (
     <header className="sticky top-0 z-30 bg-white/[0.86] px-3 py-1.5 backdrop-blur-xl sm:px-5 sm:py-2 lg:px-8">
       <div className="mx-auto max-w-[92rem]">
@@ -31,17 +72,38 @@ export function SiteHeader() {
           <Link
             href="/"
             className="zero-brand-burst pill-control-light flex items-baseline gap-3 px-4 py-2 sm:py-2.5"
-            onPointerDown={() => setBurstActive(true)}
-            onPointerUp={() => setBurstActive(false)}
-            onPointerCancel={() => setBurstActive(false)}
-            onPointerLeave={() => setBurstActive(false)}
-            onBlur={() => setBurstActive(false)}
+            onPointerDown={(event) => {
+              try {
+                event.currentTarget.setPointerCapture(event.pointerId);
+              } catch {
+                // Pointer capture is a nicety; the burst still works without it.
+              }
+              startBurst();
+            }}
+            onPointerUp={(event) => {
+              try {
+                event.currentTarget.releasePointerCapture(event.pointerId);
+              } catch {
+                // Ignore if the browser already released the pointer.
+              }
+              endBurst();
+            }}
+            onPointerCancel={endBurst}
+            onBlur={endBurst}
             onKeyDown={(event) => {
+              if (event.repeat) {
+                return;
+              }
+
               if (event.key === " " || event.key === "Enter") {
-                setBurstActive(true);
+                startBurst();
               }
             }}
-            onKeyUp={() => setBurstActive(false)}
+            onKeyUp={(event) => {
+              if (event.key === " " || event.key === "Enter") {
+                endBurst();
+              }
+            }}
             onClick={() => setMenuOpen(false)}
           >
             <span className="text-sm font-semibold uppercase text-zero-ink">ZERO</span>

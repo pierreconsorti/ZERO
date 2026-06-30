@@ -11,7 +11,7 @@ export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
         <h3 className="text-balance text-xl font-semibold leading-[1.12] text-zero-ink">
           {profile.claim}
         </h3>
-        <span className="pill-control w-fit shrink-0 px-3 py-1 text-xs">
+        <span className="metadata-pill w-fit shrink-0 px-3 py-1 text-xs">
           {profile.strengthOfEvidence}
         </span>
       </div>

@@ -17,7 +17,7 @@ export function SourceCard({ source }: SourceCardProps) {
             {source.url}
           </a>
         </div>
-        <span className="pill-control w-fit shrink-0 px-3 py-1 text-xs">
+        <span className="metadata-pill w-fit shrink-0 px-3 py-1 text-xs">
           {source.trustLevel}
         </span>
       </div>

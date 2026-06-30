@@ -66,13 +66,13 @@ export async function getGlobalTemperature(): Promise<ClimateIndicator> {
     const trend =
       change === null
         ? "Recent anomaly available"
-        : `${change >= 0 ? "Warmer" : "Cooler"} than same month last year (${formatSigned(change)}°C)`;
+        : `${change >= 0 ? "Warmer" : "Cooler"} than same month last year (${formatSigned(change)} C)`;
 
     return {
       id: "global-temperature",
       name: "Global temperature anomaly",
       value: latest.anomaly.toFixed(2),
-      unit: "°C",
+      unit: "C",
       trend,
       period: formatMonth(latest.year, latest.month),
       sourceId: "nasa-gistemp",

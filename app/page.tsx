@@ -21,7 +21,7 @@ export default async function HomePage() {
     <main>
       <HomeCatalogueExperience updatedAt={formatDate()} />
 
-      <section className="px-1.5 py-5 sm:px-5 sm:py-8 lg:px-8">
+      <section id="prototypes" className="px-1.5 py-5 sm:px-5 sm:py-8 lg:px-8">
         <AtmosphericPanel
           tone="paper"
           className="py-5 sm:py-12 lg:py-16"

@@ -5,7 +5,7 @@ export const fallbackIndicators: Record<string, ClimateIndicator> = {
     id: "global-temperature",
     name: "Global temperature anomaly",
     value: "1.28",
-    unit: "°C",
+    unit: "C",
     trend: "Above the late-20th-century baseline",
     period: "Recent monthly sample",
     sourceId: "nasa-gistemp",

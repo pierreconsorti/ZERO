@@ -45,7 +45,7 @@ export function CoolingCatalogue({ activeFilter = "All" }: CoolingCatalogueProps
               Things that can be painted, worn, installed, shaded, measured,
               retrofitted, grown, detected, replaced, or deployed.
             </p>
-            <p className="pill-control w-fit px-3 py-1.5 text-sm">
+            <p className="metadata-pill w-fit px-3 py-1.5 text-sm">
               {activeFilter === "All"
                 ? `${visibleInterventions.length} interventions`
                 : `${visibleInterventions.length} in ${activeFilter}`}

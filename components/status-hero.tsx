@@ -2,6 +2,7 @@ import {
   interventionFilterOptions,
   type InterventionFilter
 } from "@/lib/data/intervention-filters";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { AtmosphericPanel } from "./atmospheric-panel";
 
@@ -27,8 +28,8 @@ export function StatusHero({
           <div className="object-card p-4 sm:p-8 lg:min-h-[30rem]">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="meta-label">Public cooling catalogue</p>
-              <p className="pill-control px-3 py-1.5 text-sm font-semibold text-black">
-                ZERO / 0°
+              <p className="metadata-pill px-3 py-1.5 text-sm font-semibold">
+                Live field guide
               </p>
             </div>
             <h1 className="display-tight-xl mt-5 max-w-[58rem] text-balance text-[clamp(2.25rem,8.6vw,5.2rem)] text-black sm:mt-6">
@@ -71,22 +72,19 @@ export function StatusHero({
             <div className="flex items-start justify-between gap-5">
               <div>
                 <p className="meta-label">Cooling index</p>
-                <p className="mt-3 max-w-sm text-sm leading-6 text-black/[0.58]">
+                <p className="mt-3 max-w-md text-sm leading-6 text-black/[0.58]">
                   A living field guide for things that can be tested, funded,
                   regulated, installed, worn, painted, detected, or prototyped.
                 </p>
               </div>
-              <p className="display-tight-xl tabular text-[3.15rem] text-black sm:text-[3.65rem] lg:text-[3.85rem]">
-                0°
-              </p>
             </div>
 
             <dl className="grid gap-3 text-sm sm:grid-cols-2">
-              <div className="pill-control-light px-4 py-3">
+              <div className="metadata-tile px-4 py-3">
                 <dt className="meta-label text-[0.62rem]">Updated</dt>
                 <dd className="mt-1 text-black">{updatedAt}</dd>
               </div>
-              <div className="pill-control-light px-4 py-3">
+              <div className="metadata-tile px-4 py-3">
                 <dt className="meta-label text-[0.62rem]">Evidence support</dt>
                 <dd className="mt-1 text-black">NASA, NOAA, OWID, IEA</dd>
               </div>
@@ -94,10 +92,18 @@ export function StatusHero({
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            {["Evidence", "Prototype", "Scale"].map((label) => (
-              <div key={label} className="pill-control-light px-4 py-3 text-sm">
-                {label}
-              </div>
+            {[
+              { href: "/evidence", label: "Evidence" },
+              { href: "#prototypes", label: "Prototype" },
+              { href: "/roadmap", label: "Scale" }
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="pill-control-light px-4 py-3 text-sm"
+              >
+                {item.label}
+              </Link>
             ))}
           </div>
         </div>

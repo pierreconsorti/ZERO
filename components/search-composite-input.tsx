@@ -1,12 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-
-type SearchTheme = {
-  keywords: string[];
-  motif: "canopy" | "roof" | "plume" | "woven" | "surface" | "radiant";
-  palette: string[];
-};
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type SpeechRecognitionResultLike = {
   readonly 0: {
@@ -41,45 +35,6 @@ declare global {
   }
 }
 
-const themes: SearchTheme[] = [
-  {
-    keywords: ["shade", "canopy", "tree", "street", "bus", "corridor"],
-    motif: "canopy",
-    palette: ["#0a0f14", "#2f5f69", "#a8d7d6", "#f1f7f5"]
-  },
-  {
-    keywords: ["roof", "white", "paint", "coating", "albedo", "building"],
-    motif: "roof",
-    palette: ["#111111", "#f3f3ef", "#b9c6ce", "#6d8791"]
-  },
-  {
-    keywords: ["methane", "leak", "gas", "plume", "emission", "detect"],
-    motif: "plume",
-    palette: ["#050505", "#5a4d8f", "#7dd3c7", "#f1e7b4"]
-  },
-  {
-    keywords: ["textile", "fabric", "shirt", "uniform", "wear", "clothing"],
-    motif: "woven",
-    palette: ["#101010", "#d7d3c8", "#8f9ea7", "#ffffff"]
-  },
-  {
-    keywords: ["surface", "pavement", "road", "plaza", "asphalt", "material"],
-    motif: "surface",
-    palette: ["#0d0d0d", "#565656", "#b9b8ae", "#f5f5ef"]
-  },
-  {
-    keywords: ["cool", "heat", "summer", "thermal", "radiant", "solar"],
-    motif: "radiant",
-    palette: ["#050505", "#1b4b6b", "#d9eef2", "#ffffff"]
-  }
-];
-
-const fallbackTheme: SearchTheme = {
-  keywords: [],
-  motif: "radiant",
-  palette: ["#070707", "#3b3b3b", "#c9c9c9", "#ffffff"]
-};
-
 function hashString(value: string) {
   let hash = 2166136261;
 
@@ -91,158 +46,81 @@ function hashString(value: string) {
   return hash >>> 0;
 }
 
-function seededRandom(seed: number) {
-  let state = seed;
-
-  return () => {
-    state += 0x6d2b79f5;
-    let value = state;
-    value = Math.imul(value ^ (value >>> 15), value | 1);
-    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
-
-    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function escapeXml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-function getTheme(term: string) {
-  const normalized = term.toLowerCase();
-
-  return (
-    themes.find((theme) =>
-      theme.keywords.some((keyword) => normalized.includes(keyword))
-    ) ?? fallbackTheme
-  );
-}
-
-function buildMotif(theme: SearchTheme, random: () => number) {
-  if (theme.motif === "canopy") {
-    return Array.from({ length: 7 }, (_, index) => {
-      const x = 130 + index * 210;
-      const y = 290 + random() * 190;
-      const width = 180 + random() * 150;
-      const height = 80 + random() * 80;
-
-      return `<path d="M${x} ${y} C${x + width * 0.25} ${y - height}, ${x + width * 0.75} ${y - height}, ${x + width} ${y} L${x + width * 0.82} ${y + 28} C${x + width * 0.55} ${y + 4}, ${x + width * 0.32} ${y + 4}, ${x + width * 0.14} ${y + 28} Z" fill="${theme.palette[index % theme.palette.length]}" opacity="0.18"/>`;
-    }).join("");
-  }
-
-  if (theme.motif === "roof") {
-    return Array.from({ length: 9 }, (_, index) => {
-      const x = 70 + index * 180;
-      const y = 280 + random() * 470;
-      const width = 150 + random() * 120;
-      const height = 58 + random() * 42;
-
-      return `<path d="M${x} ${y} L${x + width * 0.5} ${y - height} L${x + width} ${y} L${x + width * 0.84} ${y + height * 0.72} L${x + width * 0.16} ${y + height * 0.72} Z" fill="${theme.palette[index % theme.palette.length]}" opacity="0.2"/>`;
-    }).join("");
-  }
-
-  if (theme.motif === "plume") {
-    return Array.from({ length: 8 }, (_, index) => {
-      const x = 180 + random() * 1120;
-      const y = 820 - index * 85;
-      const spread = 180 + random() * 260;
-
-      return `<path d="M${x} ${y} C${x - spread} ${y - 80}, ${x + spread} ${y - 160}, ${x + random() * 240 - 120} ${y - 250}" fill="none" stroke="${theme.palette[index % theme.palette.length]}" stroke-width="${28 + random() * 34}" stroke-linecap="round" opacity="0.18"/>`;
-    }).join("");
-  }
-
-  if (theme.motif === "woven") {
-    const horizontal = Array.from({ length: 12 }, (_, index) => {
-      const y = 120 + index * 72;
-      return `<path d="M80 ${y} C420 ${y + random() * 38 - 19}, 760 ${y + random() * 38 - 19}, 1520 ${y + random() * 38 - 19}" fill="none" stroke="${theme.palette[index % theme.palette.length]}" stroke-width="22" opacity="0.14"/>`;
-    }).join("");
-    const vertical = Array.from({ length: 10 }, (_, index) => {
-      const x = 140 + index * 150;
-      return `<path d="M${x} 80 C${x + random() * 46 - 23} 320, ${x + random() * 46 - 23} 620, ${x} 920" fill="none" stroke="${theme.palette[(index + 2) % theme.palette.length]}" stroke-width="18" opacity="0.12"/>`;
-    }).join("");
-
-    return `${horizontal}${vertical}`;
-  }
-
-  if (theme.motif === "surface") {
-    return Array.from({ length: 18 }, (_, index) => {
-      const x = 80 + random() * 1390;
-      const y = 110 + random() * 780;
-      const width = 120 + random() * 280;
-      const height = 32 + random() * 110;
-      const rotate = -18 + random() * 36;
-
-      return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="6" fill="${theme.palette[index % theme.palette.length]}" opacity="0.15" transform="rotate(${rotate} ${x + width / 2} ${y + height / 2})"/>`;
-    }).join("");
-  }
-
-  return Array.from({ length: 13 }, (_, index) => {
-    const cx = 800;
-    const cy = 500;
-    const radius = 110 + index * 58 + random() * 30;
-
-    return `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="none" stroke="${theme.palette[index % theme.palette.length]}" stroke-width="${12 + random() * 18}" opacity="${0.08 + random() * 0.09}"/>`;
-  }).join("");
-}
-
-function buildCompositeImage(term: string) {
-  const normalized = term.trim().slice(0, 48);
+function buildLetterGradient(term: string) {
+  const normalized = term.trim().slice(0, 42);
 
   if (!normalized) {
     return "none";
   }
 
-  const theme = getTheme(normalized);
-  const seed = hashString(normalized);
-  const random = seededRandom(seed);
-  const escapedTerm = escapeXml(normalized);
-  const texture = Array.from({ length: 34 }, (_, index) => {
-    const cx = 80 + random() * 1440;
-    const cy = 70 + random() * 860;
-    const rx = 42 + random() * 210;
-    const ry = 24 + random() * 150;
-    const rotate = random() * 180;
-    const color = theme.palette[index % theme.palette.length];
+  const hash = hashString(normalized);
+  const letters = Array.from(normalized).filter((character) => character.trim());
+  const angle = 18 + (hash % 124);
+  const primaryHue = hash % 360;
+  const secondaryHue = (primaryHue + 156 + letters.length * 11) % 360;
+  const tertiaryHue = (primaryHue + 242 + letters.length * 7) % 360;
+  const stops = letters.slice(0, 12).map((letter, index) => {
+    const code = letter.charCodeAt(0);
+    const hue = (primaryHue + code * 3 + index * 29) % 360;
+    const position = Math.round((index / Math.max(letters.length - 1, 1)) * 100);
 
-    return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${color}" opacity="${0.06 + random() * 0.09}" transform="rotate(${rotate} ${cx} ${cy})"/>`;
-  }).join("");
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-label="Composite visual for ${escapedTerm}">
-  <title>Composite visual for ${escapedTerm}</title>
-  <defs>
-    <filter id="soften"><feGaussianBlur stdDeviation="18"/></filter>
-    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="2" seed="${seed % 997}"/><feColorMatrix type="saturate" values="0"/></filter>
-  </defs>
-  <rect width="1600" height="1000" fill="transparent"/>
-  <g filter="url(#soften)">${texture}</g>
-  <g>${buildMotif(theme, random)}</g>
-  <rect width="1600" height="1000" filter="url(#grain)" opacity="0.055" mix-blend-mode="soft-light"/>
-  <text x="82" y="900" fill="${theme.palette[theme.palette.length - 1]}" opacity="0.13" font-family="Helvetica, Arial, sans-serif" font-size="96" font-weight="700">${escapedTerm}</text>
-</svg>`;
+    return `hsl(${hue} 78% 54% / 0.18) ${position}%`;
+  });
 
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  return [
+    `linear-gradient(${angle}deg, hsl(${primaryHue} 84% 50% / 0.22), hsl(${secondaryHue} 78% 54% / 0.2), hsl(${tertiaryHue} 74% 58% / 0.16))`,
+    `linear-gradient(${angle + 82}deg, ${stops.join(", ")})`,
+    `linear-gradient(${angle + 180}deg, transparent 0%, rgb(255 255 255 / 0.05) 46%, transparent 100%)`
+  ].join(", ");
 }
 
 export function SearchCompositeInput() {
   const [term, setTerm] = useState("");
   const [voiceMessage, setVoiceMessage] = useState("");
   const [isListening, setIsListening] = useState(false);
+  const [voiceAvailable, setVoiceAvailable] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
-  const compositeImage = useMemo(() => buildCompositeImage(term), [term]);
+  const gradient = useMemo(() => buildLetterGradient(term), [term]);
+
+  const stopRecognition = useCallback(() => {
+    try {
+      recognitionRef.current?.stop();
+    } catch {
+      // Some browsers throw if recognition is already idle.
+    }
+  }, []);
+
+  useEffect(() => {
+    const supportFrame = window.requestAnimationFrame(() => {
+      setVoiceAvailable(
+        Boolean(window.SpeechRecognition ?? window.webkitSpeechRecognition)
+      );
+    });
+
+    return () => {
+      window.cancelAnimationFrame(supportFrame);
+      const recognition = recognitionRef.current;
+
+      if (recognition) {
+        recognition.onend = null;
+        recognition.onerror = null;
+        recognition.onresult = null;
+        stopRecognition();
+        recognitionRef.current = null;
+      }
+    };
+  }, [stopRecognition]);
 
   useEffect(() => {
     const root = document.documentElement;
-    root.style.setProperty("--zero-search-image", compositeImage);
+    root.style.setProperty("--zero-search-gradient", gradient);
     root.style.setProperty("--zero-search-active", term.trim() ? "1" : "0");
 
     return () => {
-      root.style.setProperty("--zero-search-image", "none");
+      root.style.setProperty("--zero-search-gradient", "none");
       root.style.setProperty("--zero-search-active", "0");
     };
-  }, [compositeImage, term]);
+  }, [gradient, term]);
 
   const startVoiceInput = () => {
     const Recognition =
@@ -254,13 +132,13 @@ export function SearchCompositeInput() {
     }
 
     if (isListening) {
-      recognitionRef.current?.stop();
+      stopRecognition();
       setIsListening(false);
       setVoiceMessage("Stopped listening.");
       return;
     }
 
-    recognitionRef.current?.stop();
+    stopRecognition();
 
     const recognition = new Recognition();
     recognitionRef.current = recognition;
@@ -312,27 +190,29 @@ export function SearchCompositeInput() {
         autoComplete="off"
         onChange={(event) => setTerm(event.target.value)}
       />
-      <button
-        type="button"
-        className="search-voice-button"
-        aria-label={isListening ? "Listening for search term" : "Use voice input"}
-        aria-pressed={isListening}
-        onClick={startVoiceInput}
-      >
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
+      {voiceAvailable ? (
+        <button
+          type="button"
+          className="search-voice-button"
+          aria-label={isListening ? "Listening for search term" : "Use voice input"}
+          aria-pressed={isListening}
+          onClick={startVoiceInput}
         >
-          <path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" />
-          <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-          <path d="M12 19v3" />
-        </svg>
-      </button>
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          >
+            <path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <path d="M12 19v3" />
+          </svg>
+        </button>
+      ) : null}
       {term ? (
         <button type="button" onClick={() => setTerm("")}>
           Clear

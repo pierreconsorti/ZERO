@@ -10,17 +10,21 @@
     Helvetica, Arial, ui-sans-serif, system-ui, -apple-system, sans-serif;
   --zero-page-bg-rgb: 0 0 0;
   --zero-page-fg-rgb: 255 255 255;
+  --zero-inverse-fg-rgb: 0 0 0;
   --zero-section-bg-rgb: 18 18 18;
   --zero-card-bg-rgb: 10 10 10;
-  --zero-scroll-blur: 0px;
-  --zero-scroll-fade: 1;
+  --zero-content-fade: 1;
+  --zero-replay-blur: 0px;
   --zero-scroll-veil: 0;
   --zero-scroll-progress: 0;
-  --zero-search-image: none;
+  --zero-search-gradient: none;
   --zero-search-active: 0;
   --zero-tilt-x: 0;
   --zero-tilt-cool: 0;
   --zero-tilt-warm: 0;
+  --zero-ambient-dim: 0;
+  --zero-panel-blur: 7px;
+  --zero-card-blur: 8px;
   font-synthesis-weight: none;
   text-rendering: optimizeLegibility;
 }
@@ -145,6 +149,20 @@ input:focus-visible,
     color: #ffffff;
   }
 
+  .metadata-pill {
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.055);
+    color: rgba(0, 0, 0, 0.62);
+    cursor: default;
+  }
+
+  .metadata-tile {
+    border-radius: 1.25rem;
+    background: rgba(0, 0, 0, 0.045);
+    color: rgba(0, 0, 0, 0.72);
+    cursor: default;
+  }
+
   .meta-label {
     font-family: var(--font-zero-sans);
     font-size: 0.68rem;
@@ -166,7 +184,7 @@ body.scroll-tone-page {
       transparent 56%,
       rgb(255 126 40 / calc(var(--zero-tilt-warm) * 0.075))
     ),
-    var(--zero-search-image);
+    var(--zero-search-gradient);
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
@@ -182,6 +200,10 @@ body.scroll-tone-page::before {
   pointer-events: none;
   background:
     linear-gradient(
+      rgb(0 0 0 / var(--zero-ambient-dim)),
+      rgb(0 0 0 / var(--zero-ambient-dim))
+    ),
+    linear-gradient(
       rgb(var(--zero-page-fg-rgb) / var(--zero-scroll-veil)),
       rgb(var(--zero-page-fg-rgb) / var(--zero-scroll-veil))
     ),
@@ -193,24 +215,31 @@ body.scroll-tone-page::before {
 
 body.scroll-tone-page main,
 body.scroll-tone-page footer {
-  filter: blur(var(--zero-scroll-blur));
-  opacity: var(--zero-scroll-fade);
+  opacity: var(--zero-content-fade);
   transform: translateZ(0);
 }
 
 html.zero-burst-active body.scroll-tone-page::after {
-  content: "";
+  content: "ZERO";
   position: fixed;
   inset: 0;
-  z-index: 21;
+  z-index: 70;
+  display: grid;
+  place-items: center;
   pointer-events: none;
   background:
-    radial-gradient(circle at 12% 8%, rgb(0 220 255 / 0.24), transparent 25%),
-    radial-gradient(circle at 88% 16%, rgb(255 118 0 / 0.2), transparent 28%),
-    radial-gradient(circle at 50% 92%, rgb(184 91 255 / 0.18), transparent 30%),
-    radial-gradient(circle at 18% 78%, rgb(82 255 143 / 0.14), transparent 24%);
-  mix-blend-mode: difference;
-  animation: zero-burst-cycle 680ms linear infinite;
+    linear-gradient(115deg, rgb(0 220 255 / 0.82), transparent 34%),
+    linear-gradient(245deg, rgb(255 118 0 / 0.78), transparent 38%),
+    linear-gradient(0deg, rgb(184 91 255 / 0.76), rgb(82 255 143 / 0.5));
+  color: rgb(var(--zero-page-fg-rgb));
+  font-family: var(--font-zero-sans);
+  font-size: clamp(8rem, 34vw, 38rem);
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 0.72;
+  text-align: center;
+  text-transform: uppercase;
+  animation: zero-burst-cycle 720ms cubic-bezier(0.2, 0.75, 0.25, 1) infinite;
 }
 
 body.scroll-tone-page header {
@@ -220,13 +249,13 @@ body.scroll-tone-page header {
 
 body.scroll-tone-page .atmospheric-panel {
   background-color: rgb(var(--zero-section-bg-rgb));
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(calc(var(--zero-panel-blur) + var(--zero-replay-blur)));
   color: rgb(var(--zero-page-fg-rgb));
 }
 
 body.scroll-tone-page .object-card {
   background-color: rgb(var(--zero-card-bg-rgb));
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(calc(var(--zero-card-blur) + var(--zero-replay-blur)));
   color: rgb(var(--zero-page-fg-rgb));
 }
 
@@ -236,22 +265,28 @@ body.scroll-tone-page .soft-section {
 
 body.scroll-tone-page .pill-control {
   background: rgb(var(--zero-page-fg-rgb) / 0.09);
-  color: rgb(var(--zero-page-fg-rgb) / 0.72);
+  color: rgb(var(--zero-page-fg-rgb));
 }
 
 body.scroll-tone-page .pill-control-light {
   background: rgb(var(--zero-card-bg-rgb) / 0.82);
-  color: rgb(var(--zero-page-fg-rgb) / 0.72);
+  color: rgb(var(--zero-page-fg-rgb));
   box-shadow: 0 16px 42px rgb(var(--zero-page-fg-rgb) / 0.055);
 }
 
 body.scroll-tone-page .pill-control-dark {
   background: rgb(var(--zero-page-fg-rgb));
-  color: rgb(var(--zero-page-bg-rgb));
+  color: rgb(var(--zero-inverse-fg-rgb));
+}
+
+body.scroll-tone-page .metadata-pill,
+body.scroll-tone-page .metadata-tile {
+  background: rgb(var(--zero-page-fg-rgb) / 0.09);
+  color: rgb(var(--zero-page-fg-rgb));
 }
 
 body.scroll-tone-page .meta-label {
-  color: rgb(var(--zero-page-fg-rgb) / 0.48);
+  color: rgb(var(--zero-page-fg-rgb));
 }
 
 body.scroll-tone-page .text-black,
@@ -260,12 +295,12 @@ body.scroll-tone-page .text-zero-ink {
 }
 
 body.scroll-tone-page .text-white {
-  color: rgb(var(--zero-page-bg-rgb));
+  color: rgb(var(--zero-inverse-fg-rgb));
 }
 
 body.scroll-tone-page .text-zero-muted,
 body.scroll-tone-page [class*="text-black/"] {
-  color: rgb(var(--zero-page-fg-rgb) / 0.62);
+  color: rgb(var(--zero-page-fg-rgb));
 }
 
 body.scroll-tone-page .bg-black {
@@ -307,7 +342,7 @@ body.scroll-tone-page [class~="hover:text-black"]:hover {
 }
 
 body.scroll-tone-page [class~="hover:text-white"]:hover {
-  color: rgb(var(--zero-page-bg-rgb));
+  color: rgb(var(--zero-inverse-fg-rgb));
 }
 
 body.scroll-tone-page [class~="hover:bg-black"]:hover {
@@ -321,7 +356,7 @@ body.scroll-tone-page .scroll-progress-indicator {
   z-index: 50;
   border-radius: 999px;
   background: rgb(var(--zero-card-bg-rgb) / 0.72);
-  color: rgb(var(--zero-page-fg-rgb) / 0.72);
+  color: rgb(var(--zero-page-fg-rgb));
   box-shadow: 0 16px 42px rgb(var(--zero-page-fg-rgb) / 0.055);
   backdrop-filter: blur(18px);
   font-size: 0.72rem;
@@ -332,15 +367,87 @@ body.scroll-tone-page .scroll-progress-indicator {
   text-align: center;
 }
 
-html.zero-touch-reveal-active body.scroll-tone-page .atmospheric-panel {
+body.scroll-tone-page .scroll-progress-indicator button {
+  margin-left: 0.38rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgb(var(--zero-page-fg-rgb) / 0.1);
+  color: rgb(var(--zero-page-fg-rgb));
+  font: inherit;
+  font-size: 0.66rem;
+  line-height: 1;
+  padding: 0.34rem 0.48rem;
+}
+
+body.scroll-tone-page .atmospheric-panel.is-pressing-panel {
   background-color: rgb(var(--zero-section-bg-rgb) / 0.42);
   backdrop-filter: blur(0px);
 }
 
-html.zero-touch-reveal-active body.scroll-tone-page .object-card {
+body.scroll-tone-page .object-card.is-pressing-panel {
   background-color: rgb(var(--zero-card-bg-rgb) / 0.46);
   backdrop-filter: blur(0px);
   box-shadow: 0 18px 64px rgb(var(--zero-page-fg-rgb) / 0.035);
+}
+
+.meta-pill-popover {
+  position: relative;
+  display: inline-flex;
+}
+
+.meta-pill-trigger {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.055);
+  color: rgba(0, 0, 0, 0.68);
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.42rem 0.72rem;
+}
+
+.meta-pill-trigger-dark {
+  background: #000000;
+  color: #ffffff;
+}
+
+.meta-pill-trigger[aria-expanded="true"] {
+  box-shadow: 0 0 0 2px rgb(var(--zero-page-fg-rgb) / 0.16);
+}
+
+.meta-pill-popover-panel {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 45;
+  width: min(17rem, calc(100vw - 2rem));
+  border-radius: 1rem;
+  background: rgb(var(--zero-card-bg-rgb) / 0.96);
+  box-shadow: 0 18px 64px rgb(var(--zero-page-fg-rgb) / 0.12);
+  color: rgb(var(--zero-page-fg-rgb));
+  font-size: 0.78rem;
+  line-height: 1.45;
+  opacity: 0;
+  padding: 0.78rem 0.9rem;
+  pointer-events: none;
+  transform: translateY(0.25rem);
+  visibility: hidden;
+}
+
+.meta-pill-popover-panel.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+body.scroll-tone-page .meta-pill-trigger {
+  background: rgb(var(--zero-page-fg-rgb) / 0.09);
+  color: rgb(var(--zero-page-fg-rgb));
+}
+
+body.scroll-tone-page .meta-pill-trigger-dark {
+  background: rgb(var(--zero-page-fg-rgb));
+  color: rgb(var(--zero-inverse-fg-rgb));
 }
 
 body.scroll-tone-page .search-composite-control {
@@ -351,7 +458,7 @@ body.scroll-tone-page .search-composite-control {
   gap: 0.45rem;
   border-radius: 999px;
   background: rgb(var(--zero-card-bg-rgb) / 0.74);
-  color: rgb(var(--zero-page-fg-rgb) / 0.72);
+  color: rgb(var(--zero-page-fg-rgb));
   box-shadow: 0 16px 42px rgb(var(--zero-page-fg-rgb) / 0.045);
   padding: 0.32rem 0.42rem 0.32rem 0.78rem;
 }
@@ -368,7 +475,7 @@ body.scroll-tone-page .search-composite-control span {
   font-weight: 650;
   line-height: 1;
   text-transform: uppercase;
-  color: rgb(var(--zero-page-fg-rgb) / 0.46);
+  color: rgb(var(--zero-page-fg-rgb));
 }
 
 body.scroll-tone-page .search-composite-control input {
@@ -385,7 +492,7 @@ body.scroll-tone-page .search-composite-control input {
 }
 
 body.scroll-tone-page .search-composite-control input::placeholder {
-  color: rgb(var(--zero-page-fg-rgb) / 0.38);
+  color: rgb(var(--zero-page-fg-rgb));
 }
 
 body.scroll-tone-page .search-composite-control button {
@@ -393,7 +500,7 @@ body.scroll-tone-page .search-composite-control button {
   border: 0;
   border-radius: 999px;
   background: rgb(var(--zero-page-fg-rgb) / 0.1);
-  color: rgb(var(--zero-page-fg-rgb) / 0.7);
+  color: rgb(var(--zero-page-fg-rgb));
   cursor: pointer;
   font: inherit;
   font-size: 0.75rem;
@@ -452,6 +559,8 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
 
   body {
     font-size: 1.05rem;
+    --zero-panel-blur: 4px;
+    --zero-card-blur: 5px;
   }
 
   .soft-section {
@@ -460,6 +569,16 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
 
   .object-card {
     border-radius: 1.45rem;
+  }
+
+  body.scroll-tone-page .object-card {
+    padding-left: 0.875rem !important;
+    padding-right: 0.875rem !important;
+  }
+
+  body.scroll-tone-page .atmospheric-panel > div {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
   }
 
   .display-tight,
@@ -475,9 +594,25 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
   .display-tight-md {
     line-height: 0.98;
   }
+
+  .meta-pill-popover-panel {
+    bottom: auto;
+    left: 50%;
+    top: calc(100% + 0.5rem);
+    max-width: calc(100vw - 1.25rem);
+    transform: translate(-50%, -0.25rem);
+  }
+
+  .meta-pill-popover-panel.is-open {
+    transform: translate(-50%, 0);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  body.scroll-tone-page * {
+    transition-property: background-color, border-color, box-shadow, filter, opacity, transform, backdrop-filter !important;
+  }
+
   body.scroll-tone-page,
   body.scroll-tone-page header,
   body.scroll-tone-page .atmospheric-panel,
@@ -485,11 +620,15 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
   body.scroll-tone-page .pill-control,
   body.scroll-tone-page .pill-control-light,
   body.scroll-tone-page .pill-control-dark,
+  body.scroll-tone-page .metadata-pill,
+  body.scroll-tone-page .metadata-tile,
+  body.scroll-tone-page .meta-pill-trigger,
+  body.scroll-tone-page .meta-pill-popover-panel,
   body.scroll-tone-page .search-composite-control,
+  body.scroll-tone-page .scroll-progress-indicator button,
   body.scroll-tone-page .search-composite-control button {
     transition:
       background-color 120ms linear,
-      color 120ms linear,
       border-color 120ms linear,
       box-shadow 120ms linear,
       filter 180ms ease,
@@ -502,8 +641,7 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
     transition:
       background-color 900ms ease,
       backdrop-filter 900ms ease,
-      box-shadow 900ms ease,
-      color 120ms linear;
+      box-shadow 900ms ease;
   }
 
   button,
@@ -513,7 +651,6 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
     transition:
       background-color 160ms ease,
       box-shadow 160ms ease,
-      color 160ms ease,
       filter 160ms ease,
       opacity 160ms ease,
       transform 160ms ease;
@@ -525,22 +662,6 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
   [role="button"]:active {
     filter: brightness(1.08);
     transform: translateY(1px) scale(0.985);
-  }
-
-  body.scroll-tone-page main,
-  body.scroll-tone-page footer {
-    transition:
-      filter 80ms linear,
-      opacity 80ms linear;
-  }
-
-  body.scroll-tone-page .display-tight,
-  body.scroll-tone-page .display-tight-xl,
-  body.scroll-tone-page .display-tight-soft,
-  body.scroll-tone-page .display-tight-lg,
-  body.scroll-tone-page .display-tight-md {
-    filter: blur(calc(var(--zero-scroll-progress) * 0.28px));
-    opacity: calc(1 - (var(--zero-scroll-progress) * 0.035));
   }
 
   .hover-lift {
@@ -576,25 +697,24 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
   body.scroll-tone-page .display-tight-soft,
   body.scroll-tone-page .display-tight-lg,
   body.scroll-tone-page .display-tight-md {
-    filter: none;
     opacity: 1;
   }
 }
 
 @keyframes zero-burst-cycle {
   0% {
-    filter: hue-rotate(0deg) saturate(1.12);
-    opacity: 0.58;
+    filter: hue-rotate(0deg) saturate(1.18);
+    transform: scale(0.96) rotate(-1deg);
   }
 
   50% {
-    filter: hue-rotate(180deg) saturate(1.28);
-    opacity: 0.72;
+    filter: hue-rotate(180deg) saturate(1.45);
+    transform: scale(1.08) rotate(1deg);
   }
 
   100% {
-    filter: hue-rotate(360deg) saturate(1.12);
-    opacity: 0.58;
+    filter: hue-rotate(360deg) saturate(1.18);
+    transform: scale(0.96) rotate(-1deg);
   }
 }
 

@@ -24,7 +24,7 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
           <h3 className="text-lg font-medium text-zero-ink">{indicator.name}</h3>
           <span
             className={cn(
-              "pill-control shrink-0 px-2 py-1 text-[0.68rem]",
+              "metadata-pill shrink-0 px-2 py-1 text-[0.68rem]",
               indicator.status === "unavailable" && "bg-white text-zero-muted"
             )}
           >
