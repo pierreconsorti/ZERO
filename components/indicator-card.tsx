@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { ClimateIndicator } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +12,26 @@ const statusLabel = {
   unavailable: "Data unavailable"
 };
 
+const confidenceScore = {
+  "Very high": 92,
+  High: 78,
+  Medium: 58,
+  Low: 38
+};
+
+function signalBars(indicator: ClimateIndicator) {
+  const seed = indicator.id
+    .split("")
+    .reduce((total, character) => total + character.charCodeAt(0), 0);
+
+  return Array.from({ length: 14 }, (_, index) => 24 + ((seed + index * 17) % 58));
+}
+
 export function IndicatorCard({ indicator }: IndicatorCardProps) {
+  const score =
+    indicator.status === "unavailable" ? 28 : confidenceScore[indicator.confidence];
+  const style = { "--signal-score": `${score}%` } as CSSProperties;
+
   return (
     <article
       className={cn(
@@ -40,6 +60,19 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
           ) : null}
         </div>
         <p className="mt-5 text-sm font-medium text-black">{indicator.trend}</p>
+        <div className="signal-visual mt-6" style={style}>
+          <div className="signal-gauge" aria-hidden="true">
+            <span />
+          </div>
+          <div className="signal-bars" aria-hidden="true">
+            {signalBars(indicator).map((height, index) => (
+              <span
+                key={`${indicator.id}-${index}`}
+                style={{ height: `${height}%` }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
       <div className="mt-8 space-y-5">
         <p className="text-[0.98rem] leading-6 text-zero-muted sm:text-sm">

@@ -17,8 +17,8 @@ export function PlanetHeatGrid({ indicators }: PlanetHeatGridProps) {
       >
         <SectionHeading
           eyebrow="Planetary signals"
-          title="The measurements that tell us whether the system is bending"
-          description="These signals support the catalogue. They show whether cooling interventions and emissions reductions are changing the planetary system, with fallback states visibly marked when live data cannot be loaded."
+          title="Measurements that reveal the bend"
+          description="A compact signal board for heat, gases, energy, and ocean context. Live values stay separated from fallback records so the evidence surface remains honest."
         />
         <div className="mt-5 grid gap-4 sm:mt-10 md:grid-cols-2 xl:grid-cols-3">
           {indicators.map((indicator) => (

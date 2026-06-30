@@ -1,6 +1,5 @@
 import type { Intervention } from "@/lib/data/interventions";
 import { cn } from "@/lib/utils";
-import { MetaPillPopover } from "./meta-pill-popover";
 import { SaveIdeaButton } from "./save-idea-button";
 
 type InterventionCardProps = {
@@ -9,26 +8,6 @@ type InterventionCardProps = {
   featured?: boolean;
   className?: string;
 };
-
-const maturityDescriptions: Record<Intervention["maturity"], string> = {
-  known: "Known method, under-deployed in many places.",
-  deployable: "Ready for controlled pilots, procurement, or seasonal rollout.",
-  emerging: "Technically promising, but local validation still matters.",
-  experimental: "Use small pilots and careful measurement before scaling.",
-  speculative: "Possible, not proven; start with the smallest useful test."
-};
-
-const evidenceDescriptions: Record<Intervention["evidenceStrength"], string> = {
-  "very high": "Strong, repeated evidence across contexts.",
-  high: "Good evidence; still check local conditions and tradeoffs.",
-  medium: "Promising evidence with context-sensitive outcomes.",
-  early: "Early evidence; useful for measured pilots.",
-  speculative: "Hypothesis-level evidence; test cautiously."
-};
-
-function statusDescription(status: string) {
-  return `Status note: ${status}. Use this as a cue for whether the idea belongs in a pilot, procurement note, or watchlist.`;
-}
 
 export function InterventionCard({
   intervention,
@@ -49,11 +28,14 @@ export function InterventionCard({
           <p className="meta-label">
             {String(index + 1).padStart(2, "0")} / {intervention.category}
           </p>
-          <MetaPillPopover
-            label={intervention.maturity}
-            description={maturityDescriptions[intervention.maturity]}
-            dark={intervention.maturity === "speculative"}
-          />
+          <span
+            className={cn(
+              "metadata-pill shrink-0 px-3 py-1.5 text-xs",
+              intervention.maturity === "speculative" && "bg-black text-white"
+            )}
+          >
+            {intervention.maturity}
+          </span>
         </div>
         <h3
           className={cn(
@@ -123,18 +105,15 @@ export function InterventionCard({
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-2">
-            <MetaPillPopover
-              label={`Evidence: ${intervention.evidenceStrength}`}
-              description={evidenceDescriptions[intervention.evidenceStrength]}
-            />
-            <MetaPillPopover
-              label="Prototype locally"
-              description="Start with a small, measured local test before treating the idea as infrastructure."
-            />
-            <MetaPillPopover
-              label={intervention.status}
-              description={statusDescription(intervention.status)}
-            />
+            <span className="metadata-pill px-3 py-1.5 text-xs">
+              Evidence: {intervention.evidenceStrength}
+            </span>
+            <span className="metadata-pill px-3 py-1.5 text-xs">
+              Prototype locally
+            </span>
+            <span className="metadata-pill px-3 py-1.5 text-xs">
+              {intervention.status}
+            </span>
           </div>
           <SaveIdeaButton id={intervention.id} />
         </div>

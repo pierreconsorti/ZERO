@@ -17,7 +17,6 @@
   --zero-replay-blur: 0px;
   --zero-scroll-veil: 0;
   --zero-scroll-progress: 0;
-  --zero-search-gradient: none;
   --zero-search-active: 0;
   --zero-tilt-x: 0;
   --zero-tilt-cool: 0;
@@ -176,15 +175,6 @@ input:focus-visible,
 
 body.scroll-tone-page {
   background-color: rgb(var(--zero-page-bg-rgb));
-  background-image:
-    linear-gradient(
-      90deg,
-      rgb(0 202 255 / calc(var(--zero-tilt-cool) * 0.08)),
-      transparent 44%,
-      transparent 56%,
-      rgb(255 126 40 / calc(var(--zero-tilt-warm) * 0.075))
-    ),
-    var(--zero-search-gradient);
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
@@ -217,29 +207,6 @@ body.scroll-tone-page main,
 body.scroll-tone-page footer {
   opacity: var(--zero-content-fade);
   transform: translateZ(0);
-}
-
-html.zero-burst-active body.scroll-tone-page::after {
-  content: "ZERO";
-  position: fixed;
-  inset: 0;
-  z-index: 70;
-  display: grid;
-  place-items: center;
-  pointer-events: none;
-  background:
-    linear-gradient(115deg, rgb(0 220 255 / 0.82), transparent 34%),
-    linear-gradient(245deg, rgb(255 118 0 / 0.78), transparent 38%),
-    linear-gradient(0deg, rgb(184 91 255 / 0.76), rgb(82 255 143 / 0.5));
-  color: rgb(var(--zero-page-fg-rgb));
-  font-family: var(--font-zero-sans);
-  font-size: clamp(8rem, 34vw, 38rem);
-  font-weight: 750;
-  letter-spacing: 0;
-  line-height: 0.72;
-  text-align: center;
-  text-transform: uppercase;
-  animation: zero-burst-cycle 720ms cubic-bezier(0.2, 0.75, 0.25, 1) infinite;
 }
 
 body.scroll-tone-page header {
@@ -390,67 +357,8 @@ body.scroll-tone-page .object-card.is-pressing-panel {
   box-shadow: 0 18px 64px rgb(var(--zero-page-fg-rgb) / 0.035);
 }
 
-.meta-pill-popover {
-  position: relative;
-  display: inline-flex;
-}
-
-.meta-pill-trigger {
-  border: 0;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.055);
-  color: rgba(0, 0, 0, 0.68);
-  font: inherit;
-  font-size: 0.75rem;
-  line-height: 1;
-  padding: 0.42rem 0.72rem;
-}
-
-.meta-pill-trigger-dark {
-  background: #000000;
-  color: #ffffff;
-}
-
-.meta-pill-trigger[aria-expanded="true"] {
-  box-shadow: 0 0 0 2px rgb(var(--zero-page-fg-rgb) / 0.16);
-}
-
-.meta-pill-popover-panel {
-  position: absolute;
-  bottom: calc(100% + 0.5rem);
-  left: 0;
-  z-index: 45;
-  width: min(17rem, calc(100vw - 2rem));
-  border-radius: 1rem;
-  background: rgb(var(--zero-card-bg-rgb) / 0.96);
-  box-shadow: 0 18px 64px rgb(var(--zero-page-fg-rgb) / 0.12);
-  color: rgb(var(--zero-page-fg-rgb));
-  font-size: 0.78rem;
-  line-height: 1.45;
-  opacity: 0;
-  padding: 0.78rem 0.9rem;
-  pointer-events: none;
-  transform: translateY(0.25rem);
-  visibility: hidden;
-}
-
-.meta-pill-popover-panel.is-open {
-  opacity: 1;
-  transform: translateY(0);
-  visibility: visible;
-}
-
-body.scroll-tone-page .meta-pill-trigger {
-  background: rgb(var(--zero-page-fg-rgb) / 0.09);
-  color: rgb(var(--zero-page-fg-rgb));
-}
-
-body.scroll-tone-page .meta-pill-trigger-dark {
-  background: rgb(var(--zero-page-fg-rgb));
-  color: rgb(var(--zero-inverse-fg-rgb));
-}
-
 body.scroll-tone-page .search-composite-control {
+  position: relative;
   order: 3;
   display: flex;
   width: 100%;
@@ -526,26 +434,133 @@ body.scroll-tone-page .search-composite-control .search-voice-button svg {
   width: 0.95rem;
 }
 
-body.scroll-tone-page .zero-brand-burst {
-  position: relative;
-  isolation: isolate;
-}
-
-body.scroll-tone-page .zero-brand-burst::after {
-  content: "";
+body.scroll-tone-page .search-results-panel {
   position: absolute;
-  inset: -0.18rem;
-  z-index: -1;
-  border-radius: inherit;
-  opacity: 0;
-  background: linear-gradient(90deg, #00dcff, #ff7600, #b85bff, #52ff8f);
-  filter: blur(12px);
-  transition: opacity 120ms ease;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.45rem);
+  z-index: 60;
+  display: grid;
+  gap: 0.35rem;
+  border-radius: 1.1rem;
+  background: rgb(var(--zero-card-bg-rgb) / 0.96);
+  box-shadow: 0 24px 90px rgb(var(--zero-page-fg-rgb) / 0.12);
+  padding: 0.45rem;
 }
 
-html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
-  opacity: 0.62;
-  animation: zero-brand-cycle 520ms linear infinite;
+body.scroll-tone-page .search-result-item {
+  display: grid;
+  gap: 0.28rem;
+  border-radius: 0.85rem;
+  background: rgb(var(--zero-page-fg-rgb) / 0.07);
+  padding: 0.7rem 0.8rem;
+}
+
+body.scroll-tone-page .search-result-item span,
+body.scroll-tone-page .search-result-item small,
+body.scroll-tone-page .search-results-panel p {
+  color: rgb(var(--zero-page-fg-rgb));
+  font-size: 0.72rem;
+  line-height: 1.3;
+  margin: 0;
+}
+
+body.scroll-tone-page .search-result-item strong {
+  color: rgb(var(--zero-page-fg-rgb));
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.12;
+}
+
+body.scroll-tone-page .zero-wordmark {
+  border: 0;
+  font-family: var(--font-zero-sans);
+  letter-spacing: 0;
+}
+
+html.zero-sequence-active {
+  overflow: hidden;
+}
+
+.zero-image-sequence {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: #000000;
+}
+
+.zero-image-sequence img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.zero-image-sequence button {
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.62);
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1;
+  padding: 0.72rem 0.9rem;
+}
+
+.signal-visual {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.signal-gauge {
+  height: 0.72rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(var(--zero-page-fg-rgb) / 0.1);
+}
+
+.signal-gauge span {
+  display: block;
+  height: 100%;
+  width: var(--signal-score);
+  border-radius: inherit;
+  background: rgb(var(--zero-page-fg-rgb));
+}
+
+.signal-bars {
+  display: flex;
+  height: 5.2rem;
+  align-items: end;
+  gap: 0.28rem;
+  border-radius: 1.2rem;
+  background: rgb(var(--zero-page-fg-rgb) / 0.055);
+  padding: 0.6rem;
+}
+
+.signal-bars span {
+  flex: 1 1 0;
+  min-height: 0.55rem;
+  border-radius: 999px 999px 0.25rem 0.25rem;
+  background: rgb(var(--zero-page-fg-rgb) / 0.78);
+}
+
+.bend-rail {
+  height: 0.72rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(var(--zero-page-fg-rgb) / 0.09);
+}
+
+.bend-rail span {
+  display: block;
+  height: 100%;
+  width: var(--bend-scale);
+  border-radius: inherit;
+  background: rgb(var(--zero-page-fg-rgb));
 }
 
 :target {
@@ -595,17 +610,6 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
     line-height: 0.98;
   }
 
-  .meta-pill-popover-panel {
-    bottom: auto;
-    left: 50%;
-    top: calc(100% + 0.5rem);
-    max-width: calc(100vw - 1.25rem);
-    transform: translate(-50%, -0.25rem);
-  }
-
-  .meta-pill-popover-panel.is-open {
-    transform: translate(-50%, 0);
-  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -622,8 +626,6 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
   body.scroll-tone-page .pill-control-dark,
   body.scroll-tone-page .metadata-pill,
   body.scroll-tone-page .metadata-tile,
-  body.scroll-tone-page .meta-pill-trigger,
-  body.scroll-tone-page .meta-pill-popover-panel,
   body.scroll-tone-page .search-composite-control,
   body.scroll-tone-page .scroll-progress-indicator button,
   body.scroll-tone-page .search-composite-control button {
@@ -685,11 +687,6 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html.zero-burst-active body.scroll-tone-page::after,
-  html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
-    animation: none;
-  }
-
   body.scroll-tone-page main,
   body.scroll-tone-page footer,
   body.scroll-tone-page .display-tight,
@@ -698,32 +695,5 @@ html.zero-burst-active body.scroll-tone-page .zero-brand-burst::after {
   body.scroll-tone-page .display-tight-lg,
   body.scroll-tone-page .display-tight-md {
     opacity: 1;
-  }
-}
-
-@keyframes zero-burst-cycle {
-  0% {
-    filter: hue-rotate(0deg) saturate(1.18);
-    transform: scale(0.96) rotate(-1deg);
-  }
-
-  50% {
-    filter: hue-rotate(180deg) saturate(1.45);
-    transform: scale(1.08) rotate(1deg);
-  }
-
-  100% {
-    filter: hue-rotate(360deg) saturate(1.18);
-    transform: scale(0.96) rotate(-1deg);
-  }
-}
-
-@keyframes zero-brand-cycle {
-  0% {
-    filter: blur(12px) hue-rotate(0deg);
-  }
-
-  100% {
-    filter: blur(12px) hue-rotate(360deg);
   }
 }

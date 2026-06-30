@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { roadmapLevers } from "@/lib/content";
+import { sourceRegistry } from "@/lib/sources";
 
 type SpeechRecognitionResultLike = {
   readonly 0: {
@@ -28,6 +30,15 @@ type SpeechRecognitionLike = EventTarget & {
 
 type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
 
+type SearchResult = {
+  id: string;
+  title: string;
+  source: string;
+  body: string;
+  href: string;
+  kind: "Source" | "System lever";
+};
+
 declare global {
   interface Window {
     SpeechRecognition?: SpeechRecognitionConstructor;
@@ -35,43 +46,52 @@ declare global {
   }
 }
 
-function hashString(value: string) {
-  let hash = 2166136261;
+const trustedNames = [
+  "NASA",
+  "NOAA",
+  "Our World in Data",
+  "OWID",
+  "IEA",
+  "International Energy Agency"
+];
 
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
+const searchEntries: SearchResult[] = [
+  ...sourceRegistry
+    .filter((source) =>
+      trustedNames.some((trusted) => source.name.includes(trusted))
+    )
+    .map((source) => ({
+      id: source.id,
+      title: source.name,
+      source: source.trustLevel,
+      body: `${source.usedFor} ${source.limitations}`,
+      href: source.url,
+      kind: "Source" as const
+    })),
+  ...roadmapLevers
+    .filter((lever) =>
+      lever.dataSources.some((source) =>
+        trustedNames.some((trusted) => source.includes(trusted))
+      )
+    )
+    .map((lever) => ({
+      id: lever.id,
+      title: lever.title,
+      source: lever.dataSources.join(" / "),
+      body: `${lever.currentState} ${lever.whatNeedsToChange}`,
+      href: "/roadmap",
+      kind: "System lever" as const
+    }))
+];
 
-  return hash >>> 0;
-}
+function matchesQuery(result: SearchResult, query: string) {
+  const haystack = `${result.title} ${result.source} ${result.body}`.toLowerCase();
+  const terms = query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
 
-function buildLetterGradient(term: string) {
-  const normalized = term.trim().slice(0, 42);
-
-  if (!normalized) {
-    return "none";
-  }
-
-  const hash = hashString(normalized);
-  const letters = Array.from(normalized).filter((character) => character.trim());
-  const angle = 18 + (hash % 124);
-  const primaryHue = hash % 360;
-  const secondaryHue = (primaryHue + 156 + letters.length * 11) % 360;
-  const tertiaryHue = (primaryHue + 242 + letters.length * 7) % 360;
-  const stops = letters.slice(0, 12).map((letter, index) => {
-    const code = letter.charCodeAt(0);
-    const hue = (primaryHue + code * 3 + index * 29) % 360;
-    const position = Math.round((index / Math.max(letters.length - 1, 1)) * 100);
-
-    return `hsl(${hue} 78% 54% / 0.18) ${position}%`;
-  });
-
-  return [
-    `linear-gradient(${angle}deg, hsl(${primaryHue} 84% 50% / 0.22), hsl(${secondaryHue} 78% 54% / 0.2), hsl(${tertiaryHue} 74% 58% / 0.16))`,
-    `linear-gradient(${angle + 82}deg, ${stops.join(", ")})`,
-    `linear-gradient(${angle + 180}deg, transparent 0%, rgb(255 255 255 / 0.05) 46%, transparent 100%)`
-  ].join(", ");
+  return terms.every((term) => haystack.includes(term));
 }
 
 export function SearchCompositeInput() {
@@ -80,7 +100,16 @@ export function SearchCompositeInput() {
   const [isListening, setIsListening] = useState(false);
   const [voiceAvailable, setVoiceAvailable] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
-  const gradient = useMemo(() => buildLetterGradient(term), [term]);
+
+  const results = useMemo(() => {
+    const query = term.trim();
+
+    if (!query) {
+      return [];
+    }
+
+    return searchEntries.filter((entry) => matchesQuery(entry, query)).slice(0, 5);
+  }, [term]);
 
   const stopRecognition = useCallback(() => {
     try {
@@ -110,17 +139,6 @@ export function SearchCompositeInput() {
       }
     };
   }, [stopRecognition]);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty("--zero-search-gradient", gradient);
-    root.style.setProperty("--zero-search-active", term.trim() ? "1" : "0");
-
-    return () => {
-      root.style.setProperty("--zero-search-gradient", "none");
-      root.style.setProperty("--zero-search-active", "0");
-    };
-  }, [gradient, term]);
 
   const startVoiceInput = () => {
     const Recognition =
@@ -172,21 +190,30 @@ export function SearchCompositeInput() {
     }
   };
 
+  const handleSubmit = () => {
+    if (results[0]) {
+      window.location.assign(results[0].href);
+    }
+  };
+
   return (
     <form
       role="search"
       className="search-composite-control"
-      onSubmit={(event) => event.preventDefault()}
+      onSubmit={(event) => {
+        event.preventDefault();
+        handleSubmit();
+      }}
     >
       <label htmlFor="zero-search" className="sr-only">
-        Search visual background
+        Search authoritative climate sources
       </label>
       <span aria-hidden="true">Search</span>
       <input
         id="zero-search"
         type="search"
         value={term}
-        placeholder="shade, methane, textile..."
+        placeholder="NASA, methane, energy..."
         autoComplete="off"
         onChange={(event) => setTerm(event.target.value)}
       />
@@ -217,6 +244,27 @@ export function SearchCompositeInput() {
         <button type="button" onClick={() => setTerm("")}>
           Clear
         </button>
+      ) : null}
+      {term ? (
+        <div className="search-results-panel" aria-live="polite">
+          {results.length > 0 ? (
+            results.map((result) => (
+              <a
+                key={result.id}
+                href={result.href}
+                className="search-result-item"
+              >
+                <span>{result.kind}</span>
+                <strong>{result.title}</strong>
+                <small>{result.source}</small>
+              </a>
+            ))
+          ) : (
+            <p>
+              No match in NASA, NOAA, OWID, or IEA-backed records.
+            </p>
+          )}
+        </div>
       ) : null}
       <span className="sr-only" aria-live="polite">
         {voiceMessage}

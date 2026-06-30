@@ -27,7 +27,7 @@ export function StatusHero({
         <div className="flex flex-col justify-between gap-4 sm:gap-6 lg:gap-8">
           <div className="object-card p-4 sm:p-8 lg:min-h-[30rem]">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="meta-label">Public cooling catalogue</p>
+              <p className="meta-label">Public field guide</p>
               <p className="metadata-pill px-3 py-1.5 text-sm font-semibold">
                 Live field guide
               </p>
@@ -39,7 +39,7 @@ export function StatusHero({
               What can we try next summer?
             </p>
             <p className="mt-4 max-w-2xl text-[1.03rem] leading-7 text-black/[0.62] sm:text-base">
-              A public catalogue of planetary cooling possibilities organized
+              A public field guide for planetary cooling possibilities organized
               by evidence, scale, risk, and what can actually be tested.
             </p>
           </div>
@@ -71,7 +71,7 @@ export function StatusHero({
           <div className="object-card flex min-h-[17rem] flex-col justify-between p-4 sm:min-h-[22rem] sm:p-7 lg:min-h-[25rem]">
             <div className="flex items-start justify-between gap-5">
               <div>
-                <p className="meta-label">Cooling index</p>
+                <p className="meta-label">Readiness index</p>
                 <p className="mt-3 max-w-md text-sm leading-6 text-black/[0.58]">
                   A living field guide for things that can be tested, funded,
                   regulated, installed, worn, painted, detected, or prototyped.

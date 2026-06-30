@@ -57,22 +57,34 @@ export default async function HomePage() {
           className="py-5 sm:py-12 lg:py-16"
           contentClassName="mx-auto max-w-7xl px-1.5 sm:px-8 lg:px-10"
         >
-          <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
-            <div>
-              <p className="meta-label">Possible, not proven</p>
-              <h2 className="display-tight-lg mt-4 text-balance text-[clamp(1.9rem,7.2vw,2.55rem)] text-zero-ink">
-                Imagination with an evidence brake.
+          <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="object-card bg-black p-5 text-white sm:p-8">
+              <p className="meta-label text-white">Evidence brake</p>
+              <h2 className="display-tight-lg mt-5 max-w-2xl text-balance text-[clamp(2rem,7vw,3.1rem)] text-white">
+                Speculation has to earn its place.
               </h2>
+              <p className="mt-6 max-w-xl text-[1.03rem] leading-7 text-white sm:text-lg sm:leading-8">
+                The strange ideas stay useful only when they expose their
+                mechanism, smallest test, and kill criteria.
+              </p>
             </div>
-            <p className="max-w-2xl text-[1.03rem] leading-7 text-zero-muted sm:text-lg sm:leading-8">
-              ZERO can think speculatively, but it has to say what would need to
-              be true, what could go wrong, and what evidence would change the
-              idea.
-            </p>
+            <div className="object-card grid content-between gap-8 p-5 sm:p-8">
+              <p className="max-w-xl text-[1.03rem] leading-7 text-zero-muted sm:text-lg sm:leading-8">
+                This area is a disciplined sandbox: possible futures, measured
+                with enough skepticism to make them actionable.
+              </p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {["Hypothesis", "Test", "Evidence"].map((label) => (
+                  <div key={label} className="metadata-tile px-4 py-3">
+                    <p className="meta-label">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           <div className="mt-5 grid gap-4 lg:grid-cols-3">
-            {possibleNotProven.map((idea) => (
-              <PossibleNotProvenCard key={idea.id} idea={idea} />
+            {possibleNotProven.map((idea, index) => (
+              <PossibleNotProvenCard key={idea.id} idea={idea} index={index} />
             ))}
           </div>
         </AtmosphericPanel>
