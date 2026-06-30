@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SearchCompositeInput } from "./search-composite-input";
-import { ZeroImageSequence } from "./zero-image-sequence";
 
 const navItems = [
-  { href: "/", label: "Index" },
+  { href: "/", label: "Catalogue" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/evidence", label: "Evidence" },
   { href: "/sources", label: "Sources" },
@@ -15,7 +14,37 @@ const navItems = [
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [sequenceOpen, setSequenceOpen] = useState(false);
+  const [fieldOpen, setFieldOpen] = useState(false);
+  const closeTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) {
+        window.clearTimeout(closeTimerRef.current);
+      }
+    };
+  }, []);
+
+  const openField = () => {
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+
+    setMenuOpen(false);
+    setFieldOpen(true);
+  };
+
+  const closeField = () => {
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+
+    closeTimerRef.current = window.setTimeout(() => {
+      setFieldOpen(false);
+      closeTimerRef.current = null;
+    }, 160);
+  };
 
   return (
     <header className="sticky top-0 z-30 bg-white/[0.86] px-3 py-1.5 backdrop-blur-xl sm:px-5 sm:py-2 lg:px-8">
@@ -23,11 +52,26 @@ export function SiteHeader() {
         <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
           <button
             type="button"
-            aria-label="Open ZERO image sequence"
+            aria-label="Show ZERO field"
             className="zero-wordmark pill-control-light flex items-baseline gap-3 px-4 py-2 sm:py-2.5"
-            onClick={() => {
-              setMenuOpen(false);
-              setSequenceOpen(true);
+            onPointerDown={openField}
+            onPointerUp={closeField}
+            onPointerCancel={closeField}
+            onPointerLeave={closeField}
+            onBlur={closeField}
+            onKeyDown={(event) => {
+              if (event.repeat) {
+                return;
+              }
+
+              if (event.key === " " || event.key === "Enter") {
+                openField();
+              }
+            }}
+            onKeyUp={(event) => {
+              if (event.key === " " || event.key === "Enter") {
+                closeField();
+              }
             }}
           >
             <span className="text-sm font-semibold uppercase text-zero-ink">ZERO</span>
@@ -81,10 +125,7 @@ export function SiteHeader() {
           </nav>
         ) : null}
       </div>
-      <ZeroImageSequence
-        open={sequenceOpen}
-        onClose={() => setSequenceOpen(false)}
-      />
+      {fieldOpen ? <div className="zero-field-overlay" aria-hidden="true" /> : null}
     </header>
   );
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
-import { ScrollToneController } from "@/components/scroll-tone-controller";
 import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
@@ -13,8 +12,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
-      <body className="scroll-tone-page">
-        <ScrollToneController />
+      <body>
         <SiteHeader />
         {children}
         <footer className="py-10">

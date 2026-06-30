@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import type { RoadmapLever } from "@/lib/types";
 import { AtmosphericPanel } from "./atmospheric-panel";
 import { SectionHeading } from "./section-heading";
@@ -19,47 +18,34 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
         contentClassName="mx-auto max-w-7xl px-2 sm:px-8 lg:px-10"
       >
         <SectionHeading
-          eyebrow="System bend"
-          title="The structures that have to move"
-          description="Progress becomes legible when energy, buildings, industry, land, finance, and policy shift together instead of as isolated gestures."
+          eyebrow="The Roadmap"
+          title="The systems that must bend"
+          description="ZERO organizes climate progress around the major levers required to move toward zero additional heat."
         />
         <div className="mt-5 grid gap-3 sm:mt-12">
           {visible.map((lever, index) => (
             <article
               key={lever.id}
-              className="object-card grid gap-5 p-5 lg:grid-cols-[6rem_0.9fr_1.1fr] lg:items-stretch lg:p-6"
-              style={
-                {
-                  "--bend-scale": `${Math.max(24, 96 - index * 11)}%`
-                } as CSSProperties
-              }
+              className="object-card grid gap-6 p-5 lg:grid-cols-[7rem_1fr_1fr] lg:p-6"
             >
-              <div className="grid content-between rounded-[1.35rem] bg-black p-4 text-white">
-                <span className="meta-label text-white">Lever</span>
-                <span className="display-tight-md text-[clamp(2.2rem,7vw,3.4rem)] text-white">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+              <div className="meta-label text-sm">
+                {String(index + 1).padStart(2, "0")}
               </div>
-              <div className="grid content-between gap-6">
-                <div>
-                  <h3 className="display-tight-soft text-balance text-2xl text-zero-ink">
-                    {lever.title}
-                  </h3>
-                  <p className="mt-4 text-sm leading-6 text-zero-muted">
-                    {lever.currentState}
-                  </p>
-                </div>
-                <div className="bend-rail" aria-hidden="true">
-                  <span />
-                </div>
+              <div>
+                <h3 className="display-tight-soft text-balance text-2xl text-zero-ink">
+                  {lever.title}
+                </h3>
+                <p className="mt-4 text-sm leading-6 text-zero-muted">
+                  {lever.currentState}
+                </p>
               </div>
-              <dl className="grid gap-5 rounded-[1.35rem] bg-black/[0.035] p-4 text-sm leading-6">
+              <dl className="grid gap-5 text-sm leading-6">
                 <div>
-                  <dt className="meta-label">What moves</dt>
+                  <dt className="meta-label">What needs to change</dt>
                   <dd className="mt-2 text-zero-ink">{lever.whatNeedsToChange}</dd>
                 </div>
                 <div>
-                  <dt className="meta-label">Required pace</dt>
+                  <dt className="meta-label">Speed required</dt>
                   <dd className="mt-2 text-zero-ink">{lever.speedRequired}</dd>
                 </div>
                 {!compact ? (
