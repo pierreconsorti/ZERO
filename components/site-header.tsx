@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { SearchCompositeInput } from "./search-composite-input";
 
 const navItems = [
@@ -65,12 +66,46 @@ function applyTheme(mode: ThemeMode) {
 }
 
 export function SiteHeader() {
+  const pathname = usePathname();
+  const headerRef = useRef<HTMLElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const themeMode = useSyncExternalStore(
     subscribeToThemeChange,
     getStoredThemeMode,
     () => "black"
   );
+
+  useEffect(() => {
+    if (!menuOpen) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
+
+      if (
+        target instanceof Node &&
+        headerRef.current &&
+        !headerRef.current.contains(target)
+      ) {
+        setMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen]);
 
   const toggleTheme = () => {
     const nextMode = themeMode === "black" ? "white" : "black";
@@ -87,7 +122,10 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-white/[0.86] px-3 py-1.5 backdrop-blur-xl sm:px-5 sm:py-2 lg:px-8">
+    <header
+      ref={headerRef}
+      className="sticky top-0 z-30 bg-white/[0.86] px-3 py-1.5 backdrop-blur-xl sm:px-5 sm:py-2 lg:px-8"
+    >
       <div className="mx-auto max-w-[92rem]">
         <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
           <button
@@ -135,7 +173,7 @@ export function SiteHeader() {
           <nav
             id="mobile-navigation"
             aria-label="Mobile navigation"
-            className="mt-2 grid gap-1 rounded-[1.5rem] bg-white/[0.92] p-2 shadow-quiet backdrop-blur-xl lg:hidden"
+            className="mobile-menu-panel mt-2 grid gap-1.5 p-2 backdrop-blur-xl lg:hidden"
           >
             <div className="px-1 pb-2 sm:hidden">
               <SearchCompositeInput />
@@ -144,8 +182,9 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={pathname === item.href ? "page" : undefined}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-full px-4 py-3 text-sm text-black/[0.72] transition hover:bg-black/[0.055] hover:text-black"
+                className="mobile-menu-link text-sm transition"
               >
                 {item.label}
               </Link>

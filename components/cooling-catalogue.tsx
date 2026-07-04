@@ -21,16 +21,23 @@ const cardSpans = [
 
 type CoolingCatalogueProps = {
   activeFilter?: InterventionFilter;
+  pulse?: boolean;
 };
 
-export function CoolingCatalogue({ activeFilter = "All" }: CoolingCatalogueProps) {
+export function CoolingCatalogue({
+  activeFilter = "All",
+  pulse = false
+}: CoolingCatalogueProps) {
   const visibleInterventions = filterInterventions(interventions, activeFilter);
+  const prototypeReadyCount = visibleInterventions.filter(
+    (intervention) => intervention.localPrototype
+  ).length;
 
   return (
     <section id="catalogue" className="px-1.5 py-5 sm:px-5 sm:py-8 lg:px-8">
       <AtmosphericPanel
         tone="mist"
-        className="py-5 sm:py-12 lg:py-16"
+        className={cn("py-5 sm:py-12 lg:py-16", pulse && "catalogue-pulse")}
         contentClassName="mx-auto max-w-7xl px-1.5 sm:px-8 lg:px-10"
       >
         <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
@@ -49,6 +56,10 @@ export function CoolingCatalogue({ activeFilter = "All" }: CoolingCatalogueProps
               {activeFilter === "All"
                 ? `${visibleInterventions.length} interventions`
                 : `${visibleInterventions.length} in ${activeFilter}`}
+            </p>
+            <p className="text-sm leading-6 text-zero-muted">
+              {prototypeReadyCount} of {visibleInterventions.length} visible
+              interventions include local prototype notes.
             </p>
           </div>
         </div>

@@ -10,12 +10,16 @@ type StatusHeroProps = {
   updatedAt: string;
   activeFilter: InterventionFilter;
   onFilterChange: (filter: InterventionFilter) => void;
+  visibleCount: number;
+  totalCount: number;
 };
 
 export function StatusHero({
   updatedAt,
   activeFilter,
-  onFilterChange
+  onFilterChange,
+  visibleCount,
+  totalCount
 }: StatusHeroProps) {
   return (
     <div className="px-1.5 pb-4 pt-2 sm:px-5 sm:pb-6 lg:px-8">
@@ -62,6 +66,9 @@ export function StatusHero({
                 </button>
               ))}
             </div>
+            <p className="mt-3 text-sm leading-6 text-zero-muted" aria-live="polite">
+              Showing {visibleCount} of {totalCount} interventions — {activeFilter}
+            </p>
           </div>
         </div>
 
