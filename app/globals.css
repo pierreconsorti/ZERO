@@ -346,37 +346,6 @@ header {
   padding: 0.52rem 0.72rem;
 }
 
-.climate-chart {
-  min-height: 11rem;
-  width: 100%;
-  color: rgb(var(--zero-page-fg-rgb));
-}
-
-.climate-chart-grid {
-  stroke: currentColor;
-  stroke-width: 1;
-  opacity: 0.14;
-}
-
-.climate-chart-range {
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-width: 3;
-  opacity: 0.72;
-}
-
-.climate-chart-dot {
-  fill: rgb(var(--zero-card-bg-rgb));
-  stroke: currentColor;
-  stroke-width: 1.5;
-}
-
-.climate-chart text {
-  fill: rgb(var(--zero-muted-rgb));
-  font-family: var(--font-zero-sans);
-  font-size: 0.62rem;
-}
-
 .climate-chart-empty {
   display: grid;
   min-height: 11rem;
@@ -385,6 +354,48 @@ header {
   background: rgb(var(--zero-page-fg-rgb) / 0.055);
   padding: 1rem;
   text-align: center;
+}
+
+.climate-history-table {
+  display: grid;
+  gap: 0.18rem;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.climate-history-row {
+  display: grid;
+  grid-template-columns: minmax(2.2rem, 0.72fr) repeat(3, minmax(2.3rem, 1fr)) minmax(3rem, 0.86fr);
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 0.8rem;
+  background: rgb(var(--zero-page-fg-rgb) / 0.055);
+  color: rgb(var(--zero-muted-rgb));
+  font-size: 0.78rem;
+  line-height: 1;
+  padding: 0.58rem 0.62rem;
+}
+
+.climate-history-head {
+  background: transparent;
+  color: rgb(var(--zero-muted-rgb));
+  font-size: 0.66rem;
+  font-weight: 650;
+  text-transform: uppercase;
+}
+
+.climate-history-row span:not(:first-child) {
+  text-align: right;
+}
+
+.climate-history-row span:first-child {
+  color: rgb(var(--zero-page-fg-rgb));
+  font-weight: 650;
+}
+
+.climate-history-row .latest {
+  color: rgb(var(--zero-page-fg-rgb));
+  font-weight: 750;
 }
 
 .catalogue-pulse {

@@ -18,18 +18,31 @@ type StoredLocation = {
   latitude: number;
   longitude: number;
   displayName: string;
+  placeSource?: string;
 };
 
 type MonthlyTemperature = {
   month: number;
-  averageMax: number;
-  averageMin: number;
+  yearlyHighs: Record<number, number>;
+  change: number | null;
+};
+
+type TemperatureHistory = {
+  years: number[];
+  rows: MonthlyTemperature[];
+  averageSummerHigh: number;
+  strongestChange: {
+    month: number;
+    earliestYear: number;
+    latestYear: number;
+    change: number;
+  } | null;
 };
 
 type ClimateState =
   | { status: "idle" }
   | { status: "loading" }
-  | { status: "ready"; monthly: MonthlyTemperature[]; averageSummerHigh: number }
+  | { status: "ready"; history: TemperatureHistory }
   | { status: "error"; message: string };
 
 export type ClimateProfile = {
@@ -58,6 +71,20 @@ type ArchiveResponse = {
     time?: string[];
     temperature_2m_max?: Array<number | null>;
     temperature_2m_min?: Array<number | null>;
+  };
+};
+
+type ReverseGeocodingResponse = {
+  display_name?: string;
+  address?: {
+    city?: string;
+    town?: string;
+    village?: string;
+    municipality?: string;
+    suburb?: string;
+    county?: string;
+    state?: string;
+    country?: string;
   };
 };
 
@@ -110,12 +137,17 @@ function parseStoredLocation(snapshot: string | null): StoredLocation | null {
       return null;
     }
 
-    const { latitude, longitude, displayName } = parsed;
+    const { latitude, longitude, displayName, placeSource } = parsed;
 
     return typeof latitude === "number" &&
       typeof longitude === "number" &&
       typeof displayName === "string"
-      ? { latitude, longitude, displayName }
+      ? {
+          latitude,
+          longitude,
+          displayName,
+          placeSource: typeof placeSource === "string" ? placeSource : undefined
+        }
       : null;
   } catch {
     return null;
@@ -146,54 +178,173 @@ function makeDisplayName(result: NonNullable<GeocodingResponse["results"]>[numbe
     .join(", ");
 }
 
-function aggregateMonthly(response: ArchiveResponse) {
+function formatCoordinates(latitude: number, longitude: number) {
+  return `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
+}
+
+function makeReverseDisplayName(response: ReverseGeocodingResponse) {
+  const address = response.address;
+  const locality =
+    address?.city ??
+    address?.town ??
+    address?.village ??
+    address?.municipality ??
+    address?.suburb ??
+    address?.county;
+  const place = [locality, address?.state, address?.country]
+    .filter(Boolean)
+    .join(", ");
+
+  return place || response.display_name || "";
+}
+
+async function reverseGeocodeLocation(latitude: number, longitude: number) {
+  try {
+    const params = new URLSearchParams({
+      format: "jsonv2",
+      lat: String(latitude),
+      lon: String(longitude),
+      zoom: "10",
+      addressdetails: "1"
+    });
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?${params.toString()}`,
+      {
+        headers: {
+          Accept: "application/json",
+          "Accept-Language": "en"
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Reverse geocoding failed");
+    }
+
+    const data = (await response.json()) as ReverseGeocodingResponse;
+    const displayName = makeReverseDisplayName(data);
+
+    return displayName
+      ? { displayName, placeSource: "OpenStreetMap Nominatim" }
+      : {
+          displayName: formatCoordinates(latitude, longitude),
+          placeSource: "Coordinates"
+        };
+  } catch {
+    return {
+      displayName: formatCoordinates(latitude, longitude),
+      placeSource: "Coordinates"
+    };
+  }
+}
+
+function aggregateMonthlyHistory(response: ArchiveResponse, latitude: number) {
   const times = response.daily?.time ?? [];
   const maxValues = response.daily?.temperature_2m_max ?? [];
-  const minValues = response.daily?.temperature_2m_min ?? [];
-  const buckets = Array.from({ length: 12 }, (_, month) => ({
-    month,
-    maxTotal: 0,
-    minTotal: 0,
-    count: 0
-  }));
+  const buckets = new Map<string, { year: number; month: number; total: number; count: number }>();
 
   times.forEach((time, index) => {
     const max = maxValues[index];
-    const min = minValues[index];
 
-    if (typeof max !== "number" || typeof min !== "number") {
+    if (typeof max !== "number") {
       return;
     }
 
+    const year = Number(time.slice(0, 4));
     const month = Number(time.slice(5, 7)) - 1;
-    const bucket = buckets[month];
+    const key = `${year}-${month}`;
+    const bucket = buckets.get(key) ?? {
+      year,
+      month,
+      total: 0,
+      count: 0
+    };
 
-    if (!bucket) {
-      return;
-    }
-
-    bucket.maxTotal += max;
-    bucket.minTotal += min;
+    bucket.total += max;
     bucket.count += 1;
+    buckets.set(key, bucket);
   });
 
-  return buckets
-    .filter((bucket) => bucket.count > 0)
-    .map((bucket) => ({
-      month: bucket.month,
-      averageMax: bucket.maxTotal / bucket.count,
-      averageMin: bucket.minTotal / bucket.count
-    }));
-}
+  const years = [...new Set([...buckets.values()].map((bucket) => bucket.year))]
+    .sort((a, b) => a - b)
+    .slice(-3);
+  const rows = Array.from({ length: 12 }, (_, month) => {
+    const yearlyHighs = years.reduce<Record<number, number>>((values, year) => {
+      const bucket = buckets.get(`${year}-${month}`);
 
-function getAverageSummerHigh(monthly: MonthlyTemperature[], latitude: number) {
+      if (bucket && bucket.count > 0) {
+        values[year] = bucket.total / bucket.count;
+      }
+
+      return values;
+    }, {});
+    const availableYears = years.filter((year) => yearlyHighs[year] !== undefined);
+    const earliestYear = availableYears[0];
+    const latestYear = availableYears[availableYears.length - 1];
+    const change =
+      earliestYear !== undefined &&
+      latestYear !== undefined &&
+      earliestYear !== latestYear
+        ? yearlyHighs[latestYear] - yearlyHighs[earliestYear]
+        : null;
+
+    return { month, yearlyHighs, change };
+  });
   const summerMonths = latitude >= 0 ? [5, 6, 7] : [11, 0, 1];
-  const values = monthly
-    .filter((month) => summerMonths.includes(month.month))
-    .map((month) => month.averageMax);
-  const pool = values.length > 0 ? values : monthly.map((month) => month.averageMax);
+  const latestYear = years[years.length - 1];
+  const latestSummerValues = rows
+    .filter((row) => summerMonths.includes(row.month))
+    .map((row) => row.yearlyHighs[latestYear])
+    .filter((value): value is number => typeof value === "number");
+  const fallbackSummerValues = rows
+    .filter((row) => summerMonths.includes(row.month))
+    .flatMap((row) => years.map((year) => row.yearlyHighs[year]))
+    .filter((value): value is number => typeof value === "number");
+  const pool =
+    latestSummerValues.length > 0
+      ? latestSummerValues
+      : fallbackSummerValues.length > 0
+        ? fallbackSummerValues
+        : rows
+            .flatMap((row) => years.map((year) => row.yearlyHighs[year]))
+            .filter((value): value is number => typeof value === "number");
+  const strongestChange = rows.reduce<TemperatureHistory["strongestChange"]>(
+    (strongest, row) => {
+      if (row.change === null) {
+        return strongest;
+      }
 
-  return pool.reduce((total, value) => total + value, 0) / Math.max(pool.length, 1);
+      const availableYears = years.filter(
+        (year) => row.yearlyHighs[year] !== undefined
+      );
+      const earliestYear = availableYears[0];
+      const latestAvailableYear = availableYears[availableYears.length - 1];
+
+      if (
+        earliestYear === undefined ||
+        latestAvailableYear === undefined ||
+        Math.abs(row.change) <= Math.abs(strongest?.change ?? 0)
+      ) {
+        return strongest;
+      }
+
+      return {
+        month: row.month,
+        earliestYear,
+        latestYear: latestAvailableYear,
+        change: row.change
+      };
+    },
+    null
+  );
+
+  return {
+    years,
+    rows,
+    averageSummerHigh:
+      pool.reduce((total, value) => total + value, 0) / Math.max(pool.length, 1),
+    strongestChange
+  };
 }
 
 function getRecommendationIds(averageSummerHigh: number) {
@@ -232,63 +383,92 @@ function getRecommendationIds(averageSummerHigh: number) {
     .map((result) => result.id);
 }
 
-function TemperatureRangeChart({ monthly }: { monthly: MonthlyTemperature[] }) {
-  const width = 360;
-  const height = 170;
-  const paddingX = 22;
-  const paddingY = 18;
-  const plotWidth = width - paddingX * 2;
-  const plotHeight = height - paddingY * 2 - 18;
-  const values = monthly.flatMap((month) => [month.averageMax, month.averageMin]);
-  const minValue = Math.floor(Math.min(...values) - 2);
-  const maxValue = Math.ceil(Math.max(...values) + 2);
-  const range = Math.max(maxValue - minValue, 1);
-  const y = (value: number) =>
-    paddingY + ((maxValue - value) / range) * plotHeight;
-  const x = (month: number) => paddingX + (month / 11) * plotWidth;
+function formatTemperature(value: number | undefined) {
+  return typeof value === "number" ? `${Math.round(value)}°` : "—";
+}
+
+function formatChange(value: number | null) {
+  if (value === null) {
+    return "—";
+  }
+
+  const rounded = Math.round(value);
+
+  return `${rounded > 0 ? "+" : ""}${rounded}°`;
+}
+
+function describeChange(value: number) {
+  const rounded = Math.round(value);
+
+  if (rounded === 0) {
+    return "is roughly flat";
+  }
+
+  return `${rounded > 0 ? "is up" : "is down"} ${Math.abs(rounded)}°`;
+}
+
+function TemperatureHistoryTable({ history }: { history: TemperatureHistory }) {
+  const latestYear = history.years[history.years.length - 1];
+  const callout = history.strongestChange;
+  const rowTemplate = `minmax(2.2rem, 0.72fr) repeat(${Math.max(
+    history.years.length,
+    1
+  )}, minmax(2.3rem, 1fr)) minmax(3rem, 0.86fr)`;
 
   return (
-    <svg
-      className="climate-chart"
-      role="img"
-      aria-label="Average monthly high and low temperature range"
-      viewBox={`0 0 ${width} ${height}`}
-    >
-      {[0, 0.5, 1].map((ratio) => (
-        <line
-          key={ratio}
-          x1={paddingX}
-          x2={width - paddingX}
-          y1={paddingY + ratio * plotHeight}
-          y2={paddingY + ratio * plotHeight}
-          className="climate-chart-grid"
-        />
-      ))}
-      {monthly.map((month) => {
-        const maxY = y(month.averageMax);
-        const minY = y(month.averageMin);
-        const monthX = x(month.month);
-
-        return (
-          <g key={month.month}>
-            <line
-              x1={monthX}
-              x2={monthX}
-              y1={maxY}
-              y2={minY}
-              className="climate-chart-range"
-            />
-            <circle cx={monthX} cy={maxY} r="2.2" className="climate-chart-dot" />
-            <circle cx={monthX} cy={minY} r="2.2" className="climate-chart-dot" />
-            {month.month % 2 === 0 ? (
-              <text x={monthX} y={height - 6} textAnchor="middle">
-                {monthLabels[month.month]}
-              </text>
-            ) : null}
-          </g>
-        );
-      })}
-    </svg>
+    <div className="grid gap-3">
+      {callout ? (
+        <p className="metadata-pill w-fit px-3 py-1.5 text-sm">
+          {monthLabels[callout.month]} {describeChange(callout.change)} since{" "}
+          {callout.earliestYear}
+        </p>
+      ) : null}
+      <div className="climate-history-table" role="table" aria-label="Monthly average high temperature by year">
+        <div
+          className="climate-history-row climate-history-head"
+          role="row"
+          style={{ gridTemplateColumns: rowTemplate }}
+        >
+          <span role="columnheader">Month</span>
+          {history.years.map((year) => (
+            <span
+              key={year}
+              role="columnheader"
+              className={year === latestYear ? "latest" : undefined}
+            >
+              {year}
+            </span>
+          ))}
+          <span role="columnheader">Change</span>
+        </div>
+        {history.rows.map((row) => (
+          <div
+            className="climate-history-row"
+            role="row"
+            key={row.month}
+            style={{ gridTemplateColumns: rowTemplate }}
+          >
+            <span role="cell">{monthLabels[row.month]}</span>
+            {history.years.map((year) => (
+              <span
+                key={year}
+                role="cell"
+                className={year === latestYear ? "latest" : undefined}
+              >
+                {formatTemperature(row.yearlyHighs[year])}
+              </span>
+            ))}
+            <span role="cell">{formatChange(row.change)}</span>
+          </div>
+        ))}
+      </div>
+      {history.years.length < 3 ? (
+        <p className="text-sm leading-6 text-zero-muted">
+          Showing {history.years.length} available year
+          {history.years.length === 1 ? "" : "s"} from the archive.
+        </p>
+      ) : null}
+    </div>
   );
 }
 
@@ -306,6 +486,44 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
   const [state, setState] = useState<ClimateState>({ status: "idle" });
   const [locationMessage, setLocationMessage] = useState("");
   const loadedLocationKeyRef = useRef<string | null>(null);
+  const reverseLookupKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!location || location.displayName !== "Your current location") {
+      return;
+    }
+
+    const lookupKey = `${location.latitude.toFixed(4)},${location.longitude.toFixed(4)}`;
+
+    if (reverseLookupKeyRef.current === lookupKey) {
+      return;
+    }
+
+    let cancelled = false;
+    const activeLocation = location;
+    reverseLookupKeyRef.current = lookupKey;
+
+    async function upgradeStoredPlaceName() {
+      const resolved = await reverseGeocodeLocation(
+        activeLocation.latitude,
+        activeLocation.longitude
+      );
+
+      if (!cancelled) {
+        writeStoredLocation({
+          ...activeLocation,
+          displayName: resolved.displayName,
+          placeSource: resolved.placeSource
+        });
+      }
+    }
+
+    void upgradeStoredPlaceName();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [location]);
 
   useEffect(() => {
     if (!location || !locationSnapshot) {
@@ -350,20 +568,17 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
         }
 
         const archive = (await response.json()) as ArchiveResponse;
-        const monthly = aggregateMonthly(archive);
+        const history = aggregateMonthlyHistory(archive, activeLocation.latitude);
 
-        if (monthly.length === 0) {
+        if (history.rows.every((row) => Object.keys(row.yearlyHighs).length === 0)) {
           throw new Error("No monthly temperature data returned");
         }
 
-        const averageSummerHigh = getAverageSummerHigh(
-          monthly,
-          activeLocation.latitude
-        );
+        const averageSummerHigh = history.averageSummerHigh;
         const recommendationIds = getRecommendationIds(averageSummerHigh);
 
         if (!cancelled) {
-          setState({ status: "ready", monthly, averageSummerHigh });
+          setState({ status: "ready", history });
           onProfileChange({
             locationName: activeLocation.displayName,
             averageSummerHigh,
@@ -397,7 +612,7 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
   );
   const headline =
     visibleState.status === "ready"
-      ? `Average summer high: ${Math.round(visibleState.averageSummerHigh)}°C`
+      ? `Average summer high: ${Math.round(visibleState.history.averageSummerHigh)}°C`
       : "Set a place to see recent heat patterns.";
 
   async function resolveCity(event: FormEvent<HTMLFormElement>) {
@@ -436,7 +651,8 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
       writeStoredLocation({
         latitude: result.latitude,
         longitude: result.longitude,
-        displayName: makeDisplayName(result)
+        displayName: makeDisplayName(result),
+        placeSource: "Open-Meteo geocoding"
       });
       setCity("");
       setLocationMessage("Location saved.");
@@ -454,12 +670,19 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
     setLocationMessage("Waiting for location permission.");
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        writeStoredLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          displayName: "Your current location"
+        setLocationMessage("Resolving your place.");
+        void reverseGeocodeLocation(
+          position.coords.latitude,
+          position.coords.longitude
+        ).then((resolved) => {
+          writeStoredLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            displayName: resolved.displayName,
+            placeSource: resolved.placeSource
+          });
+          setLocationMessage("Location saved.");
         });
-        setLocationMessage("Location saved.");
       },
       () => {
         setLocationMessage("Location permission was not granted. You can type a city instead.");
@@ -529,12 +752,18 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
           <div className="metadata-tile grid gap-4 p-4 sm:p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="meta-label">
+                <p className="meta-label">Resolved place</p>
+                <h3 className="display-tight-md mt-2 text-balance text-[clamp(1.45rem,5.2vw,1.95rem)] text-zero-ink">
                   {location ? location.displayName : "No place set"}
-                </p>
-                <p className="mt-2 text-lg font-semibold leading-tight text-zero-ink">
+                </h3>
+                <p className="mt-3 text-lg font-semibold leading-tight text-zero-ink">
                   {headline}
                 </p>
+                {location?.placeSource ? (
+                  <p className="mt-2 text-xs leading-5 text-zero-muted">
+                    Place name via {location.placeSource}.
+                  </p>
+                ) : null}
               </div>
               {visibleState.status === "loading" ? (
                 <span className="metadata-pill w-fit px-3 py-1.5 text-xs">
@@ -544,13 +773,13 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
             </div>
 
             {visibleState.status === "ready" ? (
-              <TemperatureRangeChart monthly={visibleState.monthly} />
+              <TemperatureHistoryTable history={visibleState.history} />
             ) : (
               <div className="climate-chart-empty">
                 <p>
                   {visibleState.status === "error"
                     ? visibleState.message
-                    : "Recent monthly temperature ranges will appear here."}
+                    : "Recent monthly temperature history will appear here."}
                 </p>
               </div>
             )}
