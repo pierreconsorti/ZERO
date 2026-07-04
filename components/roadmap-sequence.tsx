@@ -26,6 +26,7 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
           {visible.map((lever, index) => (
             <article
               key={lever.id}
+              id={lever.id}
               className="object-card grid gap-6 p-5 lg:grid-cols-[7rem_1fr_1fr] lg:p-6"
             >
               <div className="meta-label text-sm">

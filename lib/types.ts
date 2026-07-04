@@ -56,6 +56,7 @@ export type EvidenceProfile = {
   researchMaturity: string;
   knownDisagreements: string;
   reviewSchedule: string;
+  relatedInterventionIds?: string[];
 };
 
 export type WatchlistSignal = {

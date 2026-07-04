@@ -156,7 +156,12 @@ export const evidenceProfiles: EvidenceProfile[] = [
     researchMaturity: "Mature.",
     knownDisagreements:
       "Disagreements focus more on sensitivity ranges, damages, policy choices, and timelines than on the core cause.",
-    reviewSchedule: "Review annually, or sooner after major assessment updates."
+    reviewSchedule: "Review annually, or sooner after major assessment updates.",
+    relatedInterventionIds: [
+      "methane-leak-detection",
+      "solar-canopies",
+      "passive-cooling-retrofits"
+    ]
   },
   {
     id: "methane-near-term",
@@ -175,7 +180,12 @@ export const evidenceProfiles: EvidenceProfile[] = [
     researchMaturity: "Mature physics; improving measurement and attribution.",
     knownDisagreements:
       "Debate remains around accounting metrics, sector responsibility, and the feasibility of specific reductions.",
-    reviewSchedule: "Review quarterly with atmospheric data and annually with sector data."
+    reviewSchedule: "Review quarterly with atmospheric data and annually with sector data.",
+    relatedInterventionIds: [
+      "methane-leak-detection",
+      "solar-canopies",
+      "passive-cooling-retrofits"
+    ]
   },
   {
     id: "clean-energy-scale",
@@ -194,7 +204,12 @@ export const evidenceProfiles: EvidenceProfile[] = [
     researchMaturity: "Mature for power-sector direction; evolving for harder sectors.",
     knownDisagreements:
       "Researchers and institutions differ on nuclear, carbon capture, hydrogen, biomass, and grid buildout assumptions.",
-    reviewSchedule: "Review quarterly for deployment signals and annually for system pathways."
+    reviewSchedule: "Review quarterly for deployment signals and annually for system pathways.",
+    relatedInterventionIds: [
+      "solar-canopies",
+      "passive-cooling-retrofits",
+      "ultra-white-roof-coatings"
+    ]
   },
   {
     id: "adaptation-needed",
@@ -213,7 +228,13 @@ export const evidenceProfiles: EvidenceProfile[] = [
     researchMaturity: "Mature risk evidence; evolving implementation evidence.",
     knownDisagreements:
       "Debate remains over limits to adaptation, financing responsibility, and which metrics best capture resilience.",
-    reviewSchedule: "Review seasonally after major events and annually for planning standards."
+    reviewSchedule: "Review seasonally after major events and annually for planning standards.",
+    relatedInterventionIds: [
+      "shade-as-infrastructure",
+      "cool-pavements",
+      "reflective-cooling-textiles",
+      "urban-shade-corridors"
+    ]
   }
 ];
 

@@ -536,6 +536,34 @@ header {
   line-height: 1.12;
 }
 
+.evidence-claim-toggle {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.confidence-popover {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 80;
+  width: min(18rem, calc(100vw - 2rem));
+  border-radius: 1.1rem;
+  background: rgb(var(--zero-card-bg-rgb) / 0.98);
+  box-shadow: 0 22px 80px rgba(0, 0, 0, 0.2);
+  color: rgb(var(--zero-page-fg-rgb));
+  padding: 1rem;
+}
+
 .zero-wordmark {
   border: 0;
   font-family: var(--font-zero-sans);

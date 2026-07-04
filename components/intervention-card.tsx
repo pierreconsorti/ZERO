@@ -1,6 +1,7 @@
 import type { Intervention } from "@/lib/data/interventions";
 import { cn } from "@/lib/utils";
-import { SaveIdeaButton } from "./save-idea-button";
+import { ListenButton } from "./listen-button";
+import { ShareIdeaButton } from "./share-idea-button";
 
 type InterventionCardProps = {
   intervention: Intervention;
@@ -15,6 +16,8 @@ export function InterventionCard({
   featured = false,
   className
 }: InterventionCardProps) {
+  const narrationText = `${intervention.title}. ${intervention.whatMakesItInteresting} Mechanism: ${intervention.mechanism}`;
+
   return (
     <article
       id={intervention.id}
@@ -116,7 +119,17 @@ export function InterventionCard({
               {intervention.status}
             </span>
           </div>
-          <SaveIdeaButton id={intervention.id} />
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <ListenButton
+              text={narrationText}
+              className="w-full px-4 py-2 text-sm sm:w-auto"
+            />
+            <ShareIdeaButton
+              id={intervention.id}
+              title={intervention.title}
+              description={intervention.whatMakesItInteresting}
+            />
+          </div>
         </div>
       </div>
     </article>

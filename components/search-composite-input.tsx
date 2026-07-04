@@ -5,8 +5,7 @@ import {
   useId,
   useMemo,
   useRef,
-  useState,
-  useSyncExternalStore
+  useState
 } from "react";
 import {
   getInterventionFamilies,
@@ -18,7 +17,6 @@ import {
   type FieldPrototype,
   type Intervention
 } from "@/lib/data/interventions";
-import { readSavedIdeaIds, subscribeToFieldbookChange } from "@/lib/fieldbook";
 
 type InterventionMatch = {
   kind: "intervention";
@@ -158,15 +156,6 @@ export function SearchCompositeInput() {
   const [term, setTerm] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
   const [panelOpen, setPanelOpen] = useState(false);
-  const savedKey = useSyncExternalStore(
-    subscribeToFieldbookChange,
-    () => readSavedIdeaIds().join("\u001f"),
-    () => ""
-  );
-  const savedIds = useMemo(
-    () => new Set(savedKey ? savedKey.split("\u001f") : []),
-    [savedKey]
-  );
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -300,10 +289,7 @@ export function SearchCompositeInput() {
                       className="search-result-item"
                       onClick={() => setPanelOpen(false)}
                     >
-                      <span>
-                        Intervention
-                        {savedIds.has(result.item.id) ? " · Saved" : ""}
-                      </span>
+                      <span>Intervention</span>
                       <strong>{result.item.title}</strong>
                       <small>{interventionSubtitle(result.item)}</small>
                     </a>

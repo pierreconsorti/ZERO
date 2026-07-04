@@ -4,6 +4,13 @@ import { evidenceProfiles } from "@/lib/content";
 
 export const revalidate = 43200;
 
+const evidenceJumpLabels: Record<string, string> = {
+  "warming-human-caused": "Warming cause",
+  "methane-near-term": "Methane",
+  "clean-energy-scale": "Energy transition",
+  "adaptation-needed": "Adaptation"
+};
+
 export default function EvidencePage() {
   return (
     <main>
@@ -13,6 +20,20 @@ export default function EvidencePage() {
           title="A system for becoming progressively less wrong"
           description="ZERO separates observation, interpretation, uncertainty, and review cadence. The goal is not performative certainty. The goal is clearer public reasoning."
         />
+        <nav
+          aria-label="Evidence sections"
+          className="mt-7 flex flex-wrap gap-2"
+        >
+          {evidenceProfiles.map((profile) => (
+            <a
+              key={profile.id}
+              href={`#${profile.id}`}
+              className="pill-control-light px-3 py-1.5 text-sm transition hover:bg-black hover:text-white"
+            >
+              {evidenceJumpLabels[profile.id] ?? profile.claim}
+            </a>
+          ))}
+        </nav>
         <div className="mt-8 grid gap-5 sm:mt-12">
           {evidenceProfiles.map((profile) => (
             <EvidenceProfileCard key={profile.id} profile={profile} />
