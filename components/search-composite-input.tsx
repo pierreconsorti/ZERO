@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { roadmapLevers } from "@/lib/content";
 import { sourceRegistry } from "@/lib/sources";
 
@@ -95,6 +95,7 @@ function matchesQuery(result: SearchResult, query: string) {
 }
 
 export function SearchCompositeInput() {
+  const inputId = useId();
   const [term, setTerm] = useState("");
   const [voiceMessage, setVoiceMessage] = useState("");
   const [isListening, setIsListening] = useState(false);
@@ -205,12 +206,12 @@ export function SearchCompositeInput() {
         handleSubmit();
       }}
     >
-      <label htmlFor="zero-search" className="sr-only">
+      <label htmlFor={inputId} className="sr-only">
         Search authoritative climate sources
       </label>
       <span aria-hidden="true">Search</span>
       <input
-        id="zero-search"
+        id={inputId}
         type="search"
         value={term}
         placeholder="NASA, methane, energy..."

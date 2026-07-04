@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { SearchCompositeInput } from "./search-composite-input";
 
 const navItems = [
@@ -12,38 +12,78 @@ const navItems = [
   { href: "/about", label: "About" }
 ] as const;
 
+type ThemeMode = "black" | "white";
+
+const themeStorageKey = "zero-theme-mode";
+const themeChangeEvent = "zero-theme-mode-change";
+let fallbackThemeMode: ThemeMode = "black";
+
+function getStoredThemeMode(): ThemeMode {
+  if (typeof window === "undefined") {
+    return "black";
+  }
+
+  try {
+    return window.localStorage.getItem(themeStorageKey) === "white"
+      ? "white"
+      : "black";
+  } catch {
+    return fallbackThemeMode;
+  }
+}
+
+function subscribeToThemeChange(onStoreChange: () => void) {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
+
+  const handleChange = () => onStoreChange();
+
+  window.addEventListener(themeChangeEvent, handleChange);
+  window.addEventListener("storage", handleChange);
+
+  return () => {
+    window.removeEventListener(themeChangeEvent, handleChange);
+    window.removeEventListener("storage", handleChange);
+  };
+}
+
+function applyTheme(mode: ThemeMode) {
+  const root = document.documentElement;
+
+  root.classList.add("theme-switching");
+
+  if (mode === "white") {
+    root.dataset.theme = "light";
+  } else {
+    delete root.dataset.theme;
+  }
+
+  window.requestAnimationFrame(() => {
+    root.classList.remove("theme-switching");
+  });
+}
+
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [fieldOpen, setFieldOpen] = useState(false);
-  const closeTimerRef = useRef<number | null>(null);
+  const themeMode = useSyncExternalStore(
+    subscribeToThemeChange,
+    getStoredThemeMode,
+    () => "black"
+  );
 
-  useEffect(() => {
-    return () => {
-      if (closeTimerRef.current) {
-        window.clearTimeout(closeTimerRef.current);
-      }
-    };
-  }, []);
+  const toggleTheme = () => {
+    const nextMode = themeMode === "black" ? "white" : "black";
 
-  const openField = () => {
-    if (closeTimerRef.current) {
-      window.clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
+    fallbackThemeMode = nextMode;
+    applyTheme(nextMode);
+    try {
+      window.localStorage.setItem(themeStorageKey, nextMode);
+    } catch {
+      // The visual toggle should still work if storage is unavailable.
     }
-
+    window.dispatchEvent(new Event(themeChangeEvent));
     setMenuOpen(false);
-    setFieldOpen(true);
-  };
-
-  const closeField = () => {
-    if (closeTimerRef.current) {
-      window.clearTimeout(closeTimerRef.current);
-    }
-
-    closeTimerRef.current = window.setTimeout(() => {
-      setFieldOpen(false);
-      closeTimerRef.current = null;
-    }, 160);
   };
 
   return (
@@ -52,31 +92,16 @@ export function SiteHeader() {
         <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
           <button
             type="button"
-            aria-label="Show ZERO field"
+            aria-label="Toggle black and white mode"
+            aria-pressed={themeMode === "white"}
             className="zero-wordmark pill-control-light flex items-baseline gap-3 px-4 py-2 sm:py-2.5"
-            onPointerDown={openField}
-            onPointerUp={closeField}
-            onPointerCancel={closeField}
-            onPointerLeave={closeField}
-            onBlur={closeField}
-            onKeyDown={(event) => {
-              if (event.repeat) {
-                return;
-              }
-
-              if (event.key === " " || event.key === "Enter") {
-                openField();
-              }
-            }}
-            onKeyUp={(event) => {
-              if (event.key === " " || event.key === "Enter") {
-                closeField();
-              }
-            }}
+            onClick={toggleTheme}
           >
             <span className="text-sm font-semibold uppercase text-zero-ink">ZERO</span>
           </button>
-          <SearchCompositeInput />
+          <div className="hidden sm:block">
+            <SearchCompositeInput />
+          </div>
           <button
             type="button"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -112,6 +137,9 @@ export function SiteHeader() {
             aria-label="Mobile navigation"
             className="mt-2 grid gap-1 rounded-[1.5rem] bg-white/[0.92] p-2 shadow-quiet backdrop-blur-xl lg:hidden"
           >
+            <div className="px-1 pb-2 sm:hidden">
+              <SearchCompositeInput />
+            </div>
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -125,7 +153,6 @@ export function SiteHeader() {
           </nav>
         ) : null}
       </div>
-      {fieldOpen ? <div className="zero-field-overlay" aria-hidden="true" /> : null}
     </header>
   );
 }

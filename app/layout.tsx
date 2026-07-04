@@ -12,6 +12,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(localStorage.getItem('zero-theme-mode')==='white'){document.documentElement.dataset.theme='light'}}catch(e){}"
+          }}
+        />
+      </head>
       <body>
         <SiteHeader />
         {children}
