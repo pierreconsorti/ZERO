@@ -54,10 +54,8 @@ export function StatusHero({
                   aria-pressed={activeFilter === filter}
                   onClick={() => onFilterChange(filter)}
                   className={cn(
-                    "rounded-full px-3 py-1.5 text-sm transition",
-                    activeFilter === filter
-                      ? "bg-black text-white shadow-quiet"
-                      : "pill-control hover:bg-black/[0.08] hover:text-black"
+                    "filter-chip px-3 py-1.5 text-sm transition",
+                    activeFilter === filter && "shadow-quiet"
                   )}
                 >
                   {filter}

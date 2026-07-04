@@ -14,6 +14,11 @@
   --zero-panel-rgb: 14 14 14;
   --zero-card-bg-rgb: 20 20 20;
   --zero-rule-rgb: 46 46 46;
+  --chip-bg-rgb: 32 32 32;
+  --chip-fg-rgb: 245 245 245;
+  --chip-hover-bg-rgb: 44 44 44;
+  --chip-active-bg-rgb: 255 255 255;
+  --chip-active-fg-rgb: 0 0 0;
   font-synthesis-weight: none;
   text-rendering: optimizeLegibility;
 }
@@ -28,6 +33,11 @@
   --zero-panel-rgb: 246 246 246;
   --zero-card-bg-rgb: 255 255 255;
   --zero-rule-rgb: 236 236 236;
+  --chip-bg-rgb: 238 238 238;
+  --chip-fg-rgb: 0 0 0;
+  --chip-hover-bg-rgb: 226 226 226;
+  --chip-active-bg-rgb: 0 0 0;
+  --chip-active-fg-rgb: 255 255 255;
 }
 
 * {
@@ -155,6 +165,22 @@ html.theme-switching *::after {
     border-radius: 999px;
     background: rgb(var(--zero-page-fg-rgb));
     color: rgb(var(--zero-page-bg-rgb));
+  }
+
+  .filter-chip {
+    border-radius: 999px;
+    background: rgb(var(--chip-bg-rgb));
+    color: rgb(var(--chip-fg-rgb));
+  }
+
+  .filter-chip:hover {
+    background: rgb(var(--chip-hover-bg-rgb));
+  }
+
+  .filter-chip[aria-pressed="true"] {
+    background: rgb(var(--chip-active-bg-rgb));
+    color: rgb(var(--chip-active-fg-rgb));
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.12);
   }
 
   .metadata-pill {
