@@ -1,62 +1,28 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import {
+  readSavedIdeaIds,
+  subscribeToFieldbookChange,
+  toggleSavedIdea
+} from "@/lib/fieldbook";
 
 type SaveIdeaButtonProps = {
   id: string;
 };
 
-const storageKey = "zero-fieldbook";
-
-function readSavedIds() {
-  if (typeof window === "undefined") {
-    return [];
-  }
-
-  try {
-    const existing = window.localStorage.getItem(storageKey);
-    const parsed = existing ? (JSON.parse(existing) as unknown) : [];
-
-    return Array.isArray(parsed) && parsed.every((item) => typeof item === "string")
-      ? parsed
-      : [];
-  } catch {
-    return [];
-  }
-}
-
-function subscribeToFieldbook(callback: () => void) {
-  window.addEventListener("storage", callback);
-  window.addEventListener("zero-fieldbook-change", callback);
-
-  return () => {
-    window.removeEventListener("storage", callback);
-    window.removeEventListener("zero-fieldbook-change", callback);
-  };
-}
-
 export function SaveIdeaButton({ id }: SaveIdeaButtonProps) {
   const saved = useSyncExternalStore(
-    subscribeToFieldbook,
-    () => readSavedIds().includes(id),
+    subscribeToFieldbookChange,
+    () => readSavedIdeaIds().includes(id),
     () => false
   );
-
-  function toggleSaved() {
-    const savedIds = readSavedIds();
-    const next = savedIds.includes(id)
-      ? savedIds.filter((savedId) => savedId !== id)
-      : [...savedIds, id];
-
-    window.localStorage.setItem(storageKey, JSON.stringify(next));
-    window.dispatchEvent(new Event("zero-fieldbook-change"));
-  }
 
   return (
     <button
       type="button"
       aria-pressed={saved}
-      onClick={toggleSaved}
+      onClick={() => toggleSavedIdea(id)}
       className="pill-control-dark w-full px-4 py-2 text-sm shadow-quiet transition hover:bg-black/[0.82] sm:w-auto"
     >
       {saved ? "Saved" : "Save idea"}

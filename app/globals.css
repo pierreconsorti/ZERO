@@ -299,24 +299,6 @@ header {
   padding: 0.42rem 0.58rem;
 }
 
-.search-composite-control .search-voice-button {
-  display: grid;
-  height: 1.85rem;
-  width: 1.85rem;
-  place-items: center;
-  padding: 0;
-}
-
-.search-composite-control .search-voice-button[aria-pressed="true"] {
-  background: rgb(var(--zero-page-fg-rgb) / 0.16);
-  box-shadow: 0 0 0 4px rgb(var(--zero-page-fg-rgb) / 0.07);
-}
-
-.search-composite-control .search-voice-button svg {
-  height: 0.95rem;
-  width: 0.95rem;
-}
-
 .search-results-panel {
   position: absolute;
   left: 0;
@@ -325,10 +307,33 @@ header {
   z-index: 60;
   display: grid;
   gap: 0.35rem;
+  max-height: min(28rem, calc(100vh - 6rem));
+  overflow-y: auto;
   border-radius: 1.1rem;
   background: rgb(var(--zero-card-bg-rgb) / 0.96);
   box-shadow: 0 24px 90px rgba(0, 0, 0, 0.12);
   padding: 0.45rem;
+}
+
+.search-results-section,
+.search-suggestions {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.search-results-group-label {
+  padding: 0.25rem 0.35rem;
+  text-transform: uppercase;
+}
+
+.search-suggestion-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.search-suggestion-grid button {
+  background: rgb(var(--zero-page-fg-rgb) / 0.08);
 }
 
 .search-result-item {

@@ -7,7 +7,10 @@ type FieldPrototypeCardProps = {
 
 export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps) {
   return (
-    <article className="object-card relative overflow-hidden p-4 text-black sm:p-6">
+    <article
+      id={prototype.id}
+      className="object-card relative overflow-hidden p-4 text-black sm:p-6"
+    >
       <div className="relative flex items-start justify-between gap-6">
         <p className="meta-label">
           Prototype {String(index + 1).padStart(2, "0")}

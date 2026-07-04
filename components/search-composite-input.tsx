@@ -1,204 +1,251 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import { roadmapLevers } from "@/lib/content";
-import { sourceRegistry } from "@/lib/sources";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore
+} from "react";
+import {
+  getInterventionFamilies,
+  interventionFamilies
+} from "@/lib/data/intervention-filters";
+import {
+  fieldPrototypes,
+  interventions,
+  type FieldPrototype,
+  type Intervention
+} from "@/lib/data/interventions";
+import { readSavedIdeaIds, subscribeToFieldbookChange } from "@/lib/fieldbook";
 
-type SpeechRecognitionResultLike = {
-  readonly 0: {
-    readonly transcript: string;
-  };
+type InterventionMatch = {
+  kind: "intervention";
+  item: Intervention;
+  score: number;
 };
 
-type SpeechRecognitionEventLike = Event & {
-  readonly results: {
-    readonly length: number;
-    readonly [index: number]: SpeechRecognitionResultLike;
-  };
+type FieldPrototypeMatch = {
+  kind: "prototype";
+  item: FieldPrototype;
+  score: number;
 };
 
-type SpeechRecognitionLike = EventTarget & {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  onend: (() => void) | null;
-  onerror: (() => void) | null;
-  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
-  start: () => void;
-  stop: () => void;
-};
+type SearchResult = InterventionMatch | FieldPrototypeMatch;
 
-type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+function fieldIncludes(text: string | string[] | undefined, query: string) {
+  const value = Array.isArray(text) ? text.join(" ") : text;
 
-type SearchResult = {
-  id: string;
-  title: string;
-  source: string;
-  body: string;
-  href: string;
-  kind: "Source" | "System lever";
-};
-
-declare global {
-  interface Window {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
-  }
+  return value ? value.toLowerCase().includes(query) : false;
 }
 
-const trustedNames = [
-  "NASA",
-  "NOAA",
-  "Our World in Data",
-  "OWID",
-  "IEA",
-  "International Energy Agency"
-];
+function searchInterventions(query: string, items: Intervention[]) {
+  const q = query.trim().toLowerCase();
 
-const searchEntries: SearchResult[] = [
-  ...sourceRegistry
-    .filter((source) =>
-      trustedNames.some((trusted) => source.name.includes(trusted))
-    )
-    .map((source) => ({
-      id: source.id,
-      title: source.name,
-      source: source.trustLevel,
-      body: `${source.usedFor} ${source.limitations}`,
-      href: source.url,
-      kind: "Source" as const
-    })),
-  ...roadmapLevers
-    .filter((lever) =>
-      lever.dataSources.some((source) =>
-        trustedNames.some((trusted) => source.includes(trusted))
-      )
-    )
-    .map((lever) => ({
-      id: lever.id,
-      title: lever.title,
-      source: lever.dataSources.join(" / "),
-      body: `${lever.currentState} ${lever.whatNeedsToChange}`,
-      href: "/roadmap",
-      kind: "System lever" as const
-    }))
-];
+  if (!q) {
+    return [];
+  }
 
-function matchesQuery(result: SearchResult, query: string) {
-  const haystack = `${result.title} ${result.source} ${result.body}`.toLowerCase();
-  const terms = query
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean);
+  return items
+    .map((item, index) => {
+      const families = getInterventionFamilies(item).join(" ");
+      const fields = [
+        { text: item.title, weight: 3 },
+        { text: families, weight: 2 },
+        { text: item.category, weight: 2 },
+        { text: item.mechanism, weight: 1 },
+        {
+          text: `${item.whatMakesItInteresting} ${item.localPrototype}`,
+          weight: 1
+        },
+        { text: item.risks, weight: 1 },
+        {
+          text: `${item.scale.join(" ")} ${item.whatToMeasure.join(" ")} ${
+            item.status
+          } ${item.evidenceStrength} ${item.maturity}`,
+          weight: 1
+        }
+      ];
+      const score = fields.reduce(
+        (total, field) =>
+          fieldIncludes(field.text, q) ? total + field.weight : total,
+        0
+      );
 
-  return terms.every((term) => haystack.includes(term));
+      return { kind: "intervention" as const, item, score, index };
+    })
+    .filter((result) => result.score > 0)
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .map((result) => ({
+      kind: result.kind,
+      item: result.item,
+      score: result.score
+    }));
+}
+
+function searchFieldPrototypes(query: string, items: FieldPrototype[]) {
+  const q = query.trim().toLowerCase();
+
+  if (!q) {
+    return [];
+  }
+
+  return items
+    .map((item, index) => {
+      const fields = [
+        { text: item.title, weight: 3 },
+        {
+          text: `${item.whatToTest} ${item.whereToTryIt}`,
+          weight: 1
+        },
+        { text: item.whatToMeasure, weight: 1 },
+        { text: item.toolsNeeded, weight: 1 },
+        { text: `${item.evidenceValue} ${item.possibleRisk}`, weight: 1 }
+      ];
+      const score = fields.reduce(
+        (total, field) =>
+          fieldIncludes(field.text, q) ? total + field.weight : total,
+        0
+      );
+
+      return { kind: "prototype" as const, item, score, index };
+    })
+    .filter((result) => result.score > 0)
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .map((result) => ({
+      kind: result.kind,
+      item: result.item,
+      score: result.score
+    }));
+}
+
+function closestFallback(query: string, items: Intervention[], max = 3) {
+  const q = query.trim().toLowerCase();
+  const matchedFamily = interventionFamilies.find((family) => {
+    const normalized = family.toLowerCase();
+
+    return normalized.includes(q) || q.includes(normalized);
+  });
+  const pool = matchedFamily
+    ? items.filter((item) => getInterventionFamilies(item).includes(matchedFamily))
+    : items;
+
+  return pool.slice(0, max).map((item) => ({
+    kind: "intervention" as const,
+    item,
+    score: 0
+  }));
+}
+
+function resultHref(result: SearchResult) {
+  return `/#${result.item.id}`;
+}
+
+function interventionSubtitle(item: Intervention) {
+  const families = getInterventionFamilies(item);
+
+  return `${families.join(" / ")} · ${item.maturity} · Evidence ${item.evidenceStrength}`;
+}
+
+function prototypeSubtitle(item: FieldPrototype) {
+  return `Field prototype · ${item.whatToMeasure.slice(0, 2).join(" / ")}`;
 }
 
 export function SearchCompositeInput() {
   const inputId = useId();
+  const formRef = useRef<HTMLFormElement | null>(null);
   const [term, setTerm] = useState("");
-  const [voiceMessage, setVoiceMessage] = useState("");
-  const [isListening, setIsListening] = useState(false);
-  const [voiceAvailable, setVoiceAvailable] = useState(false);
-  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
-
-  const results = useMemo(() => {
-    const query = term.trim();
-
-    if (!query) {
-      return [];
-    }
-
-    return searchEntries.filter((entry) => matchesQuery(entry, query)).slice(0, 5);
-  }, [term]);
-
-  const stopRecognition = useCallback(() => {
-    try {
-      recognitionRef.current?.stop();
-    } catch {
-      // Some browsers throw if recognition is already idle.
-    }
-  }, []);
+  const [debouncedTerm, setDebouncedTerm] = useState("");
+  const [panelOpen, setPanelOpen] = useState(false);
+  const savedKey = useSyncExternalStore(
+    subscribeToFieldbookChange,
+    () => readSavedIdeaIds().join("\u001f"),
+    () => ""
+  );
+  const savedIds = useMemo(
+    () => new Set(savedKey ? savedKey.split("\u001f") : []),
+    [savedKey]
+  );
 
   useEffect(() => {
-    const supportFrame = window.requestAnimationFrame(() => {
-      setVoiceAvailable(
-        Boolean(window.SpeechRecognition ?? window.webkitSpeechRecognition)
-      );
-    });
+    const timeout = window.setTimeout(() => {
+      setDebouncedTerm(term);
+    }, 150);
+
+    return () => window.clearTimeout(timeout);
+  }, [term]);
+
+  useEffect(() => {
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
+
+      if (
+        target instanceof Node &&
+        formRef.current &&
+        !formRef.current.contains(target)
+      ) {
+        setPanelOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setPanelOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.cancelAnimationFrame(supportFrame);
-      const recognition = recognitionRef.current;
-
-      if (recognition) {
-        recognition.onend = null;
-        recognition.onerror = null;
-        recognition.onresult = null;
-        stopRecognition();
-        recognitionRef.current = null;
-      }
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [stopRecognition]);
+  }, []);
 
-  const startVoiceInput = () => {
-    const Recognition =
-      window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
+  const query = debouncedTerm.trim();
+  const exactInterventions = useMemo(
+    () => searchInterventions(query, interventions),
+    [query]
+  );
+  const exactPrototypes = useMemo(
+    () => searchFieldPrototypes(query, fieldPrototypes),
+    [query]
+  );
+  const isFallback =
+    query.length > 0 &&
+    exactInterventions.length === 0 &&
+    exactPrototypes.length === 0;
+  const fallbackInterventions = useMemo(
+    () => (isFallback ? closestFallback(query, interventions) : []),
+    [isFallback, query]
+  );
+  const visibleInterventions = isFallback
+    ? fallbackInterventions
+    : exactInterventions.slice(0, 4);
+  const visiblePrototypes = isFallback ? [] : exactPrototypes.slice(0, 3);
+  const firstResult = visibleInterventions[0] ?? visiblePrototypes[0] ?? null;
+  const fallbackNames = fallbackInterventions
+    .map((result) => result.item.title)
+    .join(", ");
 
-    if (!Recognition) {
-      setVoiceMessage("Voice input is not available in this browser.");
-      return;
-    }
-
-    if (isListening) {
-      stopRecognition();
-      setIsListening(false);
-      setVoiceMessage("Stopped listening.");
-      return;
-    }
-
-    stopRecognition();
-
-    const recognition = new Recognition();
-    recognitionRef.current = recognition;
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.lang = "en-US";
-    recognition.onresult = (event) => {
-      const transcript =
-        event.results.length > 0 ? event.results[0][0].transcript.trim() : "";
-
-      if (transcript) {
-        setTerm(transcript);
-        setVoiceMessage(`Heard: ${transcript}`);
-      }
-    };
-    recognition.onerror = () => {
-      setVoiceMessage("Voice input stopped before a term was captured.");
-      setIsListening(false);
-    };
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    setIsListening(true);
-    setVoiceMessage("Listening.");
-    try {
-      recognition.start();
-    } catch {
-      setIsListening(false);
-      setVoiceMessage("Voice input could not start.");
-    }
+  const runSuggestionSearch = (suggestion: string) => {
+    setTerm(suggestion);
+    setDebouncedTerm(suggestion);
+    setPanelOpen(true);
   };
 
   const handleSubmit = () => {
-    if (results[0]) {
-      window.location.assign(results[0].href);
+    if (firstResult) {
+      window.location.assign(resultHref(firstResult));
+      setPanelOpen(false);
     }
   };
 
   return (
     <form
+      ref={formRef}
       role="search"
       className="search-composite-control"
       onSubmit={(event) => {
@@ -207,69 +254,98 @@ export function SearchCompositeInput() {
       }}
     >
       <label htmlFor={inputId} className="sr-only">
-        Search authoritative climate sources
+        Search ZERO catalogue
       </label>
       <span aria-hidden="true">Search</span>
       <input
         id={inputId}
         type="search"
         value={term}
-        placeholder="NASA, methane, energy..."
+        placeholder="shade, methane, cool roofs..."
         autoComplete="off"
-        onChange={(event) => setTerm(event.target.value)}
+        onChange={(event) => {
+          setTerm(event.target.value);
+          setPanelOpen(true);
+        }}
+        onFocus={() => setPanelOpen(true)}
       />
-      {voiceAvailable ? (
+      {term ? (
         <button
           type="button"
-          className="search-voice-button"
-          aria-label={isListening ? "Listening for search term" : "Use voice input"}
-          aria-pressed={isListening}
-          onClick={startVoiceInput}
+          onClick={() => {
+            setTerm("");
+            setDebouncedTerm("");
+            setPanelOpen(true);
+          }}
         >
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          >
-            <path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z" />
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-            <path d="M12 19v3" />
-          </svg>
-        </button>
-      ) : null}
-      {term ? (
-        <button type="button" onClick={() => setTerm("")}>
           Clear
         </button>
       ) : null}
-      {term ? (
+      {panelOpen ? (
         <div className="search-results-panel" aria-live="polite">
-          {results.length > 0 ? (
-            results.map((result) => (
-              <a
-                key={result.id}
-                href={result.href}
-                className="search-result-item"
-              >
-                <span>{result.kind}</span>
-                <strong>{result.title}</strong>
-                <small>{result.source}</small>
-              </a>
-            ))
+          {term.trim() ? (
+            <>
+              {isFallback ? (
+                <p>
+                  No exact match for &quot;{query}&quot; — closest: {fallbackNames}
+                </p>
+              ) : null}
+              {visibleInterventions.length > 0 ? (
+                <div className="search-results-section">
+                  <p className="search-results-group-label">Interventions</p>
+                  {visibleInterventions.map((result) => (
+                    <a
+                      key={result.item.id}
+                      href={resultHref(result)}
+                      className="search-result-item"
+                      onClick={() => setPanelOpen(false)}
+                    >
+                      <span>
+                        Intervention
+                        {savedIds.has(result.item.id) ? " · Saved" : ""}
+                      </span>
+                      <strong>{result.item.title}</strong>
+                      <small>{interventionSubtitle(result.item)}</small>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+              {visiblePrototypes.length > 0 ? (
+                <div className="search-results-section">
+                  <p className="search-results-group-label">Field prototypes</p>
+                  {visiblePrototypes.map((result) => (
+                    <a
+                      key={result.item.id}
+                      href={resultHref(result)}
+                      className="search-result-item"
+                      onClick={() => setPanelOpen(false)}
+                    >
+                      <span>Field prototype</span>
+                      <strong>{result.item.title}</strong>
+                      <small>{prototypeSubtitle(result.item)}</small>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </>
           ) : (
-            <p>
-              No match in NASA, NOAA, OWID, or IEA-backed records.
-            </p>
+            <div className="search-suggestions">
+              <p className="search-results-group-label">Try searching</p>
+              <div className="search-suggestion-grid">
+                {interventionFamilies.slice(0, 6).map((family) => (
+                  <button
+                    key={family}
+                    type="button"
+                    onClick={() => runSuggestionSearch(family)}
+                  >
+                    {family}
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       ) : null}
-      <span className="sr-only" aria-live="polite">
-        {voiceMessage}
-      </span>
     </form>
   );
 }

@@ -11,6 +11,11 @@ export const interventionFilterOptions = [
 ] as const;
 
 export type InterventionFilter = (typeof interventionFilterOptions)[number];
+export type InterventionFamily = Exclude<InterventionFilter, "All">;
+
+export const interventionFamilies = interventionFilterOptions.filter(
+  (filter): filter is InterventionFamily => filter !== "All"
+);
 
 const interventionFilterIds: Record<
   Exclude<InterventionFilter, "All">,
@@ -36,6 +41,12 @@ const interventionFilterIds: Record<
   Methane: ["methane-leak-detection"],
   "Passive cooling": ["passive-cooling-retrofits"]
 };
+
+export function getInterventionFamilies(intervention: Pick<Intervention, "id">) {
+  return interventionFamilies.filter((family) =>
+    interventionFilterIds[family].includes(intervention.id)
+  );
+}
 
 export function filterInterventions(
   interventions: Intervention[],
