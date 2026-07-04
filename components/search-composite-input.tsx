@@ -153,6 +153,7 @@ function prototypeSubtitle(item: FieldPrototype) {
 export function SearchCompositeInput() {
   const inputId = useId();
   const formRef = useRef<HTMLFormElement | null>(null);
+  const resultsPanelRef = useRef<HTMLDivElement | null>(null);
   const [term, setTerm] = useState("");
   const [debouncedTerm, setDebouncedTerm] = useState("");
   const [panelOpen, setPanelOpen] = useState(false);
@@ -214,7 +215,6 @@ export function SearchCompositeInput() {
     ? fallbackInterventions
     : exactInterventions.slice(0, 4);
   const visiblePrototypes = isFallback ? [] : exactPrototypes.slice(0, 3);
-  const firstResult = visibleInterventions[0] ?? visiblePrototypes[0] ?? null;
   const fallbackNames = fallbackInterventions
     .map((result) => result.item.title)
     .join(", ");
@@ -226,10 +226,21 @@ export function SearchCompositeInput() {
   };
 
   const handleSubmit = () => {
-    if (firstResult) {
-      window.location.assign(resultHref(firstResult));
-      setPanelOpen(false);
+    if (!term.trim()) {
+      return;
     }
+
+    setDebouncedTerm(term);
+    setPanelOpen(true);
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        resultsPanelRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      });
+    });
   };
 
   return (
@@ -271,7 +282,11 @@ export function SearchCompositeInput() {
         </button>
       ) : null}
       {panelOpen ? (
-        <div className="search-results-panel" aria-live="polite">
+        <div
+          ref={resultsPanelRef}
+          className="search-results-panel"
+          aria-live="polite"
+        >
           {term.trim() ? (
             <>
               {isFallback ? (

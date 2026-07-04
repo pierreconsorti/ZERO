@@ -452,7 +452,7 @@ header {
   background: transparent;
   color: rgb(var(--zero-page-fg-rgb));
   font: inherit;
-  font-size: 0.88rem;
+  font-size: 16px;
   line-height: 1.2;
   outline: none;
   padding: 0.38rem 0.1rem;
@@ -485,6 +485,7 @@ header {
   gap: 0.35rem;
   max-height: min(28rem, calc(100vh - 6rem));
   overflow-y: auto;
+  scroll-margin-top: 5.25rem;
   border-radius: 1.1rem;
   background: rgb(var(--zero-card-bg-rgb) / 0.96);
   box-shadow: 0 24px 90px rgba(0, 0, 0, 0.12);
@@ -534,6 +535,24 @@ header {
   font-size: 0.88rem;
   font-weight: 650;
   line-height: 1.12;
+}
+
+.scroll-progress-bar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 90;
+  height: 2px;
+  background: rgb(var(--zero-page-fg-rgb) / 0.14);
+  pointer-events: none;
+}
+
+.scroll-progress-bar span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: left center;
+  background: rgb(var(--zero-page-fg-rgb));
 }
 
 .evidence-claim-toggle {
@@ -613,6 +632,11 @@ header {
 
   .display-tight-md {
     line-height: 0.98;
+  }
+
+  .search-results-panel {
+    max-height: min(24rem, calc(100vh - 8rem));
+    scroll-margin-top: 4.75rem;
   }
 
 }

@@ -16,7 +16,17 @@ export function InterventionCard({
   featured = false,
   className
 }: InterventionCardProps) {
-  const narrationText = `${intervention.title}. ${intervention.whatMakesItInteresting} Mechanism: ${intervention.mechanism}`;
+  const narrationText = [
+    intervention.title,
+    intervention.whatMakesItInteresting,
+    `Mechanism: ${intervention.mechanism}`,
+    `Local prototype: ${intervention.localPrototype}`,
+    `Scale: ${intervention.scale.join(", ")}`,
+    `Measure: ${intervention.whatToMeasure.join(", ")}`,
+    `Risks and unknowns: ${intervention.risks.join(", ")}`,
+    `Evidence: ${intervention.evidenceStrength}`,
+    `Status: ${intervention.status}`
+  ].join(". ");
 
   return (
     <article
