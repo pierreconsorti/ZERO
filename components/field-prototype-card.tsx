@@ -1,4 +1,6 @@
 import type { FieldPrototype } from "@/lib/data/interventions";
+import { estimateReadingMinutes } from "@/lib/progress";
+import { GlossaryText } from "./glossary-text";
 
 type FieldPrototypeCardProps = {
   prototype: FieldPrototype;
@@ -6,6 +8,15 @@ type FieldPrototypeCardProps = {
 };
 
 export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps) {
+  const noteText = [
+    prototype.whereToTryIt,
+    prototype.whatToMeasure.join(" "),
+    prototype.toolsNeeded.join(" "),
+    prototype.evidenceValue,
+    prototype.possibleRisk
+  ].join(" ");
+  const readingMinutes = estimateReadingMinutes(noteText);
+
   return (
     <article
       id={prototype.id}
@@ -23,11 +34,16 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
         {prototype.title}
       </h3>
       <p className="relative mt-5 text-[0.98rem] leading-6 text-zero-muted sm:text-sm">
-        {prototype.whatToTest}
+        <GlossaryText text={prototype.whatToTest} />
       </p>
       <details className="group/details relative mt-7 rounded-[1.25rem] bg-black/[0.035] p-3 text-sm leading-6">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-zero-ink">
-          <span className="pill-control-light px-3 py-2 text-sm">Open test note</span>
+          <span className="flex flex-wrap items-center gap-2">
+            <span className="pill-control-light px-3 py-2 text-sm">
+              Open test note
+            </span>
+            <span className="meta-label">{readingMinutes} min read</span>
+          </span>
           <span className="pill-control-light px-3 py-1.5 font-mono text-lg leading-none transition group-open/details:rotate-45">
             +
           </span>
@@ -35,24 +51,34 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
         <dl className="mt-5 grid gap-5">
           <div>
             <dt className="meta-label">Where to try it</dt>
-            <dd className="mt-2 text-black">{prototype.whereToTryIt}</dd>
+            <dd className="mt-2 text-black">
+              <GlossaryText text={prototype.whereToTryIt} />
+            </dd>
           </div>
           <div>
             <dt className="meta-label">What to measure</dt>
-            <dd className="mt-2 text-black">{prototype.whatToMeasure.join(", ")}</dd>
+            <dd className="mt-2 text-black">
+              <GlossaryText text={prototype.whatToMeasure.join(", ")} />
+            </dd>
           </div>
           <div>
             <dt className="meta-label">Tools needed</dt>
-            <dd className="mt-2 text-black">{prototype.toolsNeeded.join(", ")}</dd>
+            <dd className="mt-2 text-black">
+              <GlossaryText text={prototype.toolsNeeded.join(", ")} />
+            </dd>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <dt className="meta-label">Evidence value</dt>
-              <dd className="mt-2 text-black">{prototype.evidenceValue}</dd>
+              <dd className="mt-2 text-black">
+                <GlossaryText text={prototype.evidenceValue} />
+              </dd>
             </div>
             <div>
               <dt className="meta-label">Possible risk</dt>
-              <dd className="mt-2 text-black">{prototype.possibleRisk}</dd>
+              <dd className="mt-2 text-black">
+                <GlossaryText text={prototype.possibleRisk} />
+              </dd>
             </div>
           </div>
         </dl>

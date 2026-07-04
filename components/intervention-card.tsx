@@ -1,5 +1,10 @@
+"use client";
+
 import type { Intervention } from "@/lib/data/interventions";
+import { estimateReadingMinutes } from "@/lib/progress";
+import { trackExploredIntervention } from "@/lib/visit-tracking";
 import { cn } from "@/lib/utils";
+import { GlossaryText } from "./glossary-text";
 import { ListenButton } from "./listen-button";
 import { ShareIdeaButton } from "./share-idea-button";
 
@@ -16,6 +21,14 @@ export function InterventionCard({
   featured = false,
   className
 }: InterventionCardProps) {
+  const fieldNoteText = [
+    intervention.mechanism,
+    intervention.localPrototype,
+    intervention.scale.join(" "),
+    intervention.whatToMeasure.join(" "),
+    intervention.risks.join(" ")
+  ].join(" ");
+  const readingMinutes = estimateReadingMinutes(fieldNoteText);
   const narrationText = [
     intervention.title,
     intervention.whatMakesItInteresting,
@@ -62,7 +75,7 @@ export function InterventionCard({
           {intervention.title}
         </h3>
         <p className="mt-5 max-w-xl text-[1.03rem] leading-7 text-zero-muted sm:mt-6 sm:text-base">
-          {intervention.whatMakesItInteresting}
+          <GlossaryText text={intervention.whatMakesItInteresting} />
         </p>
       </div>
 
@@ -71,21 +84,31 @@ export function InterventionCard({
           <div className="rounded-[1.25rem] bg-black/[0.035] p-4">
             <dt className="meta-label text-[0.64rem]">Mechanism</dt>
             <dd className="mt-2 text-sm leading-6 text-black/[0.76]">
-              {intervention.mechanism}
+              <GlossaryText text={intervention.mechanism} />
             </dd>
           </div>
           <div className="rounded-[1.25rem] bg-black/[0.035] p-4">
             <dt className="meta-label text-[0.64rem]">Local prototype</dt>
             <dd className="mt-2 text-sm leading-6 text-black/[0.76]">
-              {intervention.localPrototype}
+              <GlossaryText text={intervention.localPrototype} />
             </dd>
           </div>
         </dl>
 
-        <details className="group/details rounded-[1.25rem] bg-black/[0.035] p-3">
+        <details
+          className="group/details rounded-[1.25rem] bg-black/[0.035] p-3"
+          onToggle={(event) => {
+            if (event.currentTarget.open) {
+              trackExploredIntervention(intervention.id);
+            }
+          }}
+        >
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm text-zero-ink">
-            <span className="pill-control-light px-3 py-2 text-sm">
-              Open field note
+            <span className="flex flex-wrap items-center gap-2">
+              <span className="pill-control-light px-3 py-2 text-sm">
+                Open field note
+              </span>
+              <span className="meta-label">{readingMinutes} min read</span>
             </span>
             <span className="pill-control-light px-3 py-1.5 font-mono text-lg leading-none transition group-open/details:rotate-45">
               +
@@ -94,25 +117,33 @@ export function InterventionCard({
           <div className="mt-5 grid gap-5 text-sm leading-6 md:grid-cols-3">
             <div className="sm:hidden">
               <p className="meta-label">Mechanism</p>
-              <p className="mt-2 text-zero-ink">{intervention.mechanism}</p>
+              <p className="mt-2 text-zero-ink">
+                <GlossaryText text={intervention.mechanism} />
+              </p>
             </div>
             <div className="sm:hidden">
               <p className="meta-label">Local prototype</p>
-              <p className="mt-2 text-zero-ink">{intervention.localPrototype}</p>
+              <p className="mt-2 text-zero-ink">
+                <GlossaryText text={intervention.localPrototype} />
+              </p>
             </div>
             <div>
               <p className="meta-label">Scale</p>
-              <p className="mt-2 text-zero-ink">{intervention.scale.join(", ")}</p>
+              <p className="mt-2 text-zero-ink">
+                <GlossaryText text={intervention.scale.join(", ")} />
+              </p>
             </div>
             <div>
               <p className="meta-label">Measure</p>
               <p className="mt-2 text-zero-ink">
-                {intervention.whatToMeasure.join(", ")}
+                <GlossaryText text={intervention.whatToMeasure.join(", ")} />
               </p>
             </div>
             <div>
               <p className="meta-label">Risks / unknowns</p>
-              <p className="mt-2 text-zero-ink">{intervention.risks.join(", ")}</p>
+              <p className="mt-2 text-zero-ink">
+                <GlossaryText text={intervention.risks.join(", ")} />
+              </p>
             </div>
           </div>
         </details>

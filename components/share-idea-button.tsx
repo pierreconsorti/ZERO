@@ -8,6 +8,8 @@ type ShareIdeaButtonProps = {
   description: string;
 };
 
+type ShareStatus = "idle" | "opening" | "copied";
+
 async function copyToClipboard(text: string) {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(text);
@@ -35,7 +37,7 @@ export function ShareIdeaButton({
   description
 }: ShareIdeaButtonProps) {
   const resetTimerRef = useRef<number | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState<ShareStatus>("idle");
 
   useEffect(() => {
     return () => {
@@ -46,14 +48,14 @@ export function ShareIdeaButton({
   }, []);
 
   const showCopied = () => {
-    setCopied(true);
+    setStatus("copied");
 
     if (resetTimerRef.current) {
       window.clearTimeout(resetTimerRef.current);
     }
 
     resetTimerRef.current = window.setTimeout(() => {
-      setCopied(false);
+      setStatus("idle");
       resetTimerRef.current = null;
     }, 1800);
   };
@@ -67,11 +69,15 @@ export function ShareIdeaButton({
     };
 
     if (navigator.share) {
+      setStatus("opening");
+
       try {
         await navigator.share(shareData);
+        setStatus("idle");
         return;
       } catch (error) {
         if (isShareAbort(error)) {
+          setStatus("idle");
           return;
         }
       }
@@ -81,7 +87,7 @@ export function ShareIdeaButton({
       await copyToClipboard(`${title}\n${description}\n${url}`);
       showCopied();
     } catch {
-      setCopied(false);
+      setStatus("idle");
     }
   };
 
@@ -92,7 +98,11 @@ export function ShareIdeaButton({
       className="pill-control-dark w-full px-4 py-2 text-sm shadow-quiet transition hover:opacity-85 sm:w-auto"
       aria-live="polite"
     >
-      {copied ? "Copied" : "Share"}
+      {status === "opening"
+        ? "Opening..."
+        : status === "copied"
+          ? "Copied"
+          : "Share"}
     </button>
   );
 }

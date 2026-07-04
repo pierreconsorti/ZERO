@@ -1,10 +1,35 @@
+"use client";
+
 import {
   interventionFilterOptions,
   type InterventionFilter
 } from "@/lib/data/intervention-filters";
+import {
+  parseStoredLocation,
+  readStoredLocationSnapshot,
+  subscribeToLocationChange
+} from "@/lib/local-climate-location";
+import { asciiBar } from "@/lib/progress";
 import Link from "next/link";
+import { useMemo, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 import { AtmosphericPanel } from "./atmospheric-panel";
+import { GlossaryText } from "./glossary-text";
+
+const familyContext: Partial<Record<InterventionFilter, string>> = {
+  Materials:
+    "Reflective and low-heat materials change how surfaces absorb sunlight before mechanical cooling is needed.",
+  Shade:
+    "Shade cuts direct solar exposure immediately, lowering heat stress where people wait, walk, and work.",
+  Textiles:
+    "Cooling textiles reduce body heat gain for people exposed outdoors, especially workers and uniforms.",
+  Surfaces:
+    "Streets, roofs, and plazas store heat; cooler surfaces reduce exposure at the ground.",
+  Methane:
+    "Methane traps heat far more efficiently than CO2 but breaks down faster, so cuts can show results within years.",
+  "Passive cooling":
+    "Passive cooling lowers indoor heat before adding machines, using shade, ventilation, insulation, and thermal mass."
+};
 
 type StatusHeroProps = {
   updatedAt: string;
@@ -21,6 +46,27 @@ export function StatusHero({
   visibleCount,
   totalCount
 }: StatusHeroProps) {
+  const locationSnapshot = useSyncExternalStore(
+    subscribeToLocationChange,
+    readStoredLocationSnapshot,
+    () => null
+  );
+  const storedLocation = useMemo(
+    () => parseStoredLocation(locationSnapshot),
+    [locationSnapshot]
+  );
+  const locationName =
+    storedLocation &&
+    storedLocation.displayName !== "Your current location" &&
+    storedLocation.displayName.length <= 42
+      ? storedLocation.displayName
+      : null;
+  const heroHeadline = locationName
+    ? `In ${locationName}, summers are getting hotter. Here's what could help.`
+    : "A catalogue of planetary cooling possibilities";
+  const activeFamilyContext =
+    activeFilter === "All" ? null : familyContext[activeFilter];
+
   return (
     <div className="px-1.5 pb-4 pt-2 sm:px-5 sm:pb-6 lg:px-8">
       <AtmosphericPanel
@@ -37,14 +83,13 @@ export function StatusHero({
               </p>
             </div>
             <h1 className="display-tight-xl mt-5 max-w-[58rem] text-balance text-[clamp(2.25rem,8.6vw,5.2rem)] text-black sm:mt-6">
-              A catalogue of planetary cooling possibilities
+              {heroHeadline}
             </h1>
             <p className="mt-7 max-w-2xl text-lg font-semibold leading-[1.1] text-black sm:text-xl">
               What can we try next summer?
             </p>
             <p className="mt-4 max-w-2xl text-[1.03rem] leading-7 text-black/[0.62] sm:text-base">
-              A public field guide for planetary cooling possibilities organized
-              by evidence, scale, risk, and what can actually be tested.
+              <GlossaryText text="A public field guide for planetary cooling possibilities organized by evidence, scale, risk, and what can actually be tested." />
             </p>
           </div>
 
@@ -67,8 +112,16 @@ export function StatusHero({
               ))}
             </div>
             <p className="mt-3 text-sm leading-6 text-zero-muted" aria-live="polite">
-              Showing {visibleCount} of {totalCount} interventions — {activeFilter}
+              <span className="font-mono">
+                {asciiBar(visibleCount, totalCount)}
+              </span>{" "}
+              — {activeFilter}
             </p>
+            {activeFamilyContext ? (
+              <p className="mt-3 text-sm leading-6 text-zero-muted">
+                <GlossaryText text={activeFamilyContext} />
+              </p>
+            ) : null}
           </div>
         </div>
 
@@ -78,8 +131,7 @@ export function StatusHero({
               <div>
                 <p className="meta-label">Readiness index</p>
                 <p className="mt-3 max-w-md text-sm leading-6 text-black/[0.58]">
-                  A living field guide for things that can be tested, funded,
-                  regulated, installed, worn, painted, detected, or prototyped.
+                  <GlossaryText text="A living field guide for things that can be tested, funded, regulated, installed, worn, painted, detected, or prototyped." />
                 </p>
               </div>
             </div>

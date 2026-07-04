@@ -13,13 +13,12 @@ import {
   type InterventionFamily
 } from "@/lib/data/intervention-filters";
 import { interventions } from "@/lib/data/interventions";
-
-type StoredLocation = {
-  latitude: number;
-  longitude: number;
-  displayName: string;
-  placeSource?: string;
-};
+import {
+  parseStoredLocation,
+  readStoredLocationSnapshot,
+  subscribeToLocationChange,
+  writeStoredLocation
+} from "@/lib/local-climate-location";
 
 type MonthlyTemperature = {
   month: number;
@@ -88,8 +87,6 @@ type ReverseGeocodingResponse = {
   };
 };
 
-const locationStorageKey = "zero-local-climate-location";
-const locationChangeEvent = "zero-local-climate-location-change";
 const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const evidenceRank = {
   "very high": 5,
@@ -98,75 +95,6 @@ const evidenceRank = {
   early: 2,
   speculative: 1
 } as const;
-
-function subscribeToLocationChange(callback: () => void) {
-  if (typeof window === "undefined") {
-    return () => {};
-  }
-
-  window.addEventListener("storage", callback);
-  window.addEventListener(locationChangeEvent, callback);
-
-  return () => {
-    window.removeEventListener("storage", callback);
-    window.removeEventListener(locationChangeEvent, callback);
-  };
-}
-
-function readStoredLocationSnapshot() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  try {
-    return window.localStorage.getItem(locationStorageKey);
-  } catch {
-    return null;
-  }
-}
-
-function parseStoredLocation(snapshot: string | null): StoredLocation | null {
-  if (!snapshot) {
-    return null;
-  }
-
-  try {
-    const parsed = JSON.parse(snapshot) as Partial<StoredLocation>;
-
-    if (!parsed) {
-      return null;
-    }
-
-    const { latitude, longitude, displayName, placeSource } = parsed;
-
-    return typeof latitude === "number" &&
-      typeof longitude === "number" &&
-      typeof displayName === "string"
-      ? {
-          latitude,
-          longitude,
-          displayName,
-          placeSource: typeof placeSource === "string" ? placeSource : undefined
-        }
-      : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeStoredLocation(location: StoredLocation | null) {
-  try {
-    if (location) {
-      window.localStorage.setItem(locationStorageKey, JSON.stringify(location));
-    } else {
-      window.localStorage.removeItem(locationStorageKey);
-    }
-  } catch {
-    // The module should remain usable even if storage is unavailable.
-  }
-
-  window.dispatchEvent(new Event(locationChangeEvent));
-}
 
 function formatDate(date: Date) {
   return date.toISOString().slice(0, 10);
@@ -407,6 +335,41 @@ function describeChange(value: number) {
   return `${rounded > 0 ? "is up" : "is down"} ${Math.abs(rounded)}°`;
 }
 
+function climateNarrative(history: TemperatureHistory) {
+  const earliestYear = history.years[0];
+  const latestYear = history.years[history.years.length - 1];
+  const rowsWithLatest = history.rows.filter(
+    (row) => typeof row.yearlyHighs[latestYear] === "number"
+  );
+
+  if (!earliestYear || !latestYear || rowsWithLatest.length === 0) {
+    return "";
+  }
+
+  const hottest = rowsWithLatest.reduce((max, row) =>
+    (row.yearlyHighs[latestYear] ?? Number.NEGATIVE_INFINITY) >
+    (max.yearlyHighs[latestYear] ?? Number.NEGATIVE_INFINITY)
+      ? row
+      : max
+  );
+  const earliestValue = hottest.yearlyHighs[earliestYear];
+  const latestValue = hottest.yearlyHighs[latestYear];
+
+  if (typeof earliestValue !== "number" || typeof latestValue !== "number") {
+    return `Temperatures in your area have stayed fairly stable since ${earliestYear}.`;
+  }
+
+  const delta = latestValue - earliestValue;
+
+  if (delta >= 1) {
+    return `${monthLabels[hottest.month]} is now about ${delta.toFixed(
+      1
+    )}° hotter than it was in ${earliestYear}.`;
+  }
+
+  return `Temperatures in your area have stayed fairly stable since ${earliestYear}.`;
+}
+
 function TemperatureHistoryTable({ history }: { history: TemperatureHistory }) {
   const latestYear = history.years[history.years.length - 1];
   const callout = history.strongestChange;
@@ -417,6 +380,7 @@ function TemperatureHistoryTable({ history }: { history: TemperatureHistory }) {
 
   return (
     <div className="grid gap-3">
+      <p className="climate-narrative-line">{climateNarrative(history)}</p>
       {callout ? (
         <p className="metadata-pill w-fit px-3 py-1.5 text-sm">
           {monthLabels[callout.month]} {describeChange(callout.change)} since{" "}

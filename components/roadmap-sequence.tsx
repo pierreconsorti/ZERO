@@ -1,5 +1,6 @@
 import type { RoadmapLever } from "@/lib/types";
 import { AtmosphericPanel } from "./atmospheric-panel";
+import { GlossaryText } from "./glossary-text";
 import { SectionHeading } from "./section-heading";
 
 type RoadmapSequenceProps = {
@@ -37,23 +38,29 @@ export function RoadmapSequence({ levers, compact = false }: RoadmapSequenceProp
                   {lever.title}
                 </h3>
                 <p className="mt-4 text-sm leading-6 text-zero-muted">
-                  {lever.currentState}
+                  <GlossaryText text={lever.currentState} />
                 </p>
               </div>
               <dl className="grid gap-5 text-sm leading-6">
                 <div>
                   <dt className="meta-label">What needs to change</dt>
-                  <dd className="mt-2 text-zero-ink">{lever.whatNeedsToChange}</dd>
+                  <dd className="mt-2 text-zero-ink">
+                    <GlossaryText text={lever.whatNeedsToChange} />
+                  </dd>
                 </div>
                 <div>
                   <dt className="meta-label">Speed required</dt>
-                  <dd className="mt-2 text-zero-ink">{lever.speedRequired}</dd>
+                  <dd className="mt-2 text-zero-ink">
+                    <GlossaryText text={lever.speedRequired} />
+                  </dd>
                 </div>
                 {!compact ? (
                   <>
                     <div>
                       <dt className="meta-label">Why it matters</dt>
-                      <dd className="mt-2 text-zero-ink">{lever.whyItMatters}</dd>
+                      <dd className="mt-2 text-zero-ink">
+                        <GlossaryText text={lever.whyItMatters} />
+                      </dd>
                     </div>
                     <div className="grid gap-3 sm:grid-cols-3">
                       <div>

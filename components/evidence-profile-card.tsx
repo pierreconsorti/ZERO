@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 import { interventions } from "@/lib/data/interventions";
 import type { EvidenceProfile } from "@/lib/types";
+import { trackExploredIntervention } from "@/lib/visit-tracking";
 import { cn } from "@/lib/utils";
 import { ConfidencePill } from "./confidence-pill";
+import { GlossaryText } from "./glossary-text";
 import { ListenButton } from "./listen-button";
 
 type EvidenceProfileCardProps = {
@@ -94,6 +96,7 @@ export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
                   <Link
                     key={intervention.id}
                     href={`/#${intervention.id}`}
+                    onClick={() => trackExploredIntervention(intervention.id)}
                     className="pill-control-light px-3 py-1.5 text-sm transition hover:bg-black hover:text-white"
                   >
                     {intervention.title}
@@ -113,7 +116,7 @@ function EvidenceField({ label, value }: { label: string; value: string }) {
     <div className="rounded-[1.1rem] bg-black/[0.035] p-4">
       <dt className="meta-label">{label}</dt>
       <dd className="mt-2 text-[0.98rem] leading-6 text-zero-muted sm:text-sm">
-        {value}
+        <GlossaryText text={value} />
       </dd>
     </div>
   );

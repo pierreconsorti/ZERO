@@ -14,6 +14,7 @@ import {
 } from "./local-climate-panel";
 import { StatusHero } from "./status-hero";
 import type { Intervention } from "@/lib/data/interventions";
+import { trackExploredIntervention } from "@/lib/visit-tracking";
 
 type HomeCatalogueExperienceProps = {
   updatedAt: string;
@@ -49,6 +50,7 @@ function ClimateRecommendationStrip({ profile }: { profile: ClimateProfile }) {
               <Link
                 key={intervention.id}
                 href={`/#${intervention.id}`}
+                onClick={() => trackExploredIntervention(intervention.id)}
                 className="metadata-tile hover-lift grid cursor-pointer gap-3 p-4"
               >
                 <span className="meta-label">{intervention.category}</span>

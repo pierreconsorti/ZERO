@@ -17,6 +17,7 @@ import {
   type FieldPrototype,
   type Intervention
 } from "@/lib/data/interventions";
+import { trackExploredIntervention } from "@/lib/visit-tracking";
 
 type InterventionMatch = {
   kind: "intervention";
@@ -302,7 +303,10 @@ export function SearchCompositeInput() {
                       key={result.item.id}
                       href={resultHref(result)}
                       className="search-result-item"
-                      onClick={() => setPanelOpen(false)}
+                      onClick={() => {
+                        trackExploredIntervention(result.item.id);
+                        setPanelOpen(false);
+                      }}
                     >
                       <span>Intervention</span>
                       <strong>{result.item.title}</strong>

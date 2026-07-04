@@ -3,9 +3,12 @@ import {
   type InterventionFilter
 } from "@/lib/data/intervention-filters";
 import { interventions } from "@/lib/data/interventions";
+import { asciiBar } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { AtmosphericPanel } from "./atmospheric-panel";
+import { GlossaryText } from "./glossary-text";
 import { InterventionCard } from "./intervention-card";
+import { ReturnVisitNote } from "./return-visit-note";
 
 const cardSpans = [
   "xl:col-span-7",
@@ -49,8 +52,7 @@ export function CoolingCatalogue({
           </div>
           <div className="space-y-4">
             <p className="max-w-2xl text-[1.03rem] leading-7 text-zero-muted sm:text-lg sm:leading-8">
-              Paint, fabric, shade, detection, retrofit, procurement, and
-              measurement paths gathered into one browsable working surface.
+              <GlossaryText text="Paint, fabric, shade, detection, retrofit, procurement, and measurement paths gathered into one browsable working surface." />
             </p>
             <p className="metadata-pill w-fit px-3 py-1.5 text-sm">
               {activeFilter === "All"
@@ -58,9 +60,12 @@ export function CoolingCatalogue({
                 : `${visibleInterventions.length} in ${activeFilter}`}
             </p>
             <p className="text-sm leading-6 text-zero-muted">
-              {prototypeReadyCount} of {visibleInterventions.length} visible
-              interventions include local prototype notes.
+              <span className="font-mono">
+                {asciiBar(prototypeReadyCount, visibleInterventions.length)}
+              </span>{" "}
+              visible interventions include local prototype notes.
             </p>
+            <ReturnVisitNote totalIdeas={interventions.length} />
           </div>
         </div>
 
