@@ -1,6 +1,13 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import {
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore
+} from "react";
 import {
   getInterventionFamilies,
   type InterventionFamily
@@ -79,32 +86,40 @@ function subscribeToLocationChange(callback: () => void) {
   };
 }
 
-function readStoredLocation(): StoredLocation | null {
+function readStoredLocationSnapshot() {
   if (typeof window === "undefined") {
     return null;
   }
 
   try {
-    const raw = window.localStorage.getItem(locationStorageKey);
-    const parsed = raw ? (JSON.parse(raw) as Partial<StoredLocation>) : null;
-
-    if (
-      parsed &&
-      typeof parsed.latitude === "number" &&
-      typeof parsed.longitude === "number" &&
-      typeof parsed.displayName === "string"
-    ) {
-      return {
-        latitude: parsed.latitude,
-        longitude: parsed.longitude,
-        displayName: parsed.displayName
-      };
-    }
+    return window.localStorage.getItem(locationStorageKey);
   } catch {
     return null;
   }
+}
 
-  return null;
+function parseStoredLocation(snapshot: string | null): StoredLocation | null {
+  if (!snapshot) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(snapshot) as Partial<StoredLocation>;
+
+    if (!parsed) {
+      return null;
+    }
+
+    const { latitude, longitude, displayName } = parsed;
+
+    return typeof latitude === "number" &&
+      typeof longitude === "number" &&
+      typeof displayName === "string"
+      ? { latitude, longitude, displayName }
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 function writeStoredLocation(location: StoredLocation | null) {
@@ -278,23 +293,35 @@ function TemperatureRangeChart({ monthly }: { monthly: MonthlyTemperature[] }) {
 }
 
 export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
-  const location = useSyncExternalStore(
+  const locationSnapshot = useSyncExternalStore(
     subscribeToLocationChange,
-    readStoredLocation,
+    readStoredLocationSnapshot,
     () => null
+  );
+  const location = useMemo(
+    () => parseStoredLocation(locationSnapshot),
+    [locationSnapshot]
   );
   const [city, setCity] = useState("");
   const [state, setState] = useState<ClimateState>({ status: "idle" });
   const [locationMessage, setLocationMessage] = useState("");
+  const loadedLocationKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!location) {
+    if (!location || !locationSnapshot) {
+      loadedLocationKeyRef.current = null;
       onProfileChange(null);
+      return;
+    }
+
+    if (loadedLocationKeyRef.current === locationSnapshot) {
       return;
     }
 
     let cancelled = false;
     const activeLocation = location;
+    const activeLocationKey = locationSnapshot;
+    loadedLocationKeyRef.current = activeLocationKey;
 
     async function loadClimate() {
       setState({ status: "loading" });
@@ -358,8 +385,11 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
 
     return () => {
       cancelled = true;
+      if (loadedLocationKeyRef.current === activeLocationKey) {
+        loadedLocationKeyRef.current = null;
+      }
     };
-  }, [location, onProfileChange]);
+  }, [location, locationSnapshot, onProfileChange]);
 
   const visibleState = useMemo<ClimateState>(
     () => (location ? state : { status: "idle" }),
