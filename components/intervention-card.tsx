@@ -19,7 +19,7 @@ export function InterventionCard({
     <article
       id={intervention.id}
       className={cn(
-        "object-card group hover-lift relative flex min-h-[24rem] flex-col justify-between overflow-hidden p-4 sm:min-h-[29rem] sm:p-6",
+        "object-card group hover-lift relative flex min-h-[24rem] flex-col overflow-hidden p-4 sm:min-h-[29rem] sm:p-6",
         featured && "sm:min-h-[34rem] sm:p-7",
         className
       )}
