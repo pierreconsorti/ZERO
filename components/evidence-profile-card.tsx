@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { interventions } from "@/lib/data/interventions";
+import { researchPapers } from "@/lib/research-papers";
 import type { EvidenceProfile } from "@/lib/types";
 import { trackExploredIntervention } from "@/lib/visit-tracking";
 import { cn } from "@/lib/utils";
@@ -14,9 +15,44 @@ type EvidenceProfileCardProps = {
   profile: EvidenceProfile;
 };
 
+const plainLanguageClaims: Record<string, string> = {
+  "warming-human-caused":
+    "The planet is warming mainly because people added heat-trapping gases to the air.",
+  "methane-near-term":
+    "Cutting methane can slow near-term heating faster than many slower-moving climate actions.",
+  "clean-energy-scale":
+    "Fossil energy has to be replaced by clean power, electric machines, better grids, storage, and smarter demand.",
+  "adaptation-needed":
+    "Even if emissions fall, people still need shade, safer infrastructure, and better planning for heat already arriving."
+};
+
+const counterArguments: Record<string, string> = {
+  "warming-human-caused":
+    "The strongest objection is not that physics is absent, but that natural variability and regional records can complicate short-term attribution.",
+  "methane-near-term":
+    "The strongest objection is that some methane sources are diffuse, seasonal, or hard to assign to one accountable actor.",
+  "clean-energy-scale":
+    "The strongest objection is that deployment constraints, permitting, materials, and grid queues can slow technically mature solutions.",
+  "adaptation-needed":
+    "The strongest objection is that adaptation can be used as an excuse to delay mitigation if the two are not held together."
+};
+
+const costOfDoingNothing: Record<string, string> = {
+  "warming-human-caused":
+    "This is one reason emissions cuts matter now: accumulated greenhouse gases keep shaping future heat.",
+  "methane-near-term":
+    "This is one reason methane matters now: short-lived gases can change the next few decades of warming.",
+  "clean-energy-scale":
+    "This is one reason deployment speed matters now: infrastructure delays can lock in years of fossil use.",
+  "adaptation-needed":
+    "This is one reason practical cooling matters now: heat exposure is already changing daily life."
+};
+
 export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
   const panelId = useId();
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"simple" | "precise">("simple");
+  const [showCounter, setShowCounter] = useState(false);
   const fields = [
     { label: "What we know", value: profile.whatWeKnow },
     { label: "What we believe", value: profile.whatWeBelieve },
@@ -39,6 +75,25 @@ export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
         Boolean(intervention)
       );
   }, [profile.relatedInterventionIds]);
+  const relatedPaper = researchPapers.find(
+    (paper) => paper.relatedClaimId === profile.id
+  );
+  const displayedClaim =
+    mode === "simple"
+      ? plainLanguageClaims[profile.id] ?? profile.claim
+      : profile.claim;
+
+  useEffect(() => {
+    function handleSharedClose() {
+      setOpen(false);
+      setShowCounter(false);
+    }
+
+    window.addEventListener("zero-close-overlays", handleSharedClose);
+
+    return () =>
+      window.removeEventListener("zero-close-overlays", handleSharedClose);
+  }, []);
 
   return (
     <article id={profile.id} className="object-card p-4 sm:p-5">
@@ -79,6 +134,52 @@ export function EvidenceProfileCard({ profile }: EvidenceProfileCardProps) {
         )}
       >
         <div className="overflow-hidden">
+          <div className="mb-5 grid gap-4 rounded-[1.1rem] bg-black/[0.035] p-4">
+            <div className="flex flex-wrap gap-2">
+              {(["simple", "precise"] as const).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  aria-pressed={mode === option}
+                  className="filter-chip px-3 py-1.5 text-sm"
+                  onClick={() => setMode(option)}
+                >
+                  {option === "simple" ? "Explain simply" : "Explain precisely"}
+                </button>
+              ))}
+              <button
+                type="button"
+                aria-expanded={showCounter}
+                className="filter-chip px-3 py-1.5 text-sm"
+                onClick={() => setShowCounter((current) => !current)}
+              >
+                Counter-argument
+              </button>
+            </div>
+            <p className="text-base leading-7 text-zero-ink">
+              <GlossaryText text={displayedClaim} />
+            </p>
+            {showCounter ? (
+              <p className="text-sm leading-6 text-zero-muted">
+                <GlossaryText
+                  text={counterArguments[profile.id] ?? profile.knownDisagreements}
+                />
+              </p>
+            ) : null}
+            {relatedPaper?.confidenceTimeline ? (
+              <p className="text-sm leading-6 text-zero-muted">
+                {relatedPaper.confidenceTimeline.join(" → ")}
+              </p>
+            ) : null}
+            {relatedPaper?.editHistoryNote ? (
+              <p className="text-sm leading-6 text-zero-muted">
+                Changed-mind note: {relatedPaper.editHistoryNote}
+              </p>
+            ) : null}
+            <p className="text-sm leading-6 text-zero-muted">
+              {costOfDoingNothing[profile.id]}
+            </p>
+          </div>
           <dl className="grid gap-5 md:grid-cols-2">
             {fields.map((field) => (
               <EvidenceField

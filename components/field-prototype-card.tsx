@@ -1,5 +1,4 @@
 import type { FieldPrototype } from "@/lib/data/interventions";
-import { estimateReadingMinutes } from "@/lib/progress";
 import { GlossaryText } from "./glossary-text";
 
 type FieldPrototypeCardProps = {
@@ -8,15 +7,6 @@ type FieldPrototypeCardProps = {
 };
 
 export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps) {
-  const noteText = [
-    prototype.whereToTryIt,
-    prototype.whatToMeasure.join(" "),
-    prototype.toolsNeeded.join(" "),
-    prototype.evidenceValue,
-    prototype.possibleRisk
-  ].join(" ");
-  const readingMinutes = estimateReadingMinutes(noteText);
-
   return (
     <article
       id={prototype.id}
@@ -38,11 +28,8 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
       </p>
       <details className="group/details relative mt-7 rounded-[1.25rem] bg-black/[0.035] p-3 text-sm leading-6">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-zero-ink">
-          <span className="flex flex-wrap items-center gap-2">
-            <span className="pill-control-light px-3 py-2 text-sm">
-              Open test note
-            </span>
-            <span className="meta-label">{readingMinutes} min read</span>
+          <span className="pill-control-light px-3 py-2 text-sm">
+            Open test note
           </span>
           <span className="pill-control-light px-3 py-1.5 font-mono text-lg leading-none transition group-open/details:rotate-45">
             +

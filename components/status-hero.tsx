@@ -9,12 +9,12 @@ import {
   readStoredLocationSnapshot,
   subscribeToLocationChange
 } from "@/lib/local-climate-location";
-import { asciiBar } from "@/lib/progress";
 import Link from "next/link";
 import { useMemo, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 import { AtmosphericPanel } from "./atmospheric-panel";
 import { GlossaryText } from "./glossary-text";
+import { RotatingText } from "./rotating-text";
 
 const familyContext: Partial<Record<InterventionFilter, string>> = {
   Materials:
@@ -36,15 +36,13 @@ type StatusHeroProps = {
   activeFilter: InterventionFilter;
   onFilterChange: (filter: InterventionFilter) => void;
   visibleCount: number;
-  totalCount: number;
 };
 
 export function StatusHero({
   updatedAt,
   activeFilter,
   onFilterChange,
-  visibleCount,
-  totalCount
+  visibleCount
 }: StatusHeroProps) {
   const locationSnapshot = useSyncExternalStore(
     subscribeToLocationChange,
@@ -62,8 +60,15 @@ export function StatusHero({
       ? storedLocation.displayName
       : null;
   const heroHeadline = locationName
-    ? `In ${locationName}, summers are getting hotter. Here's what could help.`
-    : "A catalogue of planetary cooling possibilities";
+    ? [
+        `In ${locationName}, summers are getting hotter. Here's what could help.`,
+        "A catalogue of planetary cooling possibilities",
+        "Ideas that can be tested before the next heat season."
+      ]
+    : [
+        "A catalogue of planetary cooling possibilities",
+        "Ideas that can be tested before the next heat season."
+      ];
   const activeFamilyContext =
     activeFilter === "All" ? null : familyContext[activeFilter];
 
@@ -82,8 +87,8 @@ export function StatusHero({
                 Live field guide
               </p>
             </div>
-            <h1 className="display-tight-xl mt-5 max-w-[58rem] text-balance text-[clamp(2.25rem,8.6vw,5.2rem)] text-black sm:mt-6">
-              {heroHeadline}
+            <h1 className="display-tight-xl mt-5 max-w-[58rem] text-balance text-[clamp(2.05rem,7.3vw,4.25rem)] text-black sm:mt-6">
+              <RotatingText items={heroHeadline} intervalMs={5600} />
             </h1>
             <p className="mt-7 max-w-2xl text-lg font-semibold leading-[1.1] text-black sm:text-xl">
               What can we try next summer?
@@ -112,10 +117,7 @@ export function StatusHero({
               ))}
             </div>
             <p className="mt-3 text-sm leading-6 text-zero-muted" aria-live="polite">
-              <span className="font-mono">
-                {asciiBar(visibleCount, totalCount)}
-              </span>{" "}
-              — {activeFilter}
+              Showing {visibleCount} interventions — {activeFilter}
             </p>
             {activeFamilyContext ? (
               <p className="mt-3 text-sm leading-6 text-zero-muted">

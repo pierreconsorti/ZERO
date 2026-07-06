@@ -1,7 +1,8 @@
 "use client";
 
 import type { Intervention } from "@/lib/data/interventions";
-import { estimateReadingMinutes } from "@/lib/progress";
+import { getInterventionFamilies } from "@/lib/data/intervention-filters";
+import { interventions } from "@/lib/data/interventions";
 import { trackExploredIntervention } from "@/lib/visit-tracking";
 import { cn } from "@/lib/utils";
 import { GlossaryText } from "./glossary-text";
@@ -15,20 +16,42 @@ type InterventionCardProps = {
   className?: string;
 };
 
+function mechanismTokens(value: string) {
+  return new Set(
+    value
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((token) => token.length > 5)
+  );
+}
+
+function findMostSimilar(intervention: Intervention) {
+  const families = getInterventionFamilies(intervention);
+  const tokens = mechanismTokens(intervention.mechanism);
+
+  return interventions
+    .filter((candidate) => candidate.id !== intervention.id)
+    .map((candidate) => {
+      const candidateFamilies = getInterventionFamilies(candidate);
+      const familyScore = candidateFamilies.filter((family) =>
+        families.includes(family)
+      ).length;
+      const candidateTokens = mechanismTokens(candidate.mechanism);
+      const tokenScore = [...candidateTokens].filter((token) =>
+        tokens.has(token)
+      ).length;
+
+      return { candidate, score: familyScore * 3 + tokenScore };
+    })
+    .sort((a, b) => b.score - a.score)[0]?.candidate;
+}
+
 export function InterventionCard({
   intervention,
   index,
   featured = false,
   className
 }: InterventionCardProps) {
-  const fieldNoteText = [
-    intervention.mechanism,
-    intervention.localPrototype,
-    intervention.scale.join(" "),
-    intervention.whatToMeasure.join(" "),
-    intervention.risks.join(" ")
-  ].join(" ");
-  const readingMinutes = estimateReadingMinutes(fieldNoteText);
   const narrationText = [
     intervention.title,
     intervention.whatMakesItInteresting,
@@ -40,10 +63,13 @@ export function InterventionCard({
     `Evidence: ${intervention.evidenceStrength}`,
     `Status: ${intervention.status}`
   ].join(". ");
+  const mostSimilar = findMostSimilar(intervention);
 
   return (
     <article
       id={intervention.id}
+      tabIndex={-1}
+      data-catalogue-card="true"
       className={cn(
         "object-card group hover-lift relative flex min-h-[24rem] flex-col overflow-hidden p-4 sm:min-h-[29rem] sm:p-6",
         featured && "sm:min-h-[34rem] sm:p-7",
@@ -68,8 +94,8 @@ export function InterventionCard({
           className={cn(
             "display-tight-lg mt-7 text-balance text-zero-ink sm:mt-8",
             featured
-              ? "text-[clamp(1.75rem,5vw,2.35rem)]"
-              : "text-[clamp(1.55rem,4.5vw,2.1rem)]"
+              ? "text-[clamp(1.55rem,4.2vw,2rem)]"
+              : "text-[clamp(1.4rem,3.8vw,1.8rem)]"
           )}
         >
           {intervention.title}
@@ -79,7 +105,7 @@ export function InterventionCard({
         </p>
       </div>
 
-      <div className="relative mt-7 space-y-4 sm:mt-9 sm:space-y-5">
+      <div className="relative mt-auto space-y-4 pt-7 sm:space-y-5 sm:pt-9">
         <dl className="hidden gap-3 sm:grid sm:grid-cols-2">
           <div className="rounded-[1.25rem] bg-black/[0.035] p-4">
             <dt className="meta-label text-[0.64rem]">Mechanism</dt>
@@ -104,11 +130,8 @@ export function InterventionCard({
           }}
         >
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm text-zero-ink">
-            <span className="flex flex-wrap items-center gap-2">
-              <span className="pill-control-light px-3 py-2 text-sm">
-                Open field note
-              </span>
-              <span className="meta-label">{readingMinutes} min read</span>
+            <span className="pill-control-light px-3 py-2 text-sm">
+              Open field note
             </span>
             <span className="pill-control-light px-3 py-1.5 font-mono text-lg leading-none transition group-open/details:rotate-45">
               +
@@ -159,6 +182,15 @@ export function InterventionCard({
             <span className="metadata-pill px-3 py-1.5 text-xs">
               {intervention.status}
             </span>
+            {mostSimilar ? (
+              <a
+                href={`#${mostSimilar.id}`}
+                onClick={() => trackExploredIntervention(mostSimilar.id)}
+                className="metadata-pill px-3 py-1.5 text-xs underline decoration-black/20 underline-offset-4"
+              >
+                Most similar to: {mostSimilar.title}
+              </a>
+            ) : null}
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <ListenButton

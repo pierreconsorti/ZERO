@@ -3,7 +3,7 @@
 import { Fragment, type ReactNode } from "react";
 import { MetadataPopover } from "./metadata-popover";
 
-const glossary = {
+export const glossary = {
   "greenhouse gases":
     "Heat-trapping gases, including CO2 and methane, that warm the atmosphere.",
   "radiative physics":

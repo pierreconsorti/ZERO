@@ -8,5 +8,6 @@ outputs
 .env*.local
 .vercel
 .DS_Store
+*.icloud
 *.log
 tsconfig.tsbuildinfo

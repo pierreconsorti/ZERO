@@ -6,8 +6,8 @@
   color-scheme: dark;
   background: #000000;
   color: #ffffff;
-  --font-zero-sans: "Helvetica Now", "Helvetica Now Display", "Helvetica Neue",
-    Helvetica, Arial, ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-zero-sans: "Switzer", "Helvetica Neue", Helvetica, Arial,
+    ui-sans-serif, system-ui, -apple-system, sans-serif;
   --zero-page-bg-rgb: 0 0 0;
   --zero-page-fg-rgb: 255 255 255;
   --zero-muted-rgb: 190 190 190;
@@ -566,13 +566,15 @@ header {
   position: absolute;
   right: 0;
   top: calc(100% + 0.5rem);
-  z-index: 80;
+  z-index: 120;
   width: min(18rem, calc(100vw - 2rem));
+  border: 1px solid rgb(var(--zero-rule-rgb));
   border-radius: 1.1rem;
   background: rgb(var(--zero-card-bg-rgb) / 0.98);
   box-shadow: 0 22px 80px rgba(0, 0, 0, 0.2);
   color: rgb(var(--zero-page-fg-rgb));
   padding: 1rem;
+  animation: popover-fade 120ms ease-out;
 }
 
 .glossary-term {
@@ -601,6 +603,64 @@ header {
   border: 0;
   font-family: var(--font-zero-sans);
   letter-spacing: 0;
+}
+
+.your-zero-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 110;
+  width: min(22rem, calc(100vw - 1.5rem));
+  border: 1px solid rgb(var(--zero-rule-rgb));
+  border-radius: 1.25rem;
+  background: rgb(var(--zero-card-bg-rgb) / 0.98);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.18);
+  color: rgb(var(--zero-page-fg-rgb));
+  padding: 1rem;
+}
+
+.control-room-overlay,
+.zero-letter-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.82);
+  color: #ffffff;
+  padding: 1rem;
+}
+
+.control-room-overlay {
+  z-index: 150;
+}
+
+.zero-letter-overlay {
+  z-index: 160;
+  background: #000000;
+  padding: 1.5rem;
+}
+
+.control-room-console {
+  width: 100%;
+  max-width: 48rem;
+  border-radius: 1.25rem;
+  background: #000000;
+  color: #ffffff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.875rem;
+  padding: 1rem;
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.28);
+}
+
+@keyframes popover-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 :target {

@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { RotatingText } from "./rotating-text";
 
 const facts = [
   "Observed warming, atmospheric greenhouse gas growth, radiative physics, and attribution studies point in the same direction.",
@@ -11,19 +9,9 @@ const facts = [
 ];
 
 export function FooterFact() {
-  const [fact, setFact] = useState<string | null>(null);
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      setFact(facts[Math.floor(Math.random() * facts.length)]);
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
-
-  if (!fact) {
-    return null;
-  }
-
-  return <p>{fact}</p>;
+  return (
+    <p>
+      <RotatingText items={facts} intervalMs={7200} />
+    </p>
+  );
 }

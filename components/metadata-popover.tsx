@@ -42,12 +42,18 @@ export function MetadataPopover({
       }
     }
 
+    function handleSharedClose() {
+      setOpen(false);
+    }
+
     document.addEventListener("pointerdown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("zero-close-overlays", handleSharedClose);
 
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("zero-close-overlays", handleSharedClose);
     };
   }, [open]);
 

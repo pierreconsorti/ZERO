@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { asciiBar } from "@/lib/progress";
+import { useEffect, useState } from "react";
 import type { VisitSummary } from "@/lib/visit-tracking";
 import {
   readVisitSummary,
-  recordVisit,
   subscribeToVisitTracking
 } from "@/lib/visit-tracking";
 
@@ -33,16 +31,14 @@ function ordinal(value: number) {
 }
 
 export function ReturnVisitNote({ totalIdeas }: ReturnVisitNoteProps) {
-  const recordedRef = useRef(false);
   const [summary, setSummary] = useState<VisitSummary | null>(null);
 
   useEffect(() => {
-    if (!recordedRef.current) {
-      recordedRef.current = true;
-      setSummary(recordVisit());
-    }
+    const frame = window.requestAnimationFrame(() => {
+      setSummary(readVisitSummary());
+    });
 
-    return subscribeToVisitTracking(() => {
+    const unsubscribe = subscribeToVisitTracking(() => {
       setSummary((current) => {
         const latest = readVisitSummary();
 
@@ -54,6 +50,11 @@ export function ReturnVisitNote({ totalIdeas }: ReturnVisitNoteProps) {
           : latest;
       });
     });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      unsubscribe();
+    };
   }, []);
 
   if (!summary?.showReturnLine && !summary?.showNewSinceLastVisit) {
@@ -67,11 +68,8 @@ export function ReturnVisitNote({ totalIdeas }: ReturnVisitNoteProps) {
       ) : null}
       {summary.showReturnLine ? (
         <p>
-          This is your {ordinal(summary.visitCount)} visit.{" "}
-          <span className="font-mono">
-            {asciiBar(summary.exploredCount, totalIdeas)}
-          </span>{" "}
-          ideas explored so far.
+          This is your {ordinal(summary.visitCount)} visit. You&apos;ve explored{" "}
+          {summary.exploredCount} of {totalIdeas} ideas so far.
         </p>
       ) : null}
     </div>

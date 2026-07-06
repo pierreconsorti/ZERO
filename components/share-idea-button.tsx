@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { logPersonalEvent } from "@/lib/visit-tracking";
 
 type ShareIdeaButtonProps = {
   id: string;
@@ -73,6 +74,11 @@ export function ShareIdeaButton({
 
       try {
         await navigator.share(shareData);
+        logPersonalEvent({
+          type: "shared",
+          label: title,
+          timestamp: new Date().toISOString()
+        });
         setStatus("idle");
         return;
       } catch (error) {
@@ -85,6 +91,11 @@ export function ShareIdeaButton({
 
     try {
       await copyToClipboard(`${title}\n${description}\n${url}`);
+      logPersonalEvent({
+        type: "shared",
+        label: title,
+        timestamp: new Date().toISOString()
+      });
       showCopied();
     } catch {
       setStatus("idle");

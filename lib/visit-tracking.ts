@@ -3,6 +3,9 @@ import { CONTENT_UPDATED } from "./content-version";
 const visitCountKey = "zero-visit-count";
 const exploredIdsKey = "zero-explored-intervention-ids";
 const lastVisitKey = "zero-last-visit-timestamp";
+const personalNotesKey = "zero-personal-notes";
+const personalLogKey = "zero-personal-log";
+const currentVisitSummaryKey = "zero-current-visit-summary";
 const visitTrackingEvent = "zero-visit-tracking-change";
 
 export type VisitSummary = {
@@ -10,6 +13,12 @@ export type VisitSummary = {
   exploredCount: number;
   showReturnLine: boolean;
   showNewSinceLastVisit: boolean;
+};
+
+export type PersonalEvent = {
+  type: "explored" | "shared" | "searched";
+  label: string;
+  timestamp: string;
 };
 
 function readNumber(key: string) {
@@ -82,6 +91,85 @@ export function trackExploredIntervention(id: string) {
     return;
   }
 
+  logPersonalEvent({
+    type: "explored",
+    label: id,
+    timestamp: new Date().toISOString()
+  });
+  window.dispatchEvent(new Event(visitTrackingEvent));
+}
+
+export function readPersonalNotes() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  try {
+    return window.localStorage.getItem(personalNotesKey) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export function writePersonalNotes(value: string) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(personalNotesKey, value);
+  } catch {
+    return;
+  }
+
+  window.dispatchEvent(new Event(visitTrackingEvent));
+}
+
+export function readPersonalLog() {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(
+      window.localStorage.getItem(personalLogKey) ?? "[]"
+    ) as unknown;
+
+    return Array.isArray(parsed)
+      ? parsed.filter((event): event is PersonalEvent => {
+          if (!event || typeof event !== "object") {
+            return false;
+          }
+
+          const candidate = event as Partial<PersonalEvent>;
+
+          return (
+            (candidate.type === "explored" ||
+              candidate.type === "shared" ||
+              candidate.type === "searched") &&
+            typeof candidate.label === "string" &&
+            typeof candidate.timestamp === "string"
+          );
+        })
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+export function logPersonalEvent(event: PersonalEvent) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const next = [event, ...readPersonalLog()].slice(0, 30);
+
+  try {
+    window.localStorage.setItem(personalLogKey, JSON.stringify(next));
+  } catch {
+    return;
+  }
+
   window.dispatchEvent(new Event(visitTrackingEvent));
 }
 
@@ -108,22 +196,53 @@ export function recordVisit() {
   const showNewSinceLastVisit =
     previousVisitAt > 0 && contentUpdatedAt > previousVisitAt;
 
-  try {
-    window.localStorage.setItem(visitCountKey, String(nextVisitCount));
-    window.localStorage.setItem(lastVisitKey, new Date().toISOString());
-  } catch {
-    // Return the in-memory state even when persistence is unavailable.
-  }
-
-  return {
+  const summary = {
     visitCount: nextVisitCount,
     exploredCount: readExploredInterventionIds().length,
     showReturnLine: nextVisitCount >= 2,
     showNewSinceLastVisit
   };
+
+  try {
+    window.localStorage.setItem(visitCountKey, String(nextVisitCount));
+    window.localStorage.setItem(lastVisitKey, new Date().toISOString());
+    window.sessionStorage.setItem(
+      currentVisitSummaryKey,
+      JSON.stringify(summary)
+    );
+  } catch {
+    // Return the in-memory state even when persistence is unavailable.
+  }
+
+  window.dispatchEvent(new Event(visitTrackingEvent));
+
+  return summary;
 }
 
 export function readVisitSummary(): VisitSummary {
+  if (typeof window !== "undefined") {
+    try {
+      const parsed = JSON.parse(
+        window.sessionStorage.getItem(currentVisitSummaryKey) ?? "null"
+      ) as Partial<VisitSummary> | null;
+
+      if (
+        parsed &&
+        typeof parsed.visitCount === "number" &&
+        typeof parsed.exploredCount === "number"
+      ) {
+        return {
+          visitCount: parsed.visitCount,
+          exploredCount: readExploredInterventionIds().length,
+          showReturnLine: Boolean(parsed.showReturnLine),
+          showNewSinceLastVisit: Boolean(parsed.showNewSinceLastVisit)
+        };
+      }
+    } catch {
+      // Fall through to persisted summary.
+    }
+  }
+
   return {
     visitCount: readNumber(visitCountKey),
     exploredCount: readExploredInterventionIds().length,

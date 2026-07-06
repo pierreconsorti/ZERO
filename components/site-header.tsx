@@ -4,12 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { SearchCompositeInput } from "./search-composite-input";
+import { YourZeroPanel } from "./your-zero-panel";
 
 const navItems = [
   { href: "/", label: "Catalogue" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/evidence", label: "Evidence" },
   { href: "/sources", label: "Sources" },
+  { href: "/glossary", label: "Glossary" },
   { href: "/about", label: "About" }
 ] as const;
 
@@ -140,6 +142,9 @@ export function SiteHeader() {
           <div className="hidden sm:block">
             <SearchCompositeInput />
           </div>
+          <div className="hidden lg:block">
+            <YourZeroPanel />
+          </div>
           <button
             type="button"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
@@ -177,6 +182,9 @@ export function SiteHeader() {
           >
             <div className="px-1 pb-2 sm:hidden">
               <SearchCompositeInput />
+            </div>
+            <div className="px-1 pb-2 lg:hidden">
+              <YourZeroPanel />
             </div>
             {navItems.map((item) => (
               <Link

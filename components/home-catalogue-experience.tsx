@@ -119,7 +119,6 @@ export function HomeCatalogueExperience({
         activeFilter={activeFilter}
         onFilterChange={handleFilterChange}
         visibleCount={visibleInterventions.length}
-        totalCount={interventions.length}
       />
       <LocalClimatePanel onProfileChange={setClimateProfile} />
       {climateProfile ? (

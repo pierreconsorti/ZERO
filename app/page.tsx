@@ -3,6 +3,9 @@ import { AtmosphericPanel } from "@/components/atmospheric-panel";
 import { EvidenceProfileCard } from "@/components/evidence-profile-card";
 import { FieldPrototypeCard } from "@/components/field-prototype-card";
 import { HomeCatalogueExperience } from "@/components/home-catalogue-experience";
+import { ImpactMathSection } from "@/components/impact-math-section";
+import { InTheWildSection } from "@/components/in-the-wild-section";
+import { LivePulse } from "@/components/live-pulse";
 import { PlanetHeatGrid } from "@/components/planet-heat-grid";
 import { PossibleNotProvenCard } from "@/components/possible-not-proven-card";
 import { RoadmapSequence } from "@/components/roadmap-sequence";
@@ -20,6 +23,9 @@ export default async function HomePage() {
   return (
     <main>
       <HomeCatalogueExperience updatedAt={formatDate()} />
+      <LivePulse />
+      <ImpactMathSection />
+      <InTheWildSection />
 
       <section id="prototypes" className="px-1.5 py-5 sm:px-5 sm:py-8 lg:px-8">
         <AtmosphericPanel
@@ -30,7 +36,7 @@ export default async function HomePage() {
           <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
             <div>
               <p className="meta-label">Field prototypes</p>
-              <h2 className="display-tight-lg mt-4 max-w-3xl text-balance text-[clamp(1.9rem,7.2vw,2.55rem)] text-black">
+              <h2 className="display-tight-lg mt-4 max-w-3xl text-balance text-[clamp(1.65rem,6vw,2.15rem)] text-black">
                 Small tests before next summer.
               </h2>
             </div>
@@ -60,7 +66,7 @@ export default async function HomePage() {
           <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
             <div>
               <p className="meta-label">Possible, not proven</p>
-              <h2 className="display-tight-lg mt-4 text-balance text-[clamp(1.9rem,7.2vw,2.55rem)] text-zero-ink">
+              <h2 className="display-tight-lg mt-4 text-balance text-[clamp(1.65rem,6vw,2.15rem)] text-zero-ink">
                 Imagination with an evidence brake.
               </h2>
             </div>

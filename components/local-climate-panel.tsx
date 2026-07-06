@@ -54,6 +54,12 @@ type LocalClimatePanelProps = {
   onProfileChange: (profile: ClimateProfile | null) => void;
 };
 
+type CurrentClimate = {
+  temperature: number | null;
+  observedAt: string | null;
+  daylight: string | null;
+};
+
 type GeocodingResponse = {
   results?: Array<{
     latitude: number;
@@ -70,6 +76,22 @@ type ArchiveResponse = {
     time?: string[];
     temperature_2m_max?: Array<number | null>;
     temperature_2m_min?: Array<number | null>;
+  };
+};
+
+type ForecastResponse = {
+  current_weather?: {
+    temperature?: number;
+    time?: string;
+  };
+};
+
+type DaylightResponse = {
+  status?: string;
+  results?: {
+    sunrise?: string;
+    sunset?: string;
+    day_length?: number;
   };
 };
 
@@ -98,6 +120,29 @@ const evidenceRank = {
 
 function formatDate(date: Date) {
   return date.toISOString().slice(0, 10);
+}
+
+function formatDaylight(seconds: number | undefined) {
+  if (typeof seconds !== "number") {
+    return null;
+  }
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.round((seconds % 3600) / 60);
+
+  return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
+}
+
+function formatObservedAt(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+
+  return Number.isNaN(date.getTime())
+    ? null
+    : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
 function makeDisplayName(result: NonNullable<GeocodingResponse["results"]>[number]) {
@@ -448,6 +493,11 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
   );
   const [city, setCity] = useState("");
   const [state, setState] = useState<ClimateState>({ status: "idle" });
+  const [currentClimate, setCurrentClimate] = useState<CurrentClimate>({
+    temperature: null,
+    observedAt: null,
+    daylight: null
+  });
   const [locationMessage, setLocationMessage] = useState("");
   const loadedLocationKeyRef = useRef<string | null>(null);
   const reverseLookupKeyRef = useRef<string | null>(null);
@@ -493,7 +543,15 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
     if (!location || !locationSnapshot) {
       loadedLocationKeyRef.current = null;
       onProfileChange(null);
-      return;
+      const frame = window.requestAnimationFrame(() => {
+        setCurrentClimate({
+          temperature: null,
+          observedAt: null,
+          daylight: null
+        });
+      });
+
+      return () => window.cancelAnimationFrame(frame);
     }
 
     if (loadedLocationKeyRef.current === locationSnapshot) {
@@ -526,12 +584,33 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
         const response = await fetch(
           `https://archive-api.open-meteo.com/v1/archive?${params.toString()}`
         );
+        const forecastParams = new URLSearchParams({
+          latitude: String(activeLocation.latitude),
+          longitude: String(activeLocation.longitude),
+          current_weather: "true",
+          timezone: "auto"
+        });
+        const daylightParams = new URLSearchParams({
+          lat: String(activeLocation.latitude),
+          lng: String(activeLocation.longitude),
+          formatted: "0"
+        });
+        const [forecastResponse, daylightResponse] = await Promise.all([
+          fetch(`https://api.open-meteo.com/v1/forecast?${forecastParams.toString()}`),
+          fetch(`https://api.sunrise-sunset.org/json?${daylightParams.toString()}`)
+        ]);
 
         if (!response.ok) {
           throw new Error("Archive request failed");
         }
 
         const archive = (await response.json()) as ArchiveResponse;
+        const forecast = forecastResponse.ok
+          ? ((await forecastResponse.json()) as ForecastResponse)
+          : null;
+        const daylight = daylightResponse.ok
+          ? ((await daylightResponse.json()) as DaylightResponse)
+          : null;
         const history = aggregateMonthlyHistory(archive, activeLocation.latitude);
 
         if (history.rows.every((row) => Object.keys(row.yearlyHighs).length === 0)) {
@@ -542,6 +621,26 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
         const recommendationIds = getRecommendationIds(averageSummerHigh);
 
         if (!cancelled) {
+          const current = {
+            temperature:
+              typeof forecast?.current_weather?.temperature === "number"
+                ? forecast.current_weather.temperature
+                : null,
+            observedAt: forecast?.current_weather?.time ?? null,
+            daylight: formatDaylight(daylight?.results?.day_length)
+          };
+
+          setCurrentClimate(current);
+          try {
+            if (current.temperature !== null) {
+              window.localStorage.setItem(
+                "zero-local-climate-current-temp",
+                String(current.temperature)
+              );
+            }
+          } catch {
+            // Ambient audio can still run without a stored temperature.
+          }
           setState({ status: "ready", history });
           onProfileChange({
             locationName: activeLocation.displayName,
@@ -551,6 +650,11 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
         }
       } catch {
         if (!cancelled) {
+          setCurrentClimate({
+            temperature: null,
+            observedAt: null,
+            daylight: null
+          });
           setState({
             status: "error",
             message: "Couldn't load climate data right now."
@@ -723,6 +827,18 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
                 <p className="mt-3 text-lg font-semibold leading-tight text-zero-ink">
                   {headline}
                 </p>
+                {location && currentClimate.temperature !== null ? (
+                  <p className="mt-3 text-sm leading-6 text-zero-muted">
+                    Right now: {Math.round(currentClimate.temperature)}°C in{" "}
+                    {location.displayName}
+                    {formatObservedAt(currentClimate.observedAt)
+                      ? ` at ${formatObservedAt(currentClimate.observedAt)}`
+                      : ""}
+                    {currentClimate.daylight
+                      ? `. ${currentClimate.daylight} of daylight today.`
+                      : "."}
+                  </p>
+                ) : null}
                 {location?.placeSource ? (
                   <p className="mt-2 text-xs leading-5 text-zero-muted">
                     Place name via {location.placeSource}.

@@ -1,4 +1,5 @@
 import { SectionHeading } from "@/components/section-heading";
+import { ResearchPaperSection } from "@/components/research-paper-section";
 import { SourceCard } from "@/components/source-card";
 import { sourceRegistry } from "@/lib/sources";
 
@@ -19,6 +20,7 @@ export default function SourcesPage() {
           ))}
         </div>
       </section>
+      <ResearchPaperSection />
     </main>
   );
 }
