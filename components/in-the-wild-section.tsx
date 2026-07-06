@@ -29,7 +29,7 @@ export function InTheWildSection() {
         <div className="object-card p-4 sm:p-7">
           <div className="max-w-3xl">
             <p className="meta-label">In the wild</p>
-            <h2 className="display-tight-lg mt-4 text-balance text-[clamp(1.65rem,6vw,2.15rem)] text-zero-ink">
+            <h2 className="display-tight-lg mt-4 text-balance text-[clamp(1.65rem,6vw,1.8rem)] text-zero-ink">
               Real pilots already testing the edges
             </h2>
             <p className="mt-4 text-sm leading-6 text-zero-muted">

@@ -36,7 +36,7 @@ export default async function HomePage() {
           <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
             <div>
               <p className="meta-label">Field prototypes</p>
-              <h2 className="display-tight-lg mt-4 max-w-3xl text-balance text-[clamp(1.65rem,6vw,2.15rem)] text-black">
+              <h2 className="display-tight-lg mt-4 max-w-3xl text-balance text-[clamp(1.65rem,6vw,1.8rem)] text-black">
                 Small tests before next summer.
               </h2>
             </div>
@@ -66,7 +66,7 @@ export default async function HomePage() {
           <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
             <div>
               <p className="meta-label">Possible, not proven</p>
-              <h2 className="display-tight-lg mt-4 text-balance text-[clamp(1.65rem,6vw,2.15rem)] text-zero-ink">
+              <h2 className="display-tight-lg mt-4 text-balance text-[clamp(1.65rem,6vw,1.8rem)] text-zero-ink">
                 Imagination with an evidence brake.
               </h2>
             </div>

@@ -87,7 +87,7 @@ export function StatusHero({
                 Live field guide
               </p>
             </div>
-            <h1 className="display-tight-xl mt-5 max-w-[58rem] text-balance text-[clamp(2.05rem,7.3vw,4.25rem)] text-black sm:mt-6">
+            <h1 className="display-tight-xl mt-5 max-w-[58rem] text-balance text-[clamp(2.05rem,7.3vw,3.5rem)] text-black sm:mt-6">
               <RotatingText items={heroHeadline} intervalMs={5600} />
             </h1>
             <p className="mt-7 max-w-2xl text-lg font-semibold leading-[1.1] text-black sm:text-xl">

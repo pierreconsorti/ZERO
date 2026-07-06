@@ -11,7 +11,7 @@ export function ResearchPaperSection() {
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="meta-label">Primary papers</p>
-          <h2 className="display-tight-lg mt-3 text-balance text-[clamp(1.6rem,5.4vw,2rem)] text-zero-ink">
+          <h2 className="display-tight-lg mt-3 text-balance text-[clamp(1.6rem,5.4vw,1.7rem)] text-zero-ink">
             Research ZERO is allowed to cite directly
           </h2>
         </div>

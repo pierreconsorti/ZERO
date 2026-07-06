@@ -5,6 +5,7 @@ import { ControlRoom } from "@/components/control-room";
 import { FooterFact } from "@/components/footer-fact";
 import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
 import { SiteHeader } from "@/components/site-header";
+import { TypographicCopy } from "@/components/typographic-copy";
 import { UnlockLetter } from "@/components/unlock-letter";
 import { VisitRecorder } from "@/components/visit-recorder";
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
       <body>
         <SiteHeader />
         <VisitRecorder />
+        <TypographicCopy />
         <KeyboardShortcuts />
         <ControlRoom />
         <UnlockLetter />

@@ -72,7 +72,7 @@ export function CoolingCatalogue({
         <div className="object-card grid gap-5 p-4 sm:gap-8 sm:p-7 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
             <p className="meta-label">Field index</p>
-            <h2 className="display-tight-lg mt-4 max-w-3xl text-balance text-[clamp(1.65rem,6vw,2.15rem)] text-zero-ink">
+            <h2 className="display-tight-lg mt-4 max-w-3xl text-balance text-[clamp(1.65rem,6vw,1.8rem)] text-zero-ink">
               Ideas that can be tried, bought, built, installed, worn, or measured.
             </h2>
           </div>

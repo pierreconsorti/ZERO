@@ -35,7 +35,7 @@ export function ImpactMathSection() {
         <div className="object-card grid gap-5 p-4 sm:p-7 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="meta-label">Impact math</p>
-            <h2 className="display-tight-lg mt-4 text-balance text-[clamp(1.65rem,6vw,2.15rem)] text-zero-ink">
+            <h2 className="display-tight-lg mt-4 text-balance text-[clamp(1.65rem,6vw,1.8rem)] text-zero-ink">
               If this were done, what changes?
             </h2>
           </div>

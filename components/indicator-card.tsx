@@ -32,7 +32,7 @@ export function IndicatorCard({ indicator }: IndicatorCardProps) {
           </span>
         </div>
         <div className="mt-8 flex items-end gap-2">
-          <p className="display-tight-lg tabular text-[clamp(2.5rem,8vw,3rem)] text-zero-ink">
+          <p className="display-tight-lg tabular text-[clamp(2.35rem,8vw,2.4rem)] text-zero-ink">
             {indicator.value}
           </p>
           {indicator.unit ? (

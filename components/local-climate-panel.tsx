@@ -753,7 +753,7 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
           <div className="flex flex-col justify-between gap-5">
             <div>
               <p className="meta-label">Local climate</p>
-              <h2 className="display-tight-md mt-4 max-w-2xl text-balance text-[clamp(1.55rem,5.8vw,2.05rem)] text-zero-ink">
+              <h2 className="display-tight-md mt-4 max-w-2xl text-balance text-[clamp(1.55rem,5.8vw,1.75rem)] text-zero-ink">
                 What can you try where you live?
               </h2>
               <p className="mt-4 max-w-xl text-[1.02rem] leading-7 text-zero-muted">
@@ -808,7 +808,7 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="meta-label">Resolved place</p>
-                <h3 className="display-tight-md mt-2 text-balance text-[clamp(1.45rem,5.2vw,1.95rem)] text-zero-ink">
+                <h3 className="display-tight-md mt-2 text-balance text-[clamp(1.45rem,5.2vw,1.65rem)] text-zero-ink">
                   {location ? location.displayName : "No place set"}
                 </h3>
                 <p className="mt-3 text-lg font-semibold leading-tight text-zero-ink">

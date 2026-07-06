@@ -20,7 +20,7 @@ export function FieldPrototypeCard({ prototype, index }: FieldPrototypeCardProps
           field test
         </span>
       </div>
-      <h3 className="display-tight-md relative mt-8 text-balance text-[clamp(1.55rem,5.7vw,2rem)] sm:mt-10">
+      <h3 className="display-tight-md relative mt-8 text-balance text-[clamp(1.55rem,5.7vw,1.7rem)] sm:mt-10">
         {prototype.title}
       </h3>
       <p className="relative mt-5 text-[0.98rem] leading-6 text-zero-muted sm:text-sm">

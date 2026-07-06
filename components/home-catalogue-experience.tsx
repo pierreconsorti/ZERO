@@ -36,7 +36,7 @@ function ClimateRecommendationStrip({ profile }: { profile: ClimateProfile }) {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="meta-label">For {profile.locationName}</p>
-              <h2 className="display-tight-md mt-3 max-w-3xl text-balance text-[clamp(1.5rem,5vw,2rem)] text-zero-ink">
+              <h2 className="display-tight-md mt-3 max-w-3xl text-balance text-[clamp(1.5rem,5vw,1.7rem)] text-zero-ink">
                 Given your climate, these might matter most.
               </h2>
             </div>
