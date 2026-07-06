@@ -80,18 +80,12 @@ type ArchiveResponse = {
 };
 
 type ForecastResponse = {
-  current_weather?: {
-    temperature?: number;
+  current?: {
+    temperature_2m?: number;
     time?: string;
   };
-};
-
-type DaylightResponse = {
-  status?: string;
-  results?: {
-    sunrise?: string;
-    sunset?: string;
-    day_length?: number;
+  daily?: {
+    daylight_duration?: Array<number | null>;
   };
 };
 
@@ -122,13 +116,13 @@ function formatDate(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
-function formatDaylight(seconds: number | undefined) {
-  if (typeof seconds !== "number") {
+function formatDaylight(seconds: number | null | undefined) {
+  if (typeof seconds !== "number" || !Number.isFinite(seconds)) {
     return null;
   }
 
   const hours = Math.floor(seconds / 3600);
-  const minutes = Math.round((seconds % 3600) / 60);
+  const minutes = Math.round((seconds - hours * 3600) / 60);
 
   return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
 }
@@ -587,18 +581,14 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
         const forecastParams = new URLSearchParams({
           latitude: String(activeLocation.latitude),
           longitude: String(activeLocation.longitude),
-          current_weather: "true",
+          current: "temperature_2m",
+          daily: "daylight_duration",
+          forecast_days: "1",
           timezone: "auto"
         });
-        const daylightParams = new URLSearchParams({
-          lat: String(activeLocation.latitude),
-          lng: String(activeLocation.longitude),
-          formatted: "0"
-        });
-        const [forecastResponse, daylightResponse] = await Promise.all([
-          fetch(`https://api.open-meteo.com/v1/forecast?${forecastParams.toString()}`),
-          fetch(`https://api.sunrise-sunset.org/json?${daylightParams.toString()}`)
-        ]);
+        const forecastResponse = await fetch(
+          `https://api.open-meteo.com/v1/forecast?${forecastParams.toString()}`
+        );
 
         if (!response.ok) {
           throw new Error("Archive request failed");
@@ -607,9 +597,6 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
         const archive = (await response.json()) as ArchiveResponse;
         const forecast = forecastResponse.ok
           ? ((await forecastResponse.json()) as ForecastResponse)
-          : null;
-        const daylight = daylightResponse.ok
-          ? ((await daylightResponse.json()) as DaylightResponse)
           : null;
         const history = aggregateMonthlyHistory(archive, activeLocation.latitude);
 
@@ -623,11 +610,11 @@ export function LocalClimatePanel({ onProfileChange }: LocalClimatePanelProps) {
         if (!cancelled) {
           const current = {
             temperature:
-              typeof forecast?.current_weather?.temperature === "number"
-                ? forecast.current_weather.temperature
+              typeof forecast?.current?.temperature_2m === "number"
+                ? forecast.current.temperature_2m
                 : null,
-            observedAt: forecast?.current_weather?.time ?? null,
-            daylight: formatDaylight(daylight?.results?.day_length)
+            observedAt: forecast?.current?.time ?? null,
+            daylight: formatDaylight(forecast?.daily?.daylight_duration?.[0])
           };
 
           setCurrentClimate(current);

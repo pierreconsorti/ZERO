@@ -22,14 +22,50 @@ const pulseCities: PulseCity[] = [
 
 const annualCo2Gt = 37.4;
 const kgCo2PerSecond = (annualCo2Gt * 1_000_000_000_000) / (365 * 24 * 60 * 60);
+const pulseStorageKey = "zero-live-pulse";
 
-function formatDaylight(seconds: number | undefined) {
-  if (typeof seconds !== "number") {
+type PulseCache = {
+  temperatureLines?: string[];
+  daylightLines?: string[];
+  updatedAt?: string;
+};
+
+type ForecastResponse = {
+  current?: {
+    temperature_2m?: number;
+    time?: string;
+  };
+  daily?: {
+    daylight_duration?: Array<number | null>;
+  };
+};
+
+function readPulseCache(): PulseCache {
+  try {
+    return JSON.parse(window.localStorage.getItem(pulseStorageKey) ?? "{}") as PulseCache;
+  } catch {
+    return {};
+  }
+}
+
+async function fetchWithTimeout(url: string, timeoutMs = 7500) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
+function formatDaylight(seconds: number | null | undefined) {
+  if (typeof seconds !== "number" || !Number.isFinite(seconds)) {
     return null;
   }
 
   const hours = Math.floor(seconds / 3600);
-  const minutes = Math.round((seconds % 3600) / 60);
+  const minutes = Math.round((seconds - hours * 3600) / 60);
 
   return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
 }
@@ -37,49 +73,47 @@ function formatDaylight(seconds: number | undefined) {
 export function LivePulse() {
   const [temperatureLines, setTemperatureLines] = useState<string[]>([]);
   const [daylightLines, setDaylightLines] = useState<string[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const [seconds, setSeconds] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadPulse() {
+      const cached = readPulseCache();
+
+      if (cached.temperatureLines?.length) {
+        setTemperatureLines(cached.temperatureLines);
+      }
+
+      if (cached.daylightLines?.length) {
+        setDaylightLines(cached.daylightLines);
+      }
+
       const rows = await Promise.all(
         pulseCities.map(async (city) => {
           try {
             const forecastParams = new URLSearchParams({
               latitude: String(city.latitude),
               longitude: String(city.longitude),
-              current_weather: "true",
+              current: "temperature_2m",
+              daily: "daylight_duration",
+              forecast_days: "1",
               timezone: "auto"
             });
-            const daylightParams = new URLSearchParams({
-              lat: String(city.latitude),
-              lng: String(city.longitude),
-              formatted: "0"
-            });
-            const [forecastResponse, daylightResponse] = await Promise.all([
-              fetch(
-                `https://api.open-meteo.com/v1/forecast?${forecastParams.toString()}`
-              ),
-              fetch(
-                `https://api.sunrise-sunset.org/json?${daylightParams.toString()}`
-              )
-            ]);
+            const forecastResponse = await fetchWithTimeout(
+              `https://api.open-meteo.com/v1/forecast?${forecastParams.toString()}`
+            );
             const forecast = forecastResponse.ok
-              ? ((await forecastResponse.json()) as {
-                  current_weather?: { temperature?: number };
-                })
+              ? ((await forecastResponse.json()) as ForecastResponse)
               : null;
-            const daylight = daylightResponse.ok
-              ? ((await daylightResponse.json()) as {
-                  results?: { day_length?: number };
-                })
-              : null;
+            const temperature = forecast?.current?.temperature_2m;
+            const daylightSeconds = forecast?.daily?.daylight_duration?.[0];
 
             return {
               city: city.name,
-              temperature: forecast?.current_weather?.temperature,
-              daylight: formatDaylight(daylight?.results?.day_length)
+              temperature,
+              daylight: formatDaylight(daylightSeconds)
             };
           } catch {
             return {
@@ -103,15 +137,26 @@ export function LivePulse() {
         .filter((row) => row.daylight)
         .map((row) => `${row.city}: ${row.daylight} of daylight today.`);
 
-      setTemperatureLines(nextTemperatureLines);
-      setDaylightLines(nextDaylightLines);
+      setTemperatureLines((current) =>
+        nextTemperatureLines.length > 0 ? nextTemperatureLines : current
+      );
+      setDaylightLines((current) =>
+        nextDaylightLines.length > 0 ? nextDaylightLines : current
+      );
+      setLoaded(true);
 
       try {
         window.localStorage.setItem(
-          "zero-live-pulse",
+          pulseStorageKey,
           JSON.stringify({
-            temperatureLines: nextTemperatureLines,
-            daylightLines: nextDaylightLines,
+            temperatureLines:
+              nextTemperatureLines.length > 0
+                ? nextTemperatureLines
+                : cached.temperatureLines ?? [],
+            daylightLines:
+              nextDaylightLines.length > 0
+                ? nextDaylightLines
+                : cached.daylightLines ?? [],
             updatedAt: new Date().toISOString()
           })
         );
@@ -150,6 +195,8 @@ export function LivePulse() {
             <p className="mt-3 text-sm leading-6 text-zero-muted">
               {temperatureLines.length > 0 ? (
                 <RotatingText items={temperatureLines} intervalMs={6500} />
+              ) : loaded ? (
+                "Live city temperatures are temporarily unavailable."
               ) : (
                 "Loading current city temperatures."
               )}
@@ -160,6 +207,8 @@ export function LivePulse() {
             <p className="mt-3 text-sm leading-6 text-zero-muted">
               {daylightLines.length > 0 ? (
                 <RotatingText items={daylightLines} intervalMs={7600} />
+              ) : loaded ? (
+                "Daylight records are temporarily unavailable."
               ) : (
                 "Loading daylight records."
               )}
@@ -167,11 +216,11 @@ export function LivePulse() {
           </div>
           <div>
             <p className="meta-label">Elapsed</p>
-            <p className="mt-3 text-sm leading-6 text-zero-muted">
-              <RotatingText
-                items={[elapsedCo2, latestResearchLine()]}
-                intervalMs={7200}
-              />
+            <p className="mt-3 text-sm leading-6 text-zero-muted tabular">
+              {elapsedCo2}
+            </p>
+            <p className="mt-1 text-xs leading-5 text-zero-muted">
+              {latestResearchLine()}
             </p>
           </div>
         </div>

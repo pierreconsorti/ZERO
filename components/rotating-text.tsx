@@ -10,13 +10,13 @@ type RotatingTextProps = {
 
 export function RotatingText({
   items,
-  intervalMs = 6500,
   className
 }: RotatingTextProps) {
   const cleanItems = useMemo(
     () => items.map((item) => item.trim()).filter(Boolean),
     [items]
   );
+  const itemSignature = cleanItems.join("\u001f");
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -24,16 +24,26 @@ export function RotatingText({
       return undefined;
     }
 
-    const timer = window.setInterval(() => {
-      setIndex((current) => (current + 1) % cleanItems.length);
-    }, intervalMs);
+    const frame = window.requestAnimationFrame(() => {
+      setIndex(Math.floor(Math.random() * cleanItems.length));
+    });
 
-    return () => window.clearInterval(timer);
-  }, [cleanItems.length, intervalMs]);
+    return () => window.cancelAnimationFrame(frame);
+  }, [cleanItems.length, itemSignature]);
 
   if (cleanItems.length === 0) {
     return null;
   }
 
-  return <span className={className}>{cleanItems[index % cleanItems.length]}</span>;
+  const value = cleanItems[index % cleanItems.length];
+
+  return (
+    <span
+      className={["rotating-text-static", className].filter(Boolean).join(" ")}
+      suppressHydrationWarning
+      title={value}
+    >
+      {value}
+    </span>
+  );
 }
